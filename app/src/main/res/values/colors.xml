@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--<color name="colorPrimary">#F35454</color>-->
+    <!--<color name="textcolor">#ffffff</color>-->
+
+    <!--Blue and white-->
+    <!--<color name="colorPrimary">#FF4175C0</color>-->
+    <!--<color name="textcolor">#ffffff</color>-->
+
+    <!--dark gray and yellow-->
+<!--    <color name="colorPrimary">#464545</color>-->
+<!--    <color name="textcolor">#FFEB3B</color>-->
+
+<!--    <color name="colorPrimary">#28363F</color>-->
+<!--    <color name="textcolor">#ffffff</color>-->
+
+    <color name="colorPrimary">#F2E735</color>
+    <color name="textcolor">#000000</color>
+
+
+<!--    <color name="colorPrimary">#F2B335</color>-->
+<!--    <color name="textcolor">#000000</color>-->
+
+
+    <color name="textcolornew">#FFFFFF</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+
+    <color name="colorPrimary1">#616468</color>
+    <color name="colorPrimaryDark1">#00574B</color>
+    <color name="colorAccent1">#D81B60</color>
+    <color name="textcolor1">#9C9552</color>
+    <color name="colorPrimary2">#F35454</color>
+    <color name="colorPrimaryDark2">#00574B</color>
+    <color name="colorAccent2">#D81B60</color>
+    <color name="colorPrimaryBlue">#FF4175C0</color>
+    <color name="colorPrimaryDarkBlue">#00574B</color>
+    <color name="colorAccentBlue">#D81B60</color>
+    <color name="grey">#545454</color>
+    <color name="tabIndicator">#FFEB3B</color>
+    <color name="hintcolor">#FFFFFF</color>
+
+
+
+<!--    90%-->
+<!--    android:endColor="#F2E735"-->
+<!--    android:startColor="#FFC107"-->
+
+
+</resources>

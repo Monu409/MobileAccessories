@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:src="@drawable/user"
+        android:id="@+id/img_model"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Model"
+        android:id="@+id/txt_model"
+        android:gravity="center"
+        android:layout_toRightOf="@+id/img_model"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Enter Quantity"
+        android:textStyle="bold"
+        android:id="@+id/txt_qty"
+        android:padding="3dp"
+        android:layout_marginTop="5dp"
+        android:inputType="number"
+        />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:id="@+id/edt_qty"
+        android:padding="2dp"
+        android:layout_below="@+id/txt_qty"
+        android:layout_marginTop="3dp"/>
+   <!-- <view
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/edt_qty"
+        android:background="@color/grey"/>-->
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btn_submit"
+        android:text="Submit"
+        android:gravity="center|center_vertical"
+        android:layout_below="@+id/edt_qty"
+        android:padding="2dp"
+        android:background="@drawable/button_background"
+        android:textColor="#ffffff"
+        />
+    <!--<view
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/btn_submit"
+        android:background="@color/grey"/>-->
+
+</RelativeLayout>

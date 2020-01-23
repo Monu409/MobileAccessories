@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_chat"
+        android:icon="@drawable/chat"
+        android:title="Chat"
+        android:iconTint="@color/textcolor"/>
+
+    <item
+        android:id="@+id/navigation_cart"
+        android:icon="@drawable/cart"
+        android:title="Cart"
+        android:iconTint="@color/textcolor"/>
+
+    <item
+        android:id="@+id/navigation_order"
+        android:icon="@drawable/orders"
+        android:title="My Orders"
+        android:iconTint="@color/textcolor"/>
+
+<!--    <item-->
+<!--        android:id="@+id/navigation_add_product"-->
+<!--        android:icon="@drawable/addproduct"-->
+<!--        android:title="Add Product"-->
+<!--        android:iconTint="@color/textcolor"/>-->
+
+</menu>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".MainActivity">
+
+
+<!--    <item-->
+<!--        android:id="@+id/action_profile"-->
+<!--        android:orderInCategory="100"-->
+<!--        android:title="Profile"-->
+<!--        app:showAsAction="never" />-->
+<!--    <item-->
+<!--        android:id="@+id/action_credit"-->
+<!--        android:orderInCategory="100"-->
+<!--        android:title="Credit Limit"-->
+<!--        app:showAsAction="never" />-->
+<!--    <item-->
+<!--        android:id="@+id/action_order"-->
+<!--        android:orderInCategory="100"-->
+<!--        android:title="Order List"-->
+<!--        app:showAsAction="never" />-->
+<!--    <item-->
+<!--        android:id="@+id/logout_menu"-->
+<!--        android:orderInCategory="100"-->
+<!--        android:title="Logout"-->
+<!--        app:showAsAction="never" />-->
+
+<!--    <item-->
+<!--        android:id="@+id/action_search"-->
+<!--        android:icon="@drawable/search"-->
+<!--        app:showAsAction="always|collapseActionView"-->
+<!--        app:actionViewClass="androidx.appcompat.widget.SearchView"-->
+<!--        android:title="Search"/>-->
+
+<!--    <item-->
+<!--        android:id="@+id/action_call"-->
+<!--        android:icon="@drawable/call"-->
+<!--        app:showAsAction="always|collapseActionView"-->
+<!--        android:title="Call"/>-->
+
+    <item
+        android:id="@+id/action_cart"
+        android:icon="@drawable/cart"
+        app:showAsAction="always"
+        android:title="Cart"
+        app:actionLayout="@layout/custom_action_layout"
+        />
+</menu>
