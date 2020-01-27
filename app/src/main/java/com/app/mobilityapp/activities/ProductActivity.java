@@ -152,6 +152,7 @@ public class ProductActivity extends BaseActivity {
         super.onResume();
         setAdaptersData();
         invalidateOptionsMenu();
+        setCartCount();
     }
 
     private void setAdaptersData(){
@@ -167,15 +168,15 @@ public class ProductActivity extends BaseActivity {
                         JSONObject dataObj = response.getJSONObject("data");
                         String productId = dataObj.getString("_id");
                         mProductID = productId;
-                        JSONObject categoryIdObj = dataObj.getJSONObject("categoryId");
-                        String catIdStr = categoryIdObj.getString("_id");
-                        JSONObject subCategoryIdObj = dataObj.getJSONObject("subCategoryId");
-                        String catIdStr1 = subCategoryIdObj.getString("_id");
-                        JSONObject subcategory2Obj = dataObj.getJSONObject("subcategory2");
-                        String catIdStr2 = subcategory2Obj.getString("_id");
-                        JSONObject subcategory3Obj = dataObj.getJSONObject("subcategory3");
-                        String catIdStr3 = subcategory3Obj.getString("_id");
-                        String finalCatId = productId+catIdStr+catIdStr1+catIdStr2+catIdStr3;
+//                        JSONObject categoryIdObj = dataObj.getJSONObject("categoryId");
+//                        String catIdStr = categoryIdObj.getString("_id");
+//                        JSONObject subCategoryIdObj = dataObj.getJSONObject("subCategoryId");
+//                        String catIdStr1 = subCategoryIdObj.getString("_id");
+//                        JSONObject subcategory2Obj = dataObj.getJSONObject("subcategory2");
+//                        String catIdStr2 = subcategory2Obj.getString("_id");
+//                        JSONObject subcategory3Obj = dataObj.getJSONObject("subcategory3");
+//                        String catIdStr3 = subcategory3Obj.getString("_id");
+//                        String finalCatId = productId+catIdStr+catIdStr1+catIdStr2+catIdStr3;
                         JSONObject jsonObject1;
                         List<ProModlModel> proModlModels = new ArrayList<>();
                         productPriceModels = new ArrayList<>();
@@ -238,7 +239,7 @@ public class ProductActivity extends BaseActivity {
                                 proBrndModal.setId(brandId);
                                 proBrndModal.setIndexId(indexId);
                                 proBrndModal.setImgUrl(imgurl);
-                                proBrndModal.setUniqueId(finalCatId);
+//                                proBrndModal.setUniqueId(finalCatId);
                                 proBrndModals.add(proBrndModal);
                             }
                         }

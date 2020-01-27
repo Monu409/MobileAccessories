@@ -32,7 +32,7 @@ public interface AppApis {
     String CREDIT_TRANSACTION = BASE_URL+"api/creditTransaction/";
     String ACCOUNT_TRANSACTION = BASE_URL+"api/payment/";
     String FILL_CART = BASE_URL+"token/getcartinfo/cart";
-    String UPLOAD_PRODUCT = BASE_URL+"custom/product";
+    String UPLOAD_PRODUCT = BASE_URL+"api/product";
     String SEND_MESSAGE = BASE_URL+"api/conversation";
     String GET_CONVERSATION_LIST = BASE_URL+"token/getmessage/conversation";
 }

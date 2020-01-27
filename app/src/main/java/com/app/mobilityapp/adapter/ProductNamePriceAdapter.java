@@ -51,6 +51,8 @@ public class ProductNamePriceAdapter extends RecyclerView.Adapter<ProductNamePri
                 .into(holder.brandImg);
         String brandName = proBrndModals.get(position).getName();
         holder.brandTxt.setText(brandName);
+        holder.pricaeRangeTxt.setText(proBrndModals.get(position).getPriceRange());
+        holder.moqTxt.setText("MOQ: "+proBrndModals.get(position).getMoqStr());
 //        holder.brandDes.setText(proBrndModals.get(position).getContent());
         String brandId = proBrndModals.get(position).getId();
 //        for(int i=0;i<proBrndModals.size();i++)
@@ -70,7 +72,7 @@ public class ProductNamePriceAdapter extends RecyclerView.Adapter<ProductNamePri
 
     public class ProdBrndHolder extends RecyclerView.ViewHolder{
         ImageView brandImg;
-        TextView brandTxt,brandDes,mrp_txt;
+        TextView brandTxt,brandDes,pricaeRangeTxt,moqTxt;
         RelativeLayout fullView;
         public ProdBrndHolder(@NonNull View itemView) {
             super(itemView);
@@ -78,6 +80,8 @@ public class ProductNamePriceAdapter extends RecyclerView.Adapter<ProductNamePri
             brandTxt = itemView.findViewById(R.id.name_txt);
             brandDes = itemView.findViewById(R.id.des_txt);
             fullView = itemView.findViewById(R.id.full_view);
+            pricaeRangeTxt = itemView.findViewById(R.id.price_range_txt);
+            moqTxt = itemView.findViewById(R.id.moq_txt);
 //            mrp_txt=itemView.findViewById(R.id.mrp_txt);
         }
     }

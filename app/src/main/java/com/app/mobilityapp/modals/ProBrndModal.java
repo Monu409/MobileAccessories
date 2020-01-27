@@ -42,6 +42,9 @@ public class ProBrndModal implements Serializable {
     @Expose
     private Integer v;
 
+    private String priceRange;
+    private String moqStr;
+
     ArrayList<ProModlModel> model;
 
     public Integer getIndexId() {
@@ -168,5 +171,21 @@ public class ProBrndModal implements Serializable {
 
     public void setUniqueId(String uniqueId) {
         this.uniqueId = uniqueId;
+    }
+
+    public String getPriceRange() {
+        return priceRange;
+    }
+
+    public void setPriceRange(String priceRange) {
+        this.priceRange = priceRange;
+    }
+
+    public String getMoqStr() {
+        return moqStr;
+    }
+
+    public void setMoqStr(String moqStr) {
+        this.moqStr = moqStr;
     }
 }

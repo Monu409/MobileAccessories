@@ -225,13 +225,6 @@ public class DashboardActivity extends BaseActivity implements JSONResult {
                 ViewPager viewPager = findViewById(R.id.pager);
                 viewPager.setOffscreenPageLimit(3);
                 viewPager.setAdapter(new SectionPagerAdapter(getSupportFragmentManager(),catIdList,catNameList));
-                int position = tabLayout.getSelectedTabPosition();
-                if(position>3){
-                    tabLayout.setTabMode(TabLayout.MODE_FIXED);
-                }
-                else{
-                    tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
-                }
                 tabLayout.setupWithViewPager(viewPager);
                 for (int i = 0; i < tabLayout.getTabCount(); i++) {
                     TextView tv=(TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab,null);
@@ -277,6 +270,7 @@ public class DashboardActivity extends BaseActivity implements JSONResult {
     public void onResume() {
         super.onResume();
         invalidateOptionsMenu();
+        setCartCount();
     }
     TextView textCartItemCount;
     @Override
@@ -320,15 +314,9 @@ public class DashboardActivity extends BaseActivity implements JSONResult {
             case R.id.logout_menu:
                 alertDialogForLogout();
                 break;
-//            case R.id.action_cart:
-//                startActivity(new Intent(this, CartChangeActivity.class));
-//                break;
             case R.id.action_credit:
                 startActivity(new Intent(this, CreditSttmntActivity.class));
                 break;
-//            case R.id.action_acc_transaction:
-//                startActivity(new Intent(this, AccountTransactionActivity.class));
-//                break;
             case R.id.action_order:
                 startActivity(new Intent(this, OrderListActivity.class));
                 break;
@@ -450,7 +438,7 @@ public class DashboardActivity extends BaseActivity implements JSONResult {
     private void addBadgeView(String count) {
         try {
             BottomNavigationMenuView menuView = (BottomNavigationMenuView) navigationView.getChildAt(0);
-            BottomNavigationItemView itemView = (BottomNavigationItemView) menuView.getChildAt(1); //set this to 0, 1, 2, or 3.. accordingly which menu item of the bottom bar you want to show badge
+            BottomNavigationItemView itemView = (BottomNavigationItemView) menuView.getChildAt(1);
             View notificationBadge = LayoutInflater.from(this).inflate(R.layout.notification_badge, menuView, false);
             TextView textView = notificationBadge.findViewById(R.id.count_txt);
             textView.setText(count);
@@ -461,14 +449,6 @@ public class DashboardActivity extends BaseActivity implements JSONResult {
     }
 
     private void changeUserType(){
-//        String userTypeId = ConstantMethods.getStringPreference("user_type",this);
-//        String changeTypeStr;
-//        if(userTypeId.equals("3")){
-//            changeTypeStr = "4";
-//        }
-//        else {
-//            changeTypeStr = "3";
-//        }
         ConstantMethods.showProgressbar(this);
         JSONObject jsonObject = new JSONObject();
         try {

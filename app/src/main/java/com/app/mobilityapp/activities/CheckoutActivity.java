@@ -77,8 +77,8 @@ public class CheckoutActivity extends BaseActivity {
         });
         continueBtn.setOnClickListener(v->{
             String addressStr = addressEdt.getText().toString();
-            if(addressStr.equals("No address specified")){
-                ConstantMethods.getAlertMessage(this,"Please enter shipping address first");
+            if(addressStr.equals("No address specified")||addressStr.equals("")||!ConstantMethods.checkAddress(addressStr)){
+                ConstantMethods.getAlertMessage(this,"Please enter valid shipping address");
             }
             else {
                 orderPlaced(jsonForOrder);
@@ -224,7 +224,7 @@ public class CheckoutActivity extends BaseActivity {
 
     private void saveAddress(){
         String addressStr  = addressEdt.getText().toString();
-        if(addressStr.trim().matches(ADDRESS_MATCHER)){
+        if(addressStr.equals("No address specified")||addressStr.equals("")||!ConstantMethods.checkAddress(addressStr)){
             Toast.makeText(this, "Enter valid address", Toast.LENGTH_SHORT).show();
         }
         else {
@@ -349,4 +349,5 @@ public class CheckoutActivity extends BaseActivity {
             }
         },this);
     }
+
 }

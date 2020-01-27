@@ -255,4 +255,31 @@ public class ConstantMethods {
         }
         return str;
     }
+
+    public static boolean checkAddress(String address) {
+        boolean valid = false;
+        char[] strChr = address.toCharArray();
+        for (int i = 0; i < strChr.length; i++) {
+            if (strChr[i] >= 'a' && strChr[i] <= 'z' || (strChr[i] >= 'A' && strChr[i] <= 'Z')) {
+                Log.e("value", "" + strChr[i]);
+                valid = true;
+                break;
+            } else {
+                valid = false;
+            }
+        }
+        return valid;
+    }
+
+    public static boolean isFirstLetterMobileNum(String mobileNum){
+        boolean valid = false;
+        char[] strChr = mobileNum.toCharArray();
+        if(strChr[0]=='5'||strChr[0]=='6'||strChr[0]=='7'||strChr[0]=='8'||strChr[0]=='9'){
+            valid = true;
+        }
+        else {
+            valid = false;
+        }
+        return valid;
+    }
 }
