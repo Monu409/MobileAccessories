@@ -65,7 +65,7 @@ public class CartChangeAdapter extends RecyclerView.Adapter<CartChangeAdapter.Ca
 
         holder.editImg.setOnClickListener(v -> {
             Intent intent = new Intent(context, EnterQuantityActivity.class);
-            intent.putExtra("view_name", "cart");
+            intent.putExtra("view_name", "cart_unslctd");
             intent.putExtra("qty_arr", cartChangeModels.get(position));
             intent.putExtra("price_list", productPriceModels);
             context.startActivity(intent);

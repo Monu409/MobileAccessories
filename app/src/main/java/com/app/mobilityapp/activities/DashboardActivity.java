@@ -9,6 +9,8 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -85,7 +87,7 @@ public class DashboardActivity extends BaseActivity implements JSONResult {
     private BottomNavigationView navigationView;
     private static final int navigation_add_product = 1;
     private ImageView menuImg,callImg;
-    private TextView profileTxt,ledgerTxt,orderTxt,logoutTxt,changeUserTxt;
+    private TextView profileTxt,ledgerTxt,orderTxt,logoutTxt,changeUserTxt,aboutTxt,helpSprtTxt;
     private EditText searchEdt;
     private LinearLayout menuView;
     private boolean menuVisible;
@@ -106,6 +108,9 @@ public class DashboardActivity extends BaseActivity implements JSONResult {
         menuView = findViewById(R.id.menu_optn_view);
         headerView = findViewById(R.id.header_view);
         changeUserTxt = findViewById(R.id.change_user_txt);
+        aboutTxt = findViewById(R.id.about_txt);
+        aboutTxt = findViewById(R.id.about_txt);
+        helpSprtTxt = findViewById(R.id.help_sprt_txt);
 
         sliderView.setSliderAdapter(new SliderAdapterExample(this));
         sliderView.startAutoCycle();
@@ -114,10 +119,34 @@ public class DashboardActivity extends BaseActivity implements JSONResult {
         imgList.add(fileUri.toString());
         imgList.add(fileUri2.toString());
         imgList.add(fileUri3.toString());
+        ImageView searchImg = findViewById(R.id.srch_img);
+        searchEdt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(s.toString().trim().length() > 0){
+                    searchImg.setVisibility(View.GONE);
+                }
+                else{
+                    searchImg.setVisibility(View.VISIBLE);
+                }
+            }
+        });
 
         profileTxt.setOnClickListener(v->startActivity(new Intent(this, UpdateProfileActivity.class)));
         ledgerTxt.setOnClickListener(v->startActivity(new Intent(this, CreditSttmntActivity.class)));
         orderTxt.setOnClickListener(v->startActivity(new Intent(this, OrderListActivity.class)));
+        aboutTxt.setOnClickListener(v->startActivity(new Intent(this, AboutUsActivity.class)));
+        helpSprtTxt.setOnClickListener(v->startActivity(new Intent(this, HelpSupportActivity.class)));
         callImg.setOnClickListener(v->onCallBtnClick());
         logoutTxt.setOnClickListener(v->alertDialogForLogout());
 
@@ -393,17 +422,23 @@ public class DashboardActivity extends BaseActivity implements JSONResult {
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = item -> {
 
+            = item -> {
+        navigationView.getMenu().getItem(0).setIcon(R.drawable.chat_unslct);
+        navigationView.getMenu().getItem(1).setIcon(R.drawable.cart_unslctd);
+        navigationView.getMenu().getItem(2).setIcon(R.drawable.orders_unslctd);
         switch (item.getItemId()) {
             case R.id.navigation_chat:
                 startActivity(new Intent(this,ChatActivity.class));
+                item.setIcon(R.drawable.chat_slctd);
                 return true;
             case R.id.navigation_cart:
                 startActivity(new Intent(this,CartChangeActivity.class));
+                item.setIcon(R.drawable.cart_slctd);
                 return true;
             case R.id.navigation_order:
                 startActivity(new Intent(this,OrderListActivity.class));
+                item.setIcon(R.drawable.orders_slctd);
                 return true;
             case navigation_add_product:
                 startActivity(new Intent(this,Add_ProductActivity.class));

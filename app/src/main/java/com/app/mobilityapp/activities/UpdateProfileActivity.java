@@ -15,6 +15,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -52,6 +53,7 @@ public class UpdateProfileActivity extends BaseActivity {
     public static final int PICK_IMAGE_CAMERA = 100;
     public static final int PICK_IMAGE_GALLERY = 200;
     private CircleImageView profileImg;
+    private ImageView camImg;
     private String imgPath;
     private EditText nameEdt,emailEdt,passwordEdt,dobEdt,phoneEdt,addressEdt,gstEdt;
     private Button updateBtn;
@@ -62,7 +64,8 @@ public class UpdateProfileActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         ConstantMethods.setTitleAndBack(this,"Profile");
         profileImg = findViewById(R.id.profile_img);
-        profileImg.setOnClickListener(v->selectImage());
+        camImg = findViewById(R.id.cam_img);
+        camImg.setOnClickListener(v->selectImage());
         nameEdt = findViewById(R.id.input_fname);
         emailEdt = findViewById(R.id.input_email);
         passwordEdt = findViewById(R.id.input_pass);
@@ -71,15 +74,13 @@ public class UpdateProfileActivity extends BaseActivity {
         updateBtn = findViewById(R.id.update_btn);
         addressEdt = findViewById(R.id.input_address);
         gstEdt = findViewById(R.id.input_gstno);
+
         enableOrDisableEditTexts(false);
 //        dobEdt.setOnClickListener(v->{
 //            ConstantMethods.setDate(dobEdt,this);
 //        });
         updateBtn.setOnClickListener(v->{
             if(updateBtn.getText().toString().equals("Edit Profile")) {
-//                enableOrDisableEditTexts(true);
-//                updateBtn.setText("Save Profile");
-
                 enableOrDisableEditTexts(true);
                 updateBtn.setText("Save Profile");
             }

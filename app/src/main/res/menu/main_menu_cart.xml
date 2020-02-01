@@ -41,7 +41,7 @@
 
     <item
         android:id="@+id/action_cart"
-        android:icon="@drawable/cart"
+        android:icon="@drawable/cart_unslctd"
         app:showAsAction="always"
         android:title="Cart"
         app:actionLayout="@layout/custom_action_layout"

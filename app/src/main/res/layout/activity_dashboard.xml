@@ -62,10 +62,11 @@
         android:layout_height="50dp"
         android:background="#EBEAEA"
         android:foreground="?attr/selectableItemBackground"
-        app:itemIconTint="@color/textcolor"
-        app:itemTextColor="@color/textcolor"
+        app:itemTextColor="@drawable/bottom_nav_color"
+        app:itemIconTint="@drawable/bottom_nav_color"
         app:menu="@menu/navigation"
-        android:layout_alignParentBottom="true"/>
+        android:layout_alignParentBottom="true"
+        />
 
     <RelativeLayout
         android:id="@+id/header_view"
@@ -82,42 +83,80 @@
             android:textStyle="bold"
             android:textSize="18sp"
             android:textColor="#000000"/>
-        <EditText
-            android:id="@+id/search_edt"
+        <RelativeLayout
+            android:id="@+id/search_lay"
             android:layout_width="185dp"
             android:layout_height="35dp"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@+id/title"
             android:layout_marginLeft="10dp"
-            android:hint="Search here"
-            android:paddingLeft="5dp"
-            android:imeOptions="actionSearch"
-            android:inputType="text"
-            android:maxLines="1"
-            android:background="@drawable/search_back"
-            />
-        <ImageView
-            android:id="@+id/call_img"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/call"
-            android:layout_toLeftOf="@+id/menu_img"
-            android:layout_marginRight="30dp"
-            android:layout_centerVertical="true"
-            />
+            android:background="@drawable/search_back">
+
+            <ImageView
+                android:id="@+id/srch_img"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/search"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="5dp"/>
+
+            <EditText
+                android:id="@+id/search_edt"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@null"
+                android:paddingLeft="5dp"
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:maxLines="1"
+                android:layout_toRightOf="@+id/srch_img"
+                android:hint="Search here"
+                android:paddingRight="5dp"/>
+
+        </RelativeLayout>
+<!--        <EditText-->
+<!--            android:layout_width="185dp"-->
+<!--            android:layout_height="35dp"-->
+<!--            android:layout_centerVertical="true"-->
+<!--            android:layout_toRightOf="@+id/title"-->
+<!--            android:layout_marginLeft="10dp"-->
+<!--            android:hint="Search here"-->
+<!--            android:paddingLeft="5dp"-->
+<!--            android:imeOptions="actionSearch"-->
+<!--            android:inputType="text"-->
+<!--            android:maxLines="1"-->
+<!--            android:background="@drawable/search_back"-->
+<!--            />-->
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@+id/search_lay"
+            android:layout_toLeftOf="@+id/menu_img">
+            <ImageView
+                android:id="@+id/call_img"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/call"
+                android:layout_centerInParent="true"
+                android:layout_marginRight="30dp"
+                android:layout_centerVertical="true"
+                />
+        </RelativeLayout>
+
         <ImageView
             android:id="@+id/menu_img"
             android:layout_width="20dp"
             android:layout_height="wrap_content"
-            android:src="@drawable/menu"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="10dp"/>
+            android:layout_marginRight="8dp"
+            android:src="@drawable/menu" />
     </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/menu_optn_view"
         android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:background="@color/cardview_light_background"
         android:layout_alignParentRight="true"
@@ -130,11 +169,11 @@
             android:layout_height="30dp"
             android:textColor="#000000"
             android:textSize="16sp"
-            android:text="Profile"
+            android:text="My Profile"
             android:gravity="center_vertical"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginTop="5dp"/>
 
         <TextView
             android:id="@+id/ledger_txt"
@@ -146,7 +185,7 @@
             android:text="My Ledger"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginTop="5dp"/>
 
         <TextView
             android:id="@+id/order_txt"
@@ -158,19 +197,7 @@
             android:text="My Orders"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"/>
-
-        <TextView
-            android:id="@+id/logout_txt"
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:textColor="#000000"
-            android:textSize="16sp"
-            android:gravity="center_vertical"
-            android:text="Logout"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginTop="5dp"/>
 
         <TextView
             android:id="@+id/change_user_txt"
@@ -182,7 +209,51 @@
             android:text="Becomes a Seller"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginTop="5dp"/>
+
+        <TextView
+            android:id="@+id/about_txt"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:textColor="#000000"
+            android:textSize="16sp"
+            android:gravity="center_vertical"
+            android:text="About Us"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"/>
+
+        <TextView
+            android:id="@+id/help_sprt_txt"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:textColor="#000000"
+            android:textSize="16sp"
+            android:gravity="center_vertical"
+            android:text="Help &amp; Support"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#d3d3d3"
+            android:layout_marginTop="5dp"/>
+
+        <TextView
+            android:id="@+id/logout_txt"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:textColor="#C71C1C"
+            android:textSize="16sp"
+            android:gravity="center_vertical"
+            android:text="Logout"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:textStyle="bold"/>
+
+
 
     </LinearLayout>
 

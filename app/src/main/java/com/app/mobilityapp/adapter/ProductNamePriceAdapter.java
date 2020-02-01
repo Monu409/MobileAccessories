@@ -17,6 +17,9 @@ import com.app.mobilityapp.activities.ProductModelActivity;
 import com.app.mobilityapp.modals.ProBrndModal;
 import com.bumptech.glide.Glide;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.List;
 
 public class ProductNamePriceAdapter extends RecyclerView.Adapter<ProductNamePriceAdapter.ProdBrndHolder> {
@@ -43,12 +46,21 @@ public class ProductNamePriceAdapter extends RecyclerView.Adapter<ProductNamePri
 
     @Override
     public void onBindViewHolder(@NonNull ProdBrndHolder holder, int position) {
-        Glide
-                .with(context)
-                .load(proBrndModals.get(position).getImgUrl())
-                .placeholder(R.drawable.test)
-                .centerCrop()
-                .into(holder.brandImg);
+        try {
+            JSONArray imgArr = proBrndModals.get(position).getImgArr();
+            JSONObject imgObj = imgArr.getJSONObject(0);
+            String imagStr = imgObj.getString("imageurl");
+            Glide
+                    .with(context)
+                    .load(imagStr)
+                    .placeholder(R.drawable.test)
+                    .centerCrop()
+                    .into(holder.brandImg);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+
         String brandName = proBrndModals.get(position).getName();
         holder.brandTxt.setText(brandName);
         holder.pricaeRangeTxt.setText(proBrndModals.get(position).getPriceRange());

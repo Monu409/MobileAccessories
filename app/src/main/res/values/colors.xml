@@ -16,6 +16,7 @@
 
     <color name="colorPrimary">#F2E735</color>
     <color name="textcolor">#000000</color>
+    <color name="textcolorlight">#3B3A3C</color>
 
 
 <!--    <color name="colorPrimary">#F2B335</color>-->
@@ -39,6 +40,7 @@
     <color name="grey">#545454</color>
     <color name="tabIndicator">#FFEB3B</color>
     <color name="hintcolor">#FFFFFF</color>
+
 
 
 

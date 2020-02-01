@@ -97,8 +97,8 @@ public class ProductActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         ConstantMethods.setTitleAndBack(this, "All Products");
         nameDes = findViewById(R.id.prod_des);
-        addCart = findViewById(R.id.add_txt);
-        buyNow = findViewById(R.id.buy_txt);
+//        addCart = findViewById(R.id.add_txt);
+//        buyNow = findViewById(R.id.buy_txt);
         prodImg = findViewById(R.id.prod_img);
         prodPrice = findViewById(R.id.prod_price);
 
@@ -107,11 +107,11 @@ public class ProductActivity extends BaseActivity {
         rec_price = findViewById(R.id.rec_price);
         navigationView = findViewById(R.id.navigation);
 
-        GridLayoutManager glm = new GridLayoutManager(ProductActivity.this, 2);
-        prod_brand.setLayoutManager(glm);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ProductActivity.this);
+        prod_brand.setLayoutManager(linearLayoutManager);
         GridLayoutManager glm1 = new GridLayoutManager(ProductActivity.this, 2);
         prod_model.setLayoutManager(glm1);
-        rec_price.setLayoutManager(new LinearLayoutManager(this));
+        rec_price.setLayoutManager(new GridLayoutManager(this,3));
         onclickInterface = new onClickInterface() {
             @Override
             public void setClick(int abc) {
@@ -134,16 +134,16 @@ public class ProductActivity extends BaseActivity {
 
         ConstantMethods.setTitleAndBack(this, modelName);
 
-        addCart.setOnClickListener(v -> {
-            Toast.makeText(this, "Added into cart", Toast.LENGTH_SHORT).show();
-            mCartItemCount++;
-            if (mCartItemCount > 0) {
-                setupBadge();
-            }
-
-            Intent intent = new Intent(ProductActivity.this, ProductBrandActivity.class);
-            ProductActivity.this.startActivity(intent);
-        });
+//        addCart.setOnClickListener(v -> {
+//            Toast.makeText(this, "Added into cart_unslctd", Toast.LENGTH_SHORT).show();
+//            mCartItemCount++;
+//            if (mCartItemCount > 0) {
+//                setupBadge();
+//            }
+//
+//            Intent intent = new Intent(ProductActivity.this, ProductBrandActivity.class);
+//            ProductActivity.this.startActivity(intent);
+//        });
         navigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
 
@@ -168,15 +168,6 @@ public class ProductActivity extends BaseActivity {
                         JSONObject dataObj = response.getJSONObject("data");
                         String productId = dataObj.getString("_id");
                         mProductID = productId;
-//                        JSONObject categoryIdObj = dataObj.getJSONObject("categoryId");
-//                        String catIdStr = categoryIdObj.getString("_id");
-//                        JSONObject subCategoryIdObj = dataObj.getJSONObject("subCategoryId");
-//                        String catIdStr1 = subCategoryIdObj.getString("_id");
-//                        JSONObject subcategory2Obj = dataObj.getJSONObject("subcategory2");
-//                        String catIdStr2 = subcategory2Obj.getString("_id");
-//                        JSONObject subcategory3Obj = dataObj.getJSONObject("subcategory3");
-//                        String catIdStr3 = subcategory3Obj.getString("_id");
-//                        String finalCatId = productId+catIdStr+catIdStr1+catIdStr2+catIdStr3;
                         JSONObject jsonObject1;
                         List<ProModlModel> proModlModels = new ArrayList<>();
                         productPriceModels = new ArrayList<>();
@@ -435,7 +426,7 @@ public class ProductActivity extends BaseActivity {
                                 productBrandAdapter.onListClick(proBrndModal -> {
                                     if(!TextUtils.isEmpty(proBrndModals.get(proBrndModal.getIndexId()).getQuantity())) {
                                         Intent intent = new Intent(ProductActivity.this, EnterQuantityActivity.class);
-                                        intent.putExtra("view_name", "cart");
+                                        intent.putExtra("view_name", "cart_unslctd");
                                         intent.putExtra("price_list",(ArrayList<ProductPriceModel>)productPriceModels);
                                         intent.putExtra("qty_arr", cartChangeModels.get(proBrndModal.getIndexId()));
                                         startActivity(intent);

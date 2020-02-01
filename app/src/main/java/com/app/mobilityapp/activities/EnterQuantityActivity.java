@@ -45,7 +45,7 @@ public class EnterQuantityActivity extends BaseActivity {
         qtyList.setLayoutManager(new LinearLayoutManager(this));
         String previousViewName = getIntent().getStringExtra("view_name");
         productPriceModels = (ArrayList<ProductPriceModel>) getIntent().getSerializableExtra("price_list");
-        if (previousViewName.equals("cart")) {
+        if (previousViewName.equals("cart_unslctd")) {
             ConstantMethods.setTitleAndBack(this, "Edit Quantity");
             CartChangeModel cartChangeModel = (CartChangeModel) getIntent().getSerializableExtra("qty_arr");
             idForUrl = cartChangeModel.getCartId();
@@ -115,7 +115,7 @@ public class EnterQuantityActivity extends BaseActivity {
                     jsonObject.put("modallist", jsonArray);
                     if (previousViewName.equals("product")) {
                         addDataIntoCart(jsonObject, ADD_INTO_CART);
-                    } else if (previousViewName.equals("cart")) {
+                    } else if (previousViewName.equals("cart_unslctd")) {
                         updateDataIntoCart(jsonObject, UPDATE_CART + idForUrl);
                     }
 
@@ -140,7 +140,7 @@ public class EnterQuantityActivity extends BaseActivity {
                 try {
                     String confirmation = response.getString("confirmation");
                     if (confirmation.equals("success")) {
-                        Toast.makeText(EnterQuantityActivity.this, "Added into cart", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(EnterQuantityActivity.this, "Added into cart_unslctd", Toast.LENGTH_SHORT).show();
                         onBackPressed();
                     }
                 } catch (JSONException e) {

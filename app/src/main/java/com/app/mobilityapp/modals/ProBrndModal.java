@@ -3,6 +3,8 @@ package com.app.mobilityapp.modals;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import org.json.JSONArray;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -44,6 +46,7 @@ public class ProBrndModal implements Serializable {
 
     private String priceRange;
     private String moqStr;
+    private JSONArray imgArr;
 
     ArrayList<ProModlModel> model;
 
@@ -187,5 +190,13 @@ public class ProBrndModal implements Serializable {
 
     public void setMoqStr(String moqStr) {
         this.moqStr = moqStr;
+    }
+
+    public JSONArray getImgArr() {
+        return imgArr;
+    }
+
+    public void setImgArr(JSONArray imgArr) {
+        this.imgArr = imgArr;
     }
 }

@@ -145,9 +145,6 @@ public class ProductNamePriceActivity extends BaseActivity {
                             String minPrice = priceObjLast.getString("amount");
                             String fPrice = minPrice+"-"+maxPrice;
                             String moqStr = "";
-//                            JSONObject subcategory3 = jsonObject.getJSONObject("subcategory3");
-//                            JSONObject subcategory2 = jsonObject.getJSONObject("subcategory2");
-//                            JSONObject subCategoryId = jsonObject.getJSONObject("subCategoryId");
                             JSONObject subcategory3 = null;
                             try{
                                 subcategory3 = jsonObject.getJSONObject("subcategory3");
@@ -172,15 +169,13 @@ public class ProductNamePriceActivity extends BaseActivity {
                                 e.printStackTrace();
                             }
 
-//                            if(subcategory3!=null){
-//                                moqStr = subcategory3.getString("moq");
-//                            }
-//                            else if(subcategory2!=null){
-//                                moqStr = subcategory2.getString("moq");
-//                            }
-//                            else {
-//                                moqStr = subCategoryId.getString("moq");
-//                            }
+                            JSONArray imgArr = null;
+                            try {
+                                imgArr = jsonObject.getJSONArray("image");
+                            }
+                            catch (Exception e){
+                                e.printStackTrace();
+                            }
 
                             ProBrndModal proBrndModal = new ProBrndModal();
                             proBrndModal.setName(name);
@@ -188,6 +183,7 @@ public class ProductNamePriceActivity extends BaseActivity {
                             proBrndModal.setId(brandId);
                             proBrndModal.setPriceRange("₹ "+fPrice);
                             proBrndModal.setMoqStr(moqStr);
+                            proBrndModal.setImgArr(imgArr);
                             proBrndModals.add(proBrndModal);
                         }
                         ProductNamePriceAdapter productBrandAdapter = new ProductNamePriceAdapter(proBrndModals,ProductNamePriceActivity.this);
