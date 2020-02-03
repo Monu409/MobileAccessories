@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -68,6 +69,7 @@ import ss.com.bannerslider.Slider;
 
 import static com.app.mobilityapp.app_utils.AppApis.ADD_INTO_CART;
 import static com.app.mobilityapp.app_utils.AppApis.GET_CATEGORY;
+import static com.app.mobilityapp.app_utils.AppApis.GET_PROFILE;
 import static com.app.mobilityapp.app_utils.AppApis.PROFILE_UPDATE;
 
 public class DashboardActivity extends BaseActivity implements JSONResult {
@@ -111,14 +113,14 @@ public class DashboardActivity extends BaseActivity implements JSONResult {
         aboutTxt = findViewById(R.id.about_txt);
         aboutTxt = findViewById(R.id.about_txt);
         helpSprtTxt = findViewById(R.id.help_sprt_txt);
-
-        sliderView.setSliderAdapter(new SliderAdapterExample(this));
-        sliderView.startAutoCycle();
-        sliderView.setIndicatorAnimation(IndicatorAnimations.WORM);
-        sliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);
         imgList.add(fileUri.toString());
         imgList.add(fileUri2.toString());
         imgList.add(fileUri3.toString());
+        sliderView.setSliderAdapter(new SliderAdapterExample(this,imgList));
+        sliderView.startAutoCycle();
+        sliderView.setIndicatorAnimation(IndicatorAnimations.WORM);
+        sliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);
+
         ImageView searchImg = findViewById(R.id.srch_img);
         searchEdt.addTextChangedListener(new TextWatcher() {
             @Override
@@ -483,11 +485,68 @@ public class DashboardActivity extends BaseActivity implements JSONResult {
         }
     }
 
-    private void changeUserType(){
+
+    private void dialogForBecomeSeller(){
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
+        builder1.setTitle("Becomes a seller");
+        builder1.setMessage("Do you want to becomes a seller");
+        builder1.setPositiveButton(
+                "Yes",
+                (dialog, id) -> {
+                    dialog.cancel();
+                    getGSTNo();
+                });
+
+        builder1.setNegativeButton(
+                "No",
+                (dialog, id) -> dialog.cancel());
+
+        AlertDialog alert11 = builder1.create();
+        alert11.show();
+    }
+
+    private void getGSTNo(){
+        ConstantMethods.showProgressbar(this);
+        String userId = ConstantMethods.getStringPreference("user_id",this);
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("_id",userId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        CommonNetwork.postNetworkJsonObj(GET_PROFILE, jsonObject, new JSONResult() {
+            @Override
+            public void notifySuccess(@NonNull JSONObject response) {
+                ConstantMethods.dismissProgressBar();
+                try {
+                    JSONArray jsonArray = response.getJSONArray("data");
+                    JSONObject userInfo = jsonArray.getJSONObject(0);
+                    String gstno = userInfo.getString("gstno");
+                    if(gstno.isEmpty()){
+                        gstNoPopup();
+                    }
+                    else {
+                        Intent intent = new Intent(DashboardActivity.this,ThankuActivity.class);
+                        startActivity(intent);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void notifyError(@NonNull ANError anError) {
+                ConstantMethods.dismissProgressBar();
+            }
+        },this);
+    }
+
+    private void changeUserType(String gstNo){
         ConstantMethods.showProgressbar(this);
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("requestSeller", true );
+            jsonObject.put("gstno", gstNo );
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -499,10 +558,9 @@ public class DashboardActivity extends BaseActivity implements JSONResult {
                 try {
                     String confirmation = response.getString("confirmation");
                     if(confirmation.equals("success")){
-//                            updateProfilePic(destinationFile);
                         Toast.makeText(DashboardActivity.this, "Request sent...", Toast.LENGTH_SHORT).show();
-//                        finish();
-//                        startActivity(getIntent());
+                        Intent intent = new Intent(DashboardActivity.this,ThankuActivity.class);
+                        startActivity(intent);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -516,22 +574,28 @@ public class DashboardActivity extends BaseActivity implements JSONResult {
             }
         },this);
     }
-    private void dialogForBecomeSeller(){
-        AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
-        builder1.setTitle("Becomes a seller");
-        builder1.setMessage("Do you want to becomes a seller");
-        builder1.setPositiveButton(
-                "Yes",
-                (dialog, id) -> {
-                    dialog.cancel();
-                    changeUserType();
-                });
 
-        builder1.setNegativeButton(
-                "No",
-                (dialog, id) -> dialog.cancel());
+    private void gstNoPopup(){
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        EditText edittext = new EditText(this);
+        edittext.setInputType(InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS);
+        alert.setTitle("Enter your GST Number");
 
-        AlertDialog alert11 = builder1.create();
-        alert11.show();
+        alert.setView(edittext);
+
+        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                String gstStr = edittext.getText().toString();
+                changeUserType(gstStr);
+            }
+        });
+
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // what ever you want to do with No option.
+            }
+        });
+
+        alert.show();
     }
 }

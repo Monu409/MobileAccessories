@@ -33,6 +33,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.androidnetworking.error.ANError;
 import com.app.mobilityapp.adapter.ProductBrandListAdapter;
 import com.app.mobilityapp.adapter.ProductPriceListAdapter;
+import com.app.mobilityapp.adapter.SliderAdapterExample;
 import com.app.mobilityapp.app_utils.BaseActivity;
 import com.app.mobilityapp.app_utils.ConstantMethods;
 import com.app.mobilityapp.app_utils.MainSliderAdapter;
@@ -50,6 +51,9 @@ import com.app.mobilityapp.R;
 import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.smarteist.autoimageslider.IndicatorAnimations;
+import com.smarteist.autoimageslider.SliderAnimations;
+import com.smarteist.autoimageslider.SliderView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -91,6 +95,7 @@ public class ProductActivity extends BaseActivity {
     ProductBrandListAdapter productBrandAdapter;
     List<ProductPriceModel> productPriceModels;
     private BottomNavigationView navigationView;
+    private SliderView sliderView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -99,8 +104,9 @@ public class ProductActivity extends BaseActivity {
         nameDes = findViewById(R.id.prod_des);
 //        addCart = findViewById(R.id.add_txt);
 //        buyNow = findViewById(R.id.buy_txt);
-        prodImg = findViewById(R.id.prod_img);
+//        prodImg = findViewById(R.id.prod_img);
         prodPrice = findViewById(R.id.prod_price);
+        sliderView = findViewById(R.id.image_slider);
 
         prod_brand = findViewById(R.id.prod_brand);
         prod_model = findViewById(R.id.prod_model);
@@ -127,6 +133,22 @@ public class ProductActivity extends BaseActivity {
         Log.e("prod_brand_id", productId);
         String modelName = getIntent().getStringExtra("brand_name");
         String content = getIntent().getStringExtra("brand_des");
+        String imgArrStr = getIntent().getStringExtra("img_array");
+        try {
+            JSONArray jsonArray = new JSONArray(imgArrStr);
+            List<String> imgList = new ArrayList<>();
+            for(int i=0;i<jsonArray.length();i++){
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                String imgUrl = jsonObject.getString("imageurl");
+                imgList.add(imgUrl);
+            }
+            sliderView.setSliderAdapter(new SliderAdapterExample(this,imgList));
+            sliderView.startAutoCycle();
+            sliderView.setIndicatorAnimation(IndicatorAnimations.WORM);
+            sliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
 
         nameDes.setText(content);
@@ -257,7 +279,6 @@ public class ProductActivity extends BaseActivity {
 
     @Override
     protected int getLayoutResourceId() {
-//        requestWindowFeature(Window.FEATURE_NO_TITLE);
         return R.layout.activity_product;
     }
 

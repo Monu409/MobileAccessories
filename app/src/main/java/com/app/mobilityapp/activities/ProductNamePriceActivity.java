@@ -198,6 +198,7 @@ public class ProductNamePriceActivity extends BaseActivity {
                             intent.putExtra("brand_name",proBrndModal.getName());
                             intent.putExtra("brand_des",proBrndModal.getContent());
                             intent.putExtra("brand_img",proBrndModal.getImgUrl());
+                            intent.putExtra("img_array",proBrndModal.getImgArr().toString());
                             ProductNamePriceActivity.this.startActivity(intent);
                         });
                     }

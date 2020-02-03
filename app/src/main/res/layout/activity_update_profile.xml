@@ -132,7 +132,7 @@
                         <EditText android:id="@+id/input_gstno"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:inputType="text"
+                            android:inputType="textCapCharacters"
                             android:hint="GST No."
                             android:editable="false"
                             android:focusable="false"

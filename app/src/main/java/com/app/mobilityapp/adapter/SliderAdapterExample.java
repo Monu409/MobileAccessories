@@ -11,12 +11,16 @@ import com.app.mobilityapp.R;
 import com.bumptech.glide.Glide;
 import com.smarteist.autoimageslider.SliderViewAdapter;
 
+import java.util.List;
+
 public class SliderAdapterExample extends SliderViewAdapter<SliderAdapterExample.SliderAdapterVH> {
 
     private Context context;
+    private List<String> imgUrls;
 
-    public SliderAdapterExample(Context context) {
+    public SliderAdapterExample(Context context,List<String> imgUrls) {
         this.context = context;
+        this.imgUrls = imgUrls;
     }
 
     @Override
@@ -27,38 +31,17 @@ public class SliderAdapterExample extends SliderViewAdapter<SliderAdapterExample
 
     @Override
     public void onBindViewHolder(SliderAdapterVH viewHolder, int position) {
-//        viewHolder.textViewDescription.setText("This is slider item " + position);
 
-        switch (position) {
-            case 0:
-                Glide.with(viewHolder.itemView)
-                        .load("https://pkkharido.com/wp-content/uploads/2019/08/ma.jpeg")
-                        .into(viewHolder.imageViewBackground);
-                break;
-            case 1:
-                Glide.with(viewHolder.itemView)
-                        .load("https://rukminim1.flixcart.com/image/832/832/screen-guard/tempered-glass/c/x/d/kg-mobile-accessories-tg-2-original-imae88hxxn294rhx.jpeg")
-                        .into(viewHolder.imageViewBackground);
-                break;
-            case 2:
-                Glide.with(viewHolder.itemView)
-                        .load("https://infiswap.com/wp-content/uploads/2017/10/SWSA25.jpg")
-                        .into(viewHolder.imageViewBackground);
-                break;
-            default:
-                Glide.with(viewHolder.itemView)
-                        .load("https://rukminim1.flixcart.com/image/832/832/screen-guard/tempered-glass/c/x/d/kg-mobile-accessories-tg-2-original-imae88hxxn294rhx.jpeg")
-                        .into(viewHolder.imageViewBackground);
-                break;
-
-        }
+        Glide.with(viewHolder.itemView)
+                .load(imgUrls.get(position))
+                .into(viewHolder.imageViewBackground);
 
     }
 
     @Override
     public int getCount() {
         //slider view count could be dynamic size
-        return 4;
+        return imgUrls.size();
     }
 
     class SliderAdapterVH extends SliderViewAdapter.ViewHolder {
