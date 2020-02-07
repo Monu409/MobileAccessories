@@ -28,6 +28,15 @@
             android:hint="Type a message"
             android:layout_toLeftOf="@+id/line_view"/>
 
+        <ImageView
+            android:id="@+id/attach_img"
+            android:layout_width="30dp"
+            android:layout_height="25dp"
+            android:layout_toLeftOf="@+id/line_view"
+            android:src="@drawable/attach"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="5dp"/>
+
         <View
             android:id="@+id/line_view"
             android:layout_width="1dp"

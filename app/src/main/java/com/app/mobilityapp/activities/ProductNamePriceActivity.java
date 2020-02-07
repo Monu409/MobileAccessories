@@ -1,11 +1,8 @@
 package com.app.mobilityapp.activities;
 
-import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Rect;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
@@ -14,14 +11,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.androidnetworking.error.ANError;
 import com.app.mobilityapp.adapter.ProductNamePriceAdapter;
 import com.app.mobilityapp.app_utils.BaseActivity;
@@ -30,14 +24,11 @@ import com.app.mobilityapp.connection.CommonNetwork;
 import com.app.mobilityapp.connection.JSONResult;
 import com.app.mobilityapp.modals.ProBrndModal;
 import com.app.mobilityapp.R;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import static com.app.mobilityapp.app_utils.AppApis.PRODUCT_DETAIL;
 import static com.app.mobilityapp.app_utils.AppApis.SEARCH_DATA;
 
@@ -53,7 +44,7 @@ public class ProductNamePriceActivity extends BaseActivity {
 //        setSupportActionBar(toolbar);
         if(getSupportActionBar()!=null)
         {
-            ConstantMethods.setTitleAndBack(this,"All Products");
+            ConstantMethods.setTitleAndBack(this,getIntent().getStringExtra("cat_name"));
         }
         brandList.setLayoutManager(new GridLayoutManager(this,2));
         /***Space Between Column**/
@@ -84,9 +75,6 @@ public class ProductNamePriceActivity extends BaseActivity {
             }
         });
 
-
-        /**************/
-
         ConstantMethods.showProgressbar(this);
 
         Intent intent = getIntent();
@@ -102,6 +90,7 @@ public class ProductNamePriceActivity extends BaseActivity {
             try {
                 // Log.e("catId",cat_id);
                 jsonObject.put("subcategory3",cat_id);
+//                jsonObject.put("sort",1);
                 Log.e("request",jsonObject.toString());
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -117,6 +106,7 @@ public class ProductNamePriceActivity extends BaseActivity {
             try {
                 // Log.e("catId",cat_id);
                 jsonObject.put("name",keyWord);
+                jsonObject.put("sort",1);
                 Log.e("request",jsonObject.toString());
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -218,6 +208,50 @@ public class ProductNamePriceActivity extends BaseActivity {
     @Override
     protected int getLayoutResourceId() {
         return R.layout.activity_product_brand;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate( R.menu.filter_menu, menu);
+        return true;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.action_filter:
+                showFilterDialog();
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void showFilterDialog() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setTitle("Select Filter");
+        String[] items = {"Low to high price","High to low price"};
+        int checkedItem = -1;
+        alertDialog.setSingleChoiceItems(items, checkedItem, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case 0:
+                        Toast.makeText(ProductNamePriceActivity.this, "Low to high price", Toast.LENGTH_LONG).show();
+//                        alert.dismiss();
+                        break;
+                    case 1:
+                        Toast.makeText(ProductNamePriceActivity.this, "High to low price", Toast.LENGTH_LONG).show();
+//                        alert.dismiss();
+                        break;
+                }
+            }
+        });
+        AlertDialog alert = alertDialog.create();
+        alert.setCanceledOnTouchOutside(true);
+        alert.show();
     }
 }
 

@@ -31,11 +31,9 @@ public class SliderAdapterExample extends SliderViewAdapter<SliderAdapterExample
 
     @Override
     public void onBindViewHolder(SliderAdapterVH viewHolder, int position) {
-
         Glide.with(viewHolder.itemView)
                 .load(imgUrls.get(position))
                 .into(viewHolder.imageViewBackground);
-
     }
 
     @Override

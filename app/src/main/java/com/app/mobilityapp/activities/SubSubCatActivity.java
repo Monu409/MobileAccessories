@@ -18,6 +18,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.androidnetworking.error.ANError;
@@ -49,7 +50,7 @@ public class SubSubCatActivity extends BaseActivity {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         sscList = findViewById(R.id.ssc_list);
-        sscList.setLayoutManager(new GridLayoutManager(this,3));
+        sscList.setLayoutManager(new LinearLayoutManager(this));
         CartModel cartModel = (CartModel) getIntent().getSerializableExtra("cart_model_data");
         String name = cartModel.getProductsModal().getName();
         Intent i=getIntent();
@@ -94,10 +95,15 @@ public class SubSubCatActivity extends BaseActivity {
                             String name = childObj.getString("name");
                             String desc = childObj.getString("content");
                             String id=childObj.getString("_id");
+                            JSONObject imgObj = childObj.getJSONObject("image");
+                            String imgStr = imgObj.getString("imageurl");
+                            String moq = childObj.getString("moq");
                             productsModal = new ProductsModal();
                             productsModal.setName(name);
                             productsModal.setContent(desc);
                             productsModal.setId(id);
+                            productsModal.setImgUrl(imgStr);
+                            productsModal.setMoq(moq);
                             productsModals.add(productsModal);
                         }
                         SubCatAdapter productAdapter = new SubCatAdapter(getApplicationContext(),productsModals);

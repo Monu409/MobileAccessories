@@ -6,7 +6,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +25,7 @@ import com.app.mobilityapp.connection.CommonNetwork;
 import com.app.mobilityapp.connection.JSONResult;
 import com.app.mobilityapp.modals.CartModel;
 import com.app.mobilityapp.modals.ProductsModal;
+import com.bumptech.glide.Glide;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -54,6 +57,12 @@ public class SubCatAdapter extends RecyclerView.Adapter<SubCatAdapter.ProductHol
     public void onBindViewHolder(@NonNull ProductHolder holder, int position) {
         holder.nameTxt.setText(productsModals.get(position).getName());
         holder.desTxt.setText(productsModals.get(position).getContent());
+        holder.moqTxt.setText("MOQ: "+productsModals.get(position).getMoq());
+        Glide
+                .with(context)
+                .load(productsModals.get(position).getImgUrl())
+                .centerCrop()
+                .into(holder.subCatImg);
         holder.fullView.setOnClickListener(v->{
             cartModel = new CartModel();
             cartModel.setProductsModal(productsModals.get(position));
@@ -68,13 +77,16 @@ public class SubCatAdapter extends RecyclerView.Adapter<SubCatAdapter.ProductHol
     }
 
     public class ProductHolder extends RecyclerView.ViewHolder {
-        public TextView nameTxt,desTxt;
-        public LinearLayout fullView;
+        public TextView nameTxt,desTxt,moqTxt;
+        public RelativeLayout fullView;
+        public ImageView subCatImg;
         public ProductHolder(@NonNull View itemView) {
             super(itemView);
             nameTxt = itemView.findViewById(R.id.name_txt);
             desTxt = itemView.findViewById(R.id.des_txt);
             fullView = itemView.findViewById(R.id.full_view);
+            moqTxt = itemView.findViewById(R.id.moq_txt);
+            subCatImg = itemView.findViewById(R.id.sub_cat_img);
         }
     }
     private void getGlassSubData(String id){
@@ -100,26 +112,22 @@ public class SubCatAdapter extends RecyclerView.Adapter<SubCatAdapter.ProductHol
                     String confirmation = response.getString("confirmation");
                     if(confirmation.equals("success")){
                         JSONArray jsonArray = response.getJSONArray("data");
-                        if(jsonArray.length()>0)
-                        {
+                        if(jsonArray.length()>0) {
                             Intent intent = new Intent(context, SubCatActivityLast.class);
                             intent.putExtra("cart_model_data", cartModel);
                             intent.putExtra("prodid", cartModel.getProductsModal().getId());
                             Log.e("subcatid", cartModel.getProductsModal().getId());
-                            //  intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
                             context.startActivity(intent);
                         }
-                        else
-                        {
-                            //Toast.makeText(context,"No more product found",Toast.LENGTH_LONG).show();
+                        else {
                             Intent intent = new Intent(context, ProductNamePriceActivity.class);
                             intent.putExtra("last_view","sub_cat");
+                            intent.putExtra("cat_name",cartModel.getProductsModal().getName());
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             context.startActivity(intent);
                         }
-
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

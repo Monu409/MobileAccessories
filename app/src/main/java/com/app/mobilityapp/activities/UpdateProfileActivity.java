@@ -59,6 +59,8 @@ public class UpdateProfileActivity extends BaseActivity {
     private Button updateBtn;
     private File destinationFile;
     private String ADDRESS_MATCHER = "[!#$%&(){|}~:;<=>?@*+,./^_`\\'\\\" \\t\\r\\n\\f-]+";
+    private String GSTINFORMAT_REGEX1 =  "^([0]{1}[1-9]{1}|[1-2]{1}[0-9]{1}|[3]{1}[0-7]{1})([A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}[Z]{1}[0-9A-Z]{1})+$";
+    String userType;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +76,7 @@ public class UpdateProfileActivity extends BaseActivity {
         updateBtn = findViewById(R.id.update_btn);
         addressEdt = findViewById(R.id.input_address);
         gstEdt = findViewById(R.id.input_gstno);
+        userType = ConstantMethods.getStringPreference("user_type",this);
 
         enableOrDisableEditTexts(false);
 //        dobEdt.setOnClickListener(v->{
@@ -110,23 +113,11 @@ public class UpdateProfileActivity extends BaseActivity {
     private void postProfileData(){
         String nameStr  = nameEdt.getText().toString().trim();
         String emailStr = emailEdt.getText().toString();
-        String phomeStr = phoneEdt.getText().toString();
+        String phoneStr = phoneEdt.getText().toString();
         String passStr  = passwordEdt.getText().toString();
         String addressStr   = addressEdt.getText().toString();
-        if(nameStr.isEmpty()|| phomeStr.isEmpty()){
-            Toast.makeText(this, "Enter all the fields", Toast.LENGTH_SHORT).show();
-        }
-        else if(!ConstantMethods.isValidMail(emailStr)){
-            Toast.makeText(this, "Enter valid email address", Toast.LENGTH_SHORT).show();
-        }
-        else if(phomeStr.length()>13||phomeStr.length()<10){
-            Toast.makeText(this, "Enter valid mobile", Toast.LENGTH_SHORT).show();
-        }
-        else if(addressStr.trim().matches(ADDRESS_MATCHER)){
-            Toast.makeText(this, "Please select a valid address", Toast.LENGTH_SHORT).show();
-        }
-
-        else {
+        String gstNoStr   = gstEdt.getText().toString();
+        if(formValidation(nameStr,phoneStr,addressStr,gstNoStr)){
             ConstantMethods.showProgressbar(this);
             String id = ConstantMethods.getStringPreference("user_id",this);
             JSONObject jsonObject = new JSONObject();
@@ -134,7 +125,7 @@ public class UpdateProfileActivity extends BaseActivity {
                 jsonObject.put("displayName",nameStr);
 //                jsonObject.put("dob",dobStr);
                 jsonObject.put("email",emailStr);
-                jsonObject.put("phone",phomeStr);
+                jsonObject.put("phone",phoneStr);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -162,6 +153,43 @@ public class UpdateProfileActivity extends BaseActivity {
                 }
             },this);
         }
+
+//        else {
+//            ConstantMethods.showProgressbar(this);
+//            String id = ConstantMethods.getStringPreference("user_id",this);
+//            JSONObject jsonObject = new JSONObject();
+//            try {
+//                jsonObject.put("displayName",nameStr);
+////                jsonObject.put("dob",dobStr);
+//                jsonObject.put("email",emailStr);
+//                jsonObject.put("phone",phoneStr);
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//            CommonNetwork.putNetworkJsonObj(PROFILE_UPDATE+"/"+id, jsonObject, new JSONResult() {
+//                @Override
+//                public void notifySuccess(@NonNull JSONObject response) {
+//                    ConstantMethods.dismissProgressBar();
+//                    try {
+//                        String confirmation = response.getString("confirmation");
+//                        if(confirmation.equals("success")){
+////                            updateProfilePic(destinationFile);
+//                            Toast.makeText(UpdateProfileActivity.this, "Update successfully", Toast.LENGTH_SHORT).show();
+//                            updateBtn.setText("Edit Profile");
+//                            enableOrDisableEditTexts(false);
+//                        }
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//
+//                @Override
+//                public void notifyError(@NonNull ANError anError) {
+//                    ConstantMethods.dismissProgressBar();
+//                    Log.e("response",""+anError);
+//                }
+//            },this);
+//        }
     }
 
     private void getProfileData(){
@@ -301,20 +329,7 @@ public class UpdateProfileActivity extends BaseActivity {
         return cursor.getString(column_index);
     }
 
-//    private void updateProfilePic(File file){
-//        String userId = ConstantMethods.getStringPreference("user_id",this);
-//        CommonNetwork.putNetworkFileType(UPLOAD_PROFILE_PIC, file, userId, new JSONResult() {
-//            @Override
-//            public void notifySuccess(@NonNull JSONObject response) {
-//                Log.e("response",""+response);
-//            }
-//
-//            @Override
-//            public void notifyError(@NonNull ANError anError) {
-//                Log.e("response",""+anError);
-//            }
-//        });
-//    }
+
     private void updateProfilePic(File file){
         String userId = ConstantMethods.getStringPreference("user_id",this);
         AndroidNetworking
@@ -354,6 +369,39 @@ public class UpdateProfileActivity extends BaseActivity {
         emailEdt.setEnabled(able);
         addressEdt.setEnabled(able);
         gstEdt.setEnabled(able);
+    }
+    private boolean formValidation(String nameStr,String phoneStr,String addressStr,String gstNoStr){
+        boolean valid = false;
+        if(userType.equals("3")){
+            if(nameStr.isEmpty()|| phoneStr.isEmpty()){
+                ConstantMethods.getAlertMessage(this,"Enter name and mobile");
+                valid = false;
+            }
+            else if(phoneStr.length()>13||phoneStr.length()<10){
+                Toast.makeText(this, "Enter valid mobile", Toast.LENGTH_SHORT).show();
+                valid = false;
+            }
+            else {
+                valid = true;
+            }
+        }
+        else if(userType.equals("4")){
+            if(nameStr.isEmpty()||gstNoStr.isEmpty()||phoneStr.isEmpty()||addressStr.isEmpty()){
+                ConstantMethods.getAlertMessage(this,"Enter name,mobile,address and GST No.");
+            }
+            else if(phoneStr.length()>13||phoneStr.length()<10){
+                Toast.makeText(this, "Enter valid mobile", Toast.LENGTH_SHORT).show();
+                valid = false;
+            }
+            else if(!gstNoStr.matches(GSTINFORMAT_REGEX1)) {
+                ConstantMethods.getAlertMessage(this, "Enter valid GST No.");
+                valid = false;
+            }
+            else {
+                valid = true;
+            }
+        }
+        return valid;
     }
 
 }

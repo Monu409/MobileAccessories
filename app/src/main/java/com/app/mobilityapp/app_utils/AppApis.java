@@ -35,4 +35,5 @@ public interface AppApis {
     String UPLOAD_PRODUCT = BASE_URL+"api/product";
     String SEND_MESSAGE = BASE_URL+"api/conversation";
     String GET_CONVERSATION_LIST = BASE_URL+"token/getmessage/conversation";
+    String SEND_MEDIA_TO_CHAT = BASE_URL+"auth/commonupload/chating";
 }

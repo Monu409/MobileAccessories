@@ -91,7 +91,7 @@ public class DashboardActivity extends BaseActivity implements JSONResult {
     private ImageView menuImg,callImg;
     private TextView profileTxt,ledgerTxt,orderTxt,logoutTxt,changeUserTxt,aboutTxt,helpSprtTxt;
     private EditText searchEdt;
-    private LinearLayout menuView;
+    private LinearLayout menuView,sellerView;
     private boolean menuVisible;
     private RelativeLayout headerView;
 
@@ -112,6 +112,7 @@ public class DashboardActivity extends BaseActivity implements JSONResult {
         changeUserTxt = findViewById(R.id.change_user_txt);
         aboutTxt = findViewById(R.id.about_txt);
         aboutTxt = findViewById(R.id.about_txt);
+        sellerView = findViewById(R.id.seller_view);
         helpSprtTxt = findViewById(R.id.help_sprt_txt);
         imgList.add(fileUri.toString());
         imgList.add(fileUri2.toString());
@@ -200,6 +201,7 @@ public class DashboardActivity extends BaseActivity implements JSONResult {
             menu.add(Menu.NONE, navigation_add_product, Menu.NONE, getString(R.string.add_product))
                     .setIcon(R.drawable.addproduct);
             changeUserTxt.setVisibility(View.GONE);
+            sellerView.setVisibility(View.VISIBLE);
         }
         else {
             changeUserTxt.setText("Becomes a Seller");
@@ -207,6 +209,7 @@ public class DashboardActivity extends BaseActivity implements JSONResult {
                 dialogForBecomeSeller();
                 menuView.setVisibility(View.GONE);
                 menuVisible = false;
+                sellerView.setVisibility(View.GONE);
             });
         }
         navigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);

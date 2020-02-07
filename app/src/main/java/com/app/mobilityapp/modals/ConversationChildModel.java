@@ -31,6 +31,9 @@ public class ConversationChildModel {
     @SerializedName("createdAt")
     @Expose
     private String createdAt;
+    @SerializedName("imageurl")
+    @Expose
+    private String imageurl;
     @SerializedName("updatedAt")
     @Expose
     private String updatedAt;
@@ -120,6 +123,14 @@ public class ConversationChildModel {
 
     public Integer getV() {
         return v;
+    }
+
+    public String getImageurl() {
+        return imageurl;
+    }
+
+    public void setImageurl(String imageurl) {
+        this.imageurl = imageurl;
     }
 
     public void setV(Integer v) {

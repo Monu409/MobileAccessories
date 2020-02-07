@@ -35,6 +35,8 @@ public class ProductsModal implements Serializable {
     @Expose
     private Integer v;
 
+    private String moq;
+
     public Integer getAmount() {
         return amount;
     }
@@ -122,4 +124,11 @@ public class ProductsModal implements Serializable {
         return this.name;            // What to display in the Spinner list.
     }
 
+    public String getMoq() {
+        return moq;
+    }
+
+    public void setMoq(String moq) {
+        this.moq = moq;
+    }
 }

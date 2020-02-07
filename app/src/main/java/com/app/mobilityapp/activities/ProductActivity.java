@@ -80,10 +80,6 @@ public class ProductActivity extends BaseActivity {
     String img1 = "https://rukminim1.flixcart.com/image/416/416/k12go7k0/mobile/7/e/e/apple-iphone-7-mn8x2hn-a-original-imafkqcqhzxuvcpd.jpeg?q=70";
     String img2 = "https://rukminim1.flixcart.com/image/416/416/k23m4cw0/mobile/7/e/e/apple-iphone-7-mn8x2hn-a-original-imafhgvghtfqtawr.jpeg?q=70";
     String img3 = "https://rukminim1.flixcart.com/image/416/416/k12go7k0/mobile/v/z/8/apple-iphone-7-mn922hn-a-original-imafkqcrpc8bcy6h.jpeg?q=70";
-    ImageView img_left, img_right;
-    RadioGroup rgb_range;
-    EditText custom_value_edit_text;
-    LinearLayout lnr_content;
     JSONArray jsonArray = null;
     JSONObject jsonObject;
     JSONArray modeljsonArray = null;
@@ -96,17 +92,16 @@ public class ProductActivity extends BaseActivity {
     List<ProductPriceModel> productPriceModels;
     private BottomNavigationView navigationView;
     private SliderView sliderView;
+    private Button addToCartBtn;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ConstantMethods.setTitleAndBack(this, "All Products");
         nameDes = findViewById(R.id.prod_des);
-//        addCart = findViewById(R.id.add_txt);
-//        buyNow = findViewById(R.id.buy_txt);
-//        prodImg = findViewById(R.id.prod_img);
         prodPrice = findViewById(R.id.prod_price);
         sliderView = findViewById(R.id.image_slider);
+        addToCartBtn = findViewById(R.id.add_to_cart);
 
         prod_brand = findViewById(R.id.prod_brand);
         prod_model = findViewById(R.id.prod_model);
@@ -155,17 +150,6 @@ public class ProductActivity extends BaseActivity {
         prodPrice.setText(getResources().getString(R.string.rs) + "100");
 
         ConstantMethods.setTitleAndBack(this, modelName);
-
-//        addCart.setOnClickListener(v -> {
-//            Toast.makeText(this, "Added into cart_unslctd", Toast.LENGTH_SHORT).show();
-//            mCartItemCount++;
-//            if (mCartItemCount > 0) {
-//                setupBadge();
-//            }
-//
-//            Intent intent = new Intent(ProductActivity.this, ProductBrandActivity.class);
-//            ProductActivity.this.startActivity(intent);
-//        });
         navigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
 
@@ -458,6 +442,8 @@ public class ProductActivity extends BaseActivity {
                                     }
                                 });
                             }
+
+                            addToCartBtn.setOnClickListener(v->createNewCartJson(dataArr));
                         }
 
                     }
@@ -532,6 +518,38 @@ public class ProductActivity extends BaseActivity {
             textView.setText(count);
             itemView.addView(notificationBadge);
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    private void createNewCartJson(JSONArray jsonArray){
+        JSONObject jsonObject = new JSONObject();
+        int priceSum = 0;
+        try {
+            JSONObject dataObj = jsonArray.getJSONObject(0);
+            jsonObject.put("productid",dataObj.getJSONObject("productid"));
+            JSONArray brandInfoArr = new JSONArray();
+            for(int i=0;i<jsonArray.length();i++){
+                JSONObject childObj = jsonArray.getJSONObject(i);
+                JSONObject brandInfoObj = new JSONObject();
+                brandInfoObj.put("brandId",childObj.getJSONObject("brandid"));
+                brandInfoObj.put("modallist",childObj.getJSONArray("modallist"));
+                brandInfoArr.put(i,brandInfoObj);
+                String priceStr = childObj.getString("price");
+                int priceInt = Integer.parseInt(priceStr);
+                priceSum = priceSum+priceInt;
+            }
+            jsonObject.put("brandInfoArr",brandInfoArr);
+            jsonObject.put("price",priceSum);
+            jsonObject.put("categoryId",dataObj.getJSONObject("categoryId"));
+            jsonObject.put("subCategoryId",dataObj.getJSONObject("subCategoryId"));
+            jsonObject.put("subcategory2",dataObj.getJSONObject("subcategory2"));
+//            jsonObject.put("subcategory3",dataObj.getJSONObject("subcategory3"));
+            jsonObject.put("isDeleted",dataObj.getString("isDeleted"));
+            jsonObject.put("updatedAt",dataObj.getString("updatedAt"));
+            jsonObject.put("_id",dataObj.getString("_id"));
+            jsonObject.put("__v",dataObj.getString("__v"));
+            Log.e("jsonIS",""+jsonObject);
+        } catch (JSONException e) {
             e.printStackTrace();
         }
     }
