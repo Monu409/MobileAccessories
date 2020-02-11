@@ -25,6 +25,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 
 import com.app.mobilityapp.modals.CartModel;
+import com.app.mobilityapp.modals.LocalQuantityModel;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -224,6 +225,23 @@ public class ConstantMethods {
         Gson gson = new Gson();
         String json = prefs.getString(key, null);
         Type type = new TypeToken<ArrayList<CartModel>>() {}.getType();
+        return gson.fromJson(json, type);
+    }
+
+    public static void saveQtyListShared(List<LocalQuantityModel> list, Context context, String key){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(list);
+        editor.putString(key, json);
+        editor.apply();     // This line is IMPORTANT !!!
+    }
+
+    public static List<LocalQuantityModel> getQtyArrayListShared(Context context,String key){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        Gson gson = new Gson();
+        String json = prefs.getString(key, null);
+        Type type = new TypeToken<ArrayList<LocalQuantityModel>>() {}.getType();
         return gson.fromJson(json, type);
     }
 

@@ -25,7 +25,7 @@
         android:usesCleartextTraffic="true"
         android:networkSecurityConfig="@xml/network_security_config"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.SplashActivity">
+        <activity android:name=".activities.DashboardActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -37,7 +37,7 @@
         </activity>
         <activity android:name=".activities.UpdateProfileActivity" />
         <activity android:name=".activities.SignUpActivity" />
-        <activity android:name=".activities.DashboardActivity" />
+<!--        <activity android:name=".activities.DashboardActivity" />-->
         <activity android:name=".activities.ForgotPasswordActivity" />
         <activity android:name=".activities.LoginActivity" />
         <activity android:name=".activities.ProductBrandActivity" />
@@ -60,6 +60,21 @@
         <activity android:name=".activities.HelpSupportActivity"/>
         <activity android:name=".activities.ThankuActivity"/>
         <activity android:name=".activities.FullImageActivity"/>
+        <activity android:name=".activities.ProductACopy"/>
+        <activity android:name=".activities.EnterQuantityACopy"/>
+        <service
+            android:name=".firebase.MyFirebaseInstanceIdService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".firebase.MyFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
@@ -40,6 +41,7 @@ public class LoginActivity extends BaseActivity {
     public static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 7;
     private TextView signupTxt,forgotPass;
     private EditText phoneEdt,passEdt;
+    private String deviceId;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +51,7 @@ public class LoginActivity extends BaseActivity {
         forgotPass = findViewById(R.id.forget_pass_txt);
         phoneEdt = findViewById(R.id.input_phone);
         passEdt = findViewById(R.id.input_pass);
+        deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         if(checkAndRequestPermissions()) {
             loginBtn = findViewById(R.id.login_btn);
             loginBtn.setOnClickListener(t -> {
@@ -62,6 +65,7 @@ public class LoginActivity extends BaseActivity {
                     JSONObject jsonObject = new JSONObject();
                     try {
                         jsonObject.put("phone",phoneNum);
+                        jsonObject.put("deviceid",deviceId);
 //                        jsonObject.put("password",passStr);
                     } catch (JSONException e) {
                         e.printStackTrace();

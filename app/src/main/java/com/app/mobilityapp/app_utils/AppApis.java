@@ -3,7 +3,7 @@ package com.app.mobilityapp.app_utils;
 public interface AppApis {
     //    String BASE_URL = "http://192.168.0.65:3000/api/category";
     String BASE_URL = "http://132.148.158.82:3004/";
-//    String BASE_URL = "http://132.148.158.82:3004/api/orders";
+//    String BASE_URL = "http://132.148.158.82:3004/auth/sendotp";
     String SEND_OTP = BASE_URL+"auth/sendotp";
     String USER_LOGIN = BASE_URL+"auth/login";
     String GET_CATEGORY = BASE_URL+"custom/category";

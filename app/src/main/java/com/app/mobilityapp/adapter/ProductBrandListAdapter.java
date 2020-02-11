@@ -19,8 +19,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.app.mobilityapp.R;
 import com.app.mobilityapp.app_utils.onClickInterface;
 import com.app.mobilityapp.modals.CartChangeModel;
+import com.app.mobilityapp.modals.LocalQuantityModel;
 import com.app.mobilityapp.modals.ProBrndModal;
 import com.app.mobilityapp.modals.ProductsModal;
+import com.app.mobilityapp.modals.QuantityModel;
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
@@ -33,11 +35,18 @@ public class ProductBrandListAdapter extends RecyclerView.Adapter<ProductBrandLi
     private OnListClick onListClick;
     private int row_index = -1, focusedItem = 0;
     private List<CartChangeModel> cartChangeModels;
+    private List<LocalQuantityModel> quantityModels;
 
-    public ProductBrandListAdapter(List<ProBrndModal> proBrndModals, Context context,List<CartChangeModel> cartChangeModels) {
+//    public ProductBrandListAdapter(List<ProBrndModal> proBrndModals, Context context,List<CartChangeModel> cartChangeModels) {
+//        this.proBrndModals = proBrndModals;
+//        this.context = context;
+//        this.cartChangeModels = cartChangeModels;
+//        layoutInflater = LayoutInflater.from(context);
+//    }
+    public ProductBrandListAdapter(List<ProBrndModal> proBrndModals, Context context,List<LocalQuantityModel> quantityModels) {
         this.proBrndModals = proBrndModals;
         this.context = context;
-        this.cartChangeModels = cartChangeModels;
+        this.quantityModels = quantityModels;
         layoutInflater = LayoutInflater.from(context);
     }
     public ProductBrandListAdapter(List<ProBrndModal> proBrndModals, Context context) {
@@ -76,16 +85,28 @@ public class ProductBrandListAdapter extends RecyclerView.Adapter<ProductBrandLi
             holder.brandTxt.setVisibility(View.VISIBLE);
             holder.brandTxt.setText(brandName);
         }
-        if(cartChangeModels!=null) {
+//        if(cartChangeModels!=null) {
+//            String productBrandId = proBrndModal.getId();
+//            for (int i = 0; i < cartChangeModels.size(); i++) {
+//                String cartBrandId = cartChangeModels.get(i).getBrandId();
+//                if (cartBrandId.equals(productBrandId)) {
+//                    holder.qtyTxt.setText("Total Items: " + cartChangeModels.get(i).getQuantity());
+//                    proBrndModal.setQuantity(cartChangeModels.get(i).getQuantity());
+//                }
+//            }
+//        }
+
+        if(quantityModels!=null) {
             String productBrandId = proBrndModal.getId();
-            for (int i = 0; i < cartChangeModels.size(); i++) {
-                String cartBrandId = cartChangeModels.get(i).getBrandId();
+            for (int i = 0; i < quantityModels.size(); i++) {
+                String cartBrandId = quantityModels.get(i).getBrandid();
                 if (cartBrandId.equals(productBrandId)) {
-                    holder.qtyTxt.setText("Total Items: " + cartChangeModels.get(i).getQuantity());
-                    proBrndModal.setQuantity(cartChangeModels.get(i).getQuantity());
+                    holder.qtyTxt.setText("Total Items: " + quantityModels.get(i).getTotalQty());
+                    proBrndModal.setQuantity(String.valueOf(quantityModels.get(i).getTotalQty()));
                 }
             }
         }
+
 
 //        if (proBrndModal.getQuantity() != null)
 //            holder.qtyTxt.setText("Total Items: " + proBrndModal.getQuantity());

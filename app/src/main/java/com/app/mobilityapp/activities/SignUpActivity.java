@@ -2,6 +2,7 @@ package com.app.mobilityapp.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -49,6 +50,7 @@ public class SignUpActivity extends BaseActivity {
     public static final String GSTN_CODEPOINT_CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private String GSTINFORMAT_REGEX1 =  "^([0]{1}[1-9]{1}|[1-2]{1}[0-9]{1}|[3]{1}[0-7]{1})([A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}[Z]{1}[0-9A-Z]{1})+$";
     private String ADDRESS_MATCHER = "[!#$%&(){|}~:;<=>?@*+,./^_`\\'\\\" \\t\\r\\n\\f-]+";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -173,6 +175,7 @@ public class SignUpActivity extends BaseActivity {
             jsonObject.put("countryId",countryId);
             jsonObject.put("cityId",cityId);
             jsonObject.put("gstno",gstNoStr);
+
 
         } catch (JSONException e) {
             e.printStackTrace();

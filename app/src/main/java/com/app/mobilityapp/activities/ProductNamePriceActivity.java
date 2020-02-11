@@ -180,7 +180,8 @@ public class ProductNamePriceActivity extends BaseActivity {
                         brandList.setAdapter(productBrandAdapter);
                         productBrandAdapter.onListClick(proBrndModal -> {
                             Log.e("position",""+proBrndModal);
-                            Intent intent = new Intent(ProductNamePriceActivity.this, ProductActivity.class);
+                            Intent intent = new Intent(ProductNamePriceActivity.this, ProductACopy.class);
+//                            Intent intent = new Intent(ProductNamePriceActivity.this, ProductActivity.class);
                             Log.e("brand_name",proBrndModal.getName());
                             Log.e("brand_des",proBrndModal.getContent());
 

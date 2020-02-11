@@ -113,11 +113,13 @@ public class EnterQuantityActivity extends BaseActivity {
                     int applyPrice = applyPrice(totalQty);
                     jsonObject.put("price", String.valueOf(applyPrice));
                     jsonObject.put("modallist", jsonArray);
-                    if (previousViewName.equals("product")) {
-                        addDataIntoCart(jsonObject, ADD_INTO_CART);
-                    } else if (previousViewName.equals("cart_unslctd")) {
-                        updateDataIntoCart(jsonObject, UPDATE_CART + idForUrl);
-                    }
+                    String jsonArrayPrif = jsonArray.toString();
+                    ConstantMethods.setStringPreference("product_json",jsonArrayPrif,this);
+//                    if (previousViewName.equals("product")) {
+//                        addDataIntoCart(jsonObject, ADD_INTO_CART);
+//                    } else if (previousViewName.equals("cart_unslctd")) {
+//                        updateDataIntoCart(jsonObject, UPDATE_CART + idForUrl);
+//                    }
 
                 } catch (JSONException e) {
                     e.printStackTrace();

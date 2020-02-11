@@ -16,7 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.app.mobilityapp.R;
-import com.app.mobilityapp.activities.EnterQuantityActivity;
+import com.app.mobilityapp.activities.EnterQuantityACopy;
 import com.app.mobilityapp.app_utils.OnItemClick;
 import com.app.mobilityapp.modals.ProModlModel;
 
@@ -63,8 +63,8 @@ public class ProductModelListAdapter1 extends RecyclerView.Adapter<ProductModelL
                     qty = 0;
                 if (!proModlModel.getQty().equals("" + qty)) {
                     proModlModel.setQty("" + qty);
-                    if (context instanceof EnterQuantityActivity) {
-                        ((EnterQuantityActivity) context).update_quantity();
+                    if (context instanceof EnterQuantityACopy) {
+                        ((EnterQuantityACopy) context).update_quantity();
                     }
                 }
             }
