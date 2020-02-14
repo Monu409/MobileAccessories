@@ -51,9 +51,11 @@ public class EnterQuantityACopy extends BaseActivity {
 
         try {
             modelList = localQuantityModels.get(position).getModallist();
+            btnOrder.setText("Order Qty" + "  " + localQuantityModels.get(position).getTotalQty());
         }
         catch (Exception e){
             e.printStackTrace();
+            btnOrder.setText("Order Qty" + "  " + mQty);
         }
         if(localQuantityModels==null||modelList==null){
             localQuantityModels = new ArrayList<>();
@@ -67,7 +69,7 @@ public class EnterQuantityACopy extends BaseActivity {
         qtyList.setAdapter(productModelAdapter);
         productIdforJson = getIntent().getStringExtra("brand_id");
         brandId = getIntent().getStringExtra("brandId");
-        btnOrder.setText("Order Qty" + "  " + mQty);
+
 
         submit.setOnClickListener(v -> {
             if(btnOrder.getText().toString().trim().equals("Order Qty  0")){
@@ -82,7 +84,7 @@ public class EnterQuantityACopy extends BaseActivity {
                         ProModlModel proModlModel = proModlModels.get(i);
                         JSONObject jsonObject1 = new JSONObject();
                         jsonObject1.put("modalid", proModlModels.get(i).getId());
-                        jsonObject1.put("quantity", proModlModels.get(i).getQty());
+                        jsonObject1.put("quantity", Integer.parseInt(proModlModels.get(i).getQty()));
                         totalQty = totalQty + Integer.parseInt(proModlModel.getQty());
                         jsonArray.put(i, jsonObject1);
                     }

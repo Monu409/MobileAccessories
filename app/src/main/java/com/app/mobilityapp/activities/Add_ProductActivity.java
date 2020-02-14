@@ -52,7 +52,7 @@ public class Add_ProductActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ConstantMethods.setTitleAndBack(this,"Add Product");
+        ConstantMethods.setTitleAndBack(this, "Add Product");
         post_json = new JSONObject();
         post_brands = new ArrayList();
         post_prices = new ArrayList();
@@ -71,7 +71,11 @@ public class Add_ProductActivity extends BaseActivity {
                         add_new_brand(new AddedBrands());
                     break;
                 case R.id.addprice_btn:
-                    add_new_price(new AddedPrice());
+                    if (post_prices.size() < 3) {
+                        add_new_price(new AddedPrice());
+                    } else {
+                        Toast.makeText(Add_ProductActivity.this, "You can't add more price", Toast.LENGTH_SHORT).show();
+                    }
                     break;
                 case R.id.continue_btn:
                     try {
@@ -195,9 +199,16 @@ public class Add_ProductActivity extends BaseActivity {
         brand_spinr.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                ConsModel selected_brand = (ConsModel) parent.getSelectedItem();
-                brands.setBrand_id(selected_brand.getId());
-                get_model("http://132.148.158.82:3004/custom/model", putJson(new JSONObject(), "brandId", selected_brand.getId()), model_spnr);
+                if (position > 0) {
+                    ConsModel selected_brand = (ConsModel) parent.getSelectedItem();
+                    if (!check_duplicate(post_brands, selected_brand)) {
+                        brands.setBrand_id(selected_brand.getId());
+                        get_model("http://132.148.158.82:3004/custom/model", putJson(new JSONObject(), "brandId", selected_brand.getId()), model_spnr);
+                    } else {
+                        Toast.makeText(Add_ProductActivity.this, "This Brand already selected please select different one", Toast.LENGTH_SHORT).show();
+                        brand_spinr.setSelection(0);
+                    }
+                }
             }
 
             @Override
@@ -218,9 +229,21 @@ public class Add_ProductActivity extends BaseActivity {
         });
     }
 
+    private boolean check_duplicate(List<AddedBrands> post_brands, ConsModel cat) {
+        for (AddedBrands brand : post_brands) {
+            if (brand.getBrand_id() != null && brand.getBrand_id().equalsIgnoreCase(cat.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     private void add_new_price(final AddedPrice prices) {
         post_prices.add(prices);
+        if (post_prices.size() >= 3) {
+            addprice_btn.setVisibility(View.GONE);
+        }
         final View view1 = getLayoutInflater().inflate(R.layout.price_item, price_root, false);
         final ImageView delete_btn = view1.findViewById(R.id.delete_btn);
         final EditText from_edt = view1.findViewById(R.id.from_edt);
@@ -238,6 +261,11 @@ public class Add_ProductActivity extends BaseActivity {
             public void onClick(View v) {
                 price_root.removeView(view1);
                 post_prices.remove(prices);
+                if (post_prices.size() < 3) {
+                    addprice_btn.setVisibility(View.VISIBLE);
+                } else {
+                    addprice_btn.setVisibility(View.GONE);
+                }
             }
         });
         TextWatcher textWatcher = new TextWatcher() {
@@ -254,17 +282,26 @@ public class Add_ProductActivity extends BaseActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 String s1 = s.toString();
-                if(s1.equals("0")){
-                    Toast.makeText(Add_ProductActivity.this, "Start value from 1", Toast.LENGTH_SHORT).show();
+                if (from_edt.hasFocus()) {
+                    if (s1.equals("0")) {
+                        Toast.makeText(Add_ProductActivity.this, "Start value from 1", Toast.LENGTH_SHORT).show();
+                        from_edt.setText("");
+                    }
+                    prices.setFrom(s1);
+                } else if (to_edt.hasFocus()) {
+                    if (s1.equals("0")) {
+                        Toast.makeText(Add_ProductActivity.this, "Start value from 1", Toast.LENGTH_SHORT).show();
+                        to_edt.setText("");
+                    }
+                    prices.setTo(s1);
+                } else if (price_edt.hasFocus()) {
+                    prices.setAmount(s1);
+                    if (s1.equals("0")) {
+                        Toast.makeText(Add_ProductActivity.this, "Start value from 1", Toast.LENGTH_SHORT).show();
+                        price_edt.setText("");
+                    }
                 }
-                else {
-                    if (from_edt.hasFocus())
-                        prices.setFrom(s1);
-                    else if (to_edt.hasFocus())
-                        prices.setTo(s1);
-                    else if (price_edt.hasFocus())
-                        prices.setAmount(s1);
-                }
+
 
             }
         };
@@ -304,6 +341,10 @@ public class Add_ProductActivity extends BaseActivity {
                                 break;
                             case "brand":
                                 all_brands = new ArrayList<>(Arrays.asList(new Gson().fromJson(response.getString("data"), ConsModel[].class)));
+                                ConsModel consModel = new ConsModel();
+                                consModel.setName("Please Select");
+                                consModel.setId("0");
+                                all_brands.add(0, consModel);
                                 add_new_brand(new AddedBrands());
                                 break;
                             case "models":
@@ -357,8 +398,8 @@ public class Add_ProductActivity extends BaseActivity {
         }
         return jsonObject;
     }
-    
-    private void uploadProduct(JSONObject jsonObject){
+
+    private void uploadProduct(JSONObject jsonObject) {
         ConstantMethods.showProgressbar(this);
         CommonNetwork.postNetworkJsonObj(UPLOAD_PRODUCT, jsonObject, new JSONResult() {
             @Override
@@ -366,10 +407,9 @@ public class Add_ProductActivity extends BaseActivity {
                 ConstantMethods.dismissProgressBar();
                 try {
                     String confirmation = response.getString("confirmation");
-                    if(confirmation.equals("success")){
+                    if (confirmation.equals("success")) {
                         Toast.makeText(Add_ProductActivity.this, "Product add successfully", Toast.LENGTH_SHORT).show();
-                    }
-                    else {
+                    } else {
                         Toast.makeText(Add_ProductActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException e) {
@@ -382,6 +422,6 @@ public class Add_ProductActivity extends BaseActivity {
             public void notifyError(@NonNull ANError anError) {
                 Toast.makeText(Add_ProductActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
             }
-        },this);
+        }, this);
     }
 }

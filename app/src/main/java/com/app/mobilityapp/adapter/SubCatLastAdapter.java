@@ -78,6 +78,7 @@ public class SubCatLastAdapter extends RecyclerView.Adapter<SubCatLastAdapter.Pr
 
             Intent intent = new Intent(context, ProductNamePriceActivity.class);
             intent.putExtra("last_view","sub_cat");
+            intent.putExtra("layer","three");
             intent.putExtra("cat_id",cartModel.getProductsModal().getId());
             intent.putExtra("cat_name",cartModel.getProductsModal().getName());
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

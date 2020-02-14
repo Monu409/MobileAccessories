@@ -47,6 +47,7 @@ import java.util.List;
 
 import ss.com.bannerslider.Slider;
 
+import static com.app.mobilityapp.app_utils.AppApis.ADD_INTO_CART;
 import static com.app.mobilityapp.app_utils.AppApis.GET_ALL_PROD_BRAND;
 
 public class ProductACopy extends BaseActivity {
@@ -101,6 +102,12 @@ public class ProductACopy extends BaseActivity {
             }
         };
         productId = getIntent().getStringExtra("brand_id");
+
+        addToCartBtn.setOnClickListener(v->{
+            List<LocalQuantityModel> quantityModels =  ConstantMethods.getQtyArrayListShared(ProductACopy.this,"local_qty_models");
+            JSONObject jsonObject = getBrandDetailArr(quantityModels);
+            addDataIntoCart(jsonObject,ADD_INTO_CART);
+        });
         Log.e("prod_brand_id", productId);
 //        setCartCount();
 
@@ -311,58 +318,69 @@ public class ProductACopy extends BaseActivity {
             e.printStackTrace();
         }
     }
-    private void createNewCartJson(JSONArray jsonArray){
-        JSONObject jsonObject = new JSONObject();
-        int priceSum = 0;
-        try {
-            JSONObject dataObj = jsonArray.getJSONObject(0);
-            jsonObject.put("productid",dataObj.getJSONObject("productid"));
-            JSONArray brandInfoArr = new JSONArray();
-            for(int i=0;i<jsonArray.length();i++){
-                JSONObject childObj = jsonArray.getJSONObject(i);
-                JSONObject brandInfoObj = new JSONObject();
-                brandInfoObj.put("brandId",childObj.getJSONObject("brandid"));
-                brandInfoObj.put("modallist",childObj.getJSONArray("modallist"));
-                brandInfoArr.put(i,brandInfoObj);
-                String priceStr = childObj.getString("price");
-                int priceInt = Integer.parseInt(priceStr);
-                priceSum = priceSum+priceInt;
-            }
-            jsonObject.put("brandInfoArr",brandInfoArr);
-            jsonObject.put("price",priceSum);
-            jsonObject.put("categoryId",dataObj.getJSONObject("categoryId"));
-            jsonObject.put("subCategoryId",dataObj.getJSONObject("subCategoryId"));
-            jsonObject.put("subcategory2",dataObj.getJSONObject("subcategory2"));
-//            jsonObject.put("subcategory3",dataObj.getJSONObject("subcategory3"));
-            jsonObject.put("isDeleted",dataObj.getString("isDeleted"));
-            jsonObject.put("updatedAt",dataObj.getString("updatedAt"));
-            jsonObject.put("_id",dataObj.getString("_id"));
-            jsonObject.put("__v",dataObj.getString("__v"));
-            Log.e("jsonIS",""+jsonObject);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
 
-    private JSONArray getBrandDetailArr(List<LocalQuantityModel> quantityModels){
+    private JSONObject getBrandDetailArr(List<LocalQuantityModel> quantityModels){
+        int priceSum = 0;
         JSONArray jsonArray = new JSONArray();
-        JSONObject brandDetails = new JSONObject();
+        JSONObject cartJson = new JSONObject();
         Gson gson = new Gson();
         String strJson = gson.toJson(quantityModels);
         Log.e("json",strJson);
         try {
             JSONArray getJsonArr = new JSONArray(strJson);
             for(int i=0;i<getJsonArr.length();i++){
+                JSONObject brandDetails = new JSONObject();
                 JSONObject childObj = getJsonArr.getJSONObject(i);
                 JSONArray modallist = childObj.getJSONArray("modallist");
                 String brandid = childObj.getString("brandid");
-                brandDetails.put("modallist",modallist);
+                String price = childObj.getString("price");
+                int priceInt = Integer.parseInt(price);
+                priceSum = priceSum+priceInt;
                 brandDetails.put("brand",brandid);
+                brandDetails.put("modallist",modallist);
+                jsonArray.put(i,brandDetails);
             }
-            jsonArray.put(0,brandDetails);
+            String productId = getJsonArr.getJSONObject(0).getString("productid");
+            cartJson.put("productid",productId);
+            cartJson.put("brandDetails",jsonArray);
+            cartJson.put("price",priceSum);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return jsonArray;
+        return cartJson;
+    }
+
+    private void addDataIntoCart(JSONObject jsonObject, String apiUrl) {
+        ConstantMethods.showProgressbar(this);
+        CommonNetwork.postNetworkJsonObj(apiUrl, jsonObject, new JSONResult() {
+            @Override
+            public void notifySuccess(@NonNull JSONObject response) {
+                ConstantMethods.dismissProgressBar();
+                try {
+                    String confirmation = response.getString("confirmation");
+                    if (confirmation.equals("success")) {
+                        Toast.makeText(ProductACopy.this, "Added into cart", Toast.LENGTH_SHORT).show();
+                        onBackPressed();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void notifyError(@NonNull ANError anError) {
+                ConstantMethods.dismissProgressBar();
+                Toast.makeText(ProductACopy.this, "Something went wrong", Toast.LENGTH_SHORT).show();
+            }
+        }, this);
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        List<LocalQuantityModel> quantityModels =  ConstantMethods.getQtyArrayListShared(ProductACopy.this,"local_qty_models");
+        quantityModels.clear();
+        ConstantMethods.saveQtyListShared(quantityModels,this,"local_qty_models");
     }
 }

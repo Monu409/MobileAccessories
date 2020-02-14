@@ -56,7 +56,7 @@ public class LoginActivity extends BaseActivity {
             loginBtn = findViewById(R.id.login_btn);
             loginBtn.setOnClickListener(t -> {
                 String phoneNum = phoneEdt.getText().toString();
-                String passStr = passEdt.getText().toString();
+                String myToken = ConstantMethods.getStringPreference("my_token",this);
                 if(phoneNum.isEmpty()){
                     Toast.makeText(this, "Enter your mobile number", Toast.LENGTH_SHORT).show();
                 }
@@ -65,7 +65,7 @@ public class LoginActivity extends BaseActivity {
                     JSONObject jsonObject = new JSONObject();
                     try {
                         jsonObject.put("phone",phoneNum);
-                        jsonObject.put("deviceid",deviceId);
+                        jsonObject.put("deviceid",myToken);
 //                        jsonObject.put("password",passStr);
                     } catch (JSONException e) {
                         e.printStackTrace();

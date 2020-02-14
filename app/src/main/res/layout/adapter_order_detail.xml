@@ -36,7 +36,7 @@
                     android:layout_marginLeft="5dp"
                     android:layout_centerVertical="true"
                     android:layout_marginTop="5dp"
-                    android:src="@drawable/call"/>
+                    android:src="@drawable/test"/>
                 <TextView
                     android:id="@+id/cat_name_txt"
                     android:layout_width="wrap_content"
@@ -58,32 +58,6 @@
                     android:layout_marginLeft="10dp"
                     />
 
-<!--                <TextView-->
-<!--                    android:id="@+id/price_txt"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:textStyle="bold"-->
-<!--                    android:textSize="17sp"-->
-<!--                    android:layout_toRightOf="@+id/brand_img"-->
-<!--                    android:layout_below="@+id/name_txt"-->
-<!--                    android:layout_marginLeft="10dp"-->
-<!--                    android:textColor="@color/colorAccent"-->
-<!--                    />-->
-
-                <TextView
-                    android:visibility="gone"
-                    android:id="@+id/des_txt"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Content hereContent hereContent hereContent hereContent hereContent hereContent hereContent here"
-                    android:maxLines="2"
-                    android:layout_marginLeft="10dp"
-                    android:layout_toRightOf="@+id/brand_img"
-                    android:layout_below="@+id/name_txt"
-                    android:layout_toLeftOf="@+id/qty_txt"
-                    android:layout_marginRight="5dp"
-                    />
-
                 <TextView
                     android:id="@+id/price_txt"
                     android:layout_width="60dp"
@@ -94,18 +68,10 @@
                     android:gravity="center"
                     android:textSize="17sp"
                     android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
+                    android:layout_alignParentBottom="true"
                     android:layout_marginRight="15dp"
+                    android:layout_marginBottom="5dp"
                     />
-
-<!--                <ImageView-->
-<!--                    android:id="@+id/edit_qty"-->
-<!--                    android:layout_width="25dp"-->
-<!--                    android:layout_height="25dp"-->
-<!--                    android:layout_centerVertical="true"-->
-<!--                    android:layout_alignParentRight="true"-->
-<!--                    android:layout_marginRight="10dp"-->
-<!--                    android:src="@drawable/edit_qntity"/>-->
 
             </RelativeLayout>
         </androidx.cardview.widget.CardView>

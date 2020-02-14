@@ -125,6 +125,8 @@ public class SubCatAdapter extends RecyclerView.Adapter<SubCatAdapter.ProductHol
                             Intent intent = new Intent(context, ProductNamePriceActivity.class);
                             intent.putExtra("last_view","sub_cat");
                             intent.putExtra("cat_name",cartModel.getProductsModal().getName());
+                            intent.putExtra("layer","two");
+                            intent.putExtra("cat_id",cartModel.getProductsModal().getId());
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             context.startActivity(intent);
                         }

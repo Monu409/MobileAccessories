@@ -73,6 +73,7 @@
                     android:layout_marginLeft="20dp"
                     android:textStyle="bold"
                     android:textSize="17sp"
+                    android:textColor="@color/textcolor"
                     />
 
                 <TextView

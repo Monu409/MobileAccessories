@@ -20,11 +20,13 @@ import com.app.mobilityapp.app_utils.BaseActivity;
 import com.app.mobilityapp.app_utils.ConstantMethods;
 import com.app.mobilityapp.connection.CommonNetwork;
 import com.app.mobilityapp.connection.JSONResult;
-import com.app.mobilityapp.modals.CartChangeModel;
+import com.app.mobilityapp.modals.CartNewModel;
+import com.google.gson.Gson;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import java.util.ArrayList;
+
 import java.util.List;
 
 import static com.app.mobilityapp.app_utils.AppApis.ADD_INTO_CART;
@@ -39,11 +41,12 @@ public class CheckoutActivity extends BaseActivity {
     private TextView totalTxt, discounntTxt, netAmountTxt,totalBotmTxt;
     private EditText addressEdt;
     private Button editAdrsBtn,continueBtn;
-    private JSONArray jsonForOrder;
+    private JSONObject jsonForOrder;
     private JSONArray cartIdArray = new JSONArray();
     private RelativeLayout dataAvailView;
     private LinearLayout noDataView;
     private String ADDRESS_MATCHER = "[!#$%&(){|}~:;<=>?@*+,./^_`\\'\\\" \\t\\r\\n\\f-]+";
+    private JSONObject cartIdJSON = new JSONObject();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -125,82 +128,48 @@ public class CheckoutActivity extends BaseActivity {
             }
         }, this);
     }
-    int sumAmount = 0;
     private void getCartDetail() {
         CommonNetwork.getNetworkJsonObj(ADD_INTO_CART, new JSONResult() {
             @Override
             public void notifySuccess(@NonNull JSONObject response) {
-//                ConstantMethods.dismissProgressBar();
-                List<CartChangeModel> cartChangeModels = new ArrayList<>();
-                int totalCartPrice = 0;
-                try {
-                    JSONArray jsonArray = response.getJSONArray("data");
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        int totalBrndQty = 0;
-                        JSONObject childObj = jsonArray.getJSONObject(i);
-                        JSONObject brandObj = childObj.getJSONObject("brandid");
-                        JSONObject productObj = childObj.getJSONObject("productid");
-                        JSONObject categoryId = childObj.getJSONObject("categoryId");
-                        JSONArray modalArr = childObj.getJSONArray("modallist");
-                        for (int j = 0; j < modalArr.length(); j++) {
-                            JSONObject modalObj = modalArr.getJSONObject(j);
-                            String qty = modalObj.getString("quantity");
-                            int qtyInt = Integer.parseInt(qty);
-                            totalBrndQty = totalBrndQty + qtyInt;
-                        }
-                        String brandName = brandObj.getString("name");
-                        String catName = categoryId.getString("name");
-                        String brandImgUrl = brandObj.getString("imgUrl");
-                        String brandPrice = childObj.getString("price");
-                        int priceInt = Integer.parseInt(brandPrice);
-                        sumAmount = sumAmount+priceInt;
-                        int brandPriceInt = Integer.parseInt(brandPrice);
-                        totalCartPrice = totalCartPrice+brandPriceInt;
-                        String brandId = brandObj.getString("_id");
-                        String productId = productObj.getString("_id");
-                        String cartId = childObj.getString("_id");
-                        String qty = String.valueOf(totalBrndQty);
-                        CartChangeModel cartChangeModel = new CartChangeModel();
-                        cartChangeModel.setBrandName(brandName);
-                        cartChangeModel.setCatName(catName);
-                        cartChangeModel.setImgUrl(brandImgUrl);
-                        cartChangeModel.setQuantity(qty);
-                        cartChangeModel.setTotalPrice(brandPrice);
-                        cartChangeModel.setBrandId(brandId);
-                        cartChangeModel.setProductId(productId);
-                        cartChangeModel.setJsonArray(modalArr.toString());
-                        cartChangeModel.setCartId(cartId);
-                        cartIdArray.put(i,cartId);
-                        cartChangeModels.add(cartChangeModel);
-                    }
-                    CartChangeAdapter cartChangeAdapter = new CartChangeAdapter(cartChangeModels, CheckoutActivity.this);
+                Gson gson = new Gson();
+                CartNewModel cartNewModel = gson.fromJson(String.valueOf(response),CartNewModel.class);
+                String confirmation = cartNewModel.getConfirmation();
+                if(confirmation.equals("success")){
+                    List<CartNewModel.CartChildModel> cartChildModels = cartNewModel.getData();
+                    CartChangeAdapter cartChangeAdapter = new CartChangeAdapter(cartChildModels, CheckoutActivity.this);
                     checkoutList.setAdapter(cartChangeAdapter);
-                    totalTxt.setText(sumAmount+".0");
-//                    jsonForOrder = getOrderJson(cartChangeModels);
-                    getCreditLimit(sumAmount,cartChangeModels);
-                    if(cartChangeModels.size()!=0){
+                    if(cartChildModels.size()!=0){
                         dataAvailView.setVisibility(View.VISIBLE);
                         noDataView.setVisibility(View.GONE);
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                    int priceSum = 0;
+                    for(int i=0;i<cartChildModels.size();i++){
+                        int price = cartChildModels.get(i).getPrice();
+                        String cartId = cartChildModels.get(i).getId();
+                        cartIdArray.put(cartId);
+                        priceSum = priceSum+price;
+                    }
+                    totalTxt.setText("₹ "+priceSum);
+                    getCreditLimit(priceSum/*,cartChangeModels*/);
+                    jsonForOrder = getOrderJson(cartChildModels,priceSum);
                 }
             }
-
             @Override
             public void notifyError(@NonNull ANError anError) {
-//                ConstantMethods.dismissProgressBar();
+                ConstantMethods.dismissProgressBar();
                 Toast.makeText(CheckoutActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
             }
         },this);
     }
     double totalDiscount;
-    private void getCreditLimit(int totalAmount,List<CartChangeModel> cartChangeModels){
+    private void getCreditLimit(int totalAmount/*,List<CartChangeModel> cartChangeModels*/){
 
         CommonNetwork.getNetworkJsonObj(CREDIT_LIMIT, new JSONResult() {
             @Override
             public void notifySuccess(@NonNull JSONObject response) {
                 try {
+                    ConstantMethods.dismissProgressBar();
                     JSONObject creditObj = response.getJSONObject("data");
                     String discountPercent = creditObj.getString("discount");
                     int percentIntDiscount = Integer.parseInt(discountPercent);
@@ -208,7 +177,7 @@ public class CheckoutActivity extends BaseActivity {
                     netAmountTxt.setText(String.valueOf(totalAmount-totalDiscount));
                     discounntTxt.setText(String.valueOf(totalDiscount));
                     totalBotmTxt.setText("₹ "+(totalAmount-totalDiscount));
-                    jsonForOrder = getOrderJson(cartChangeModels);
+//                    jsonForOrder = getOrderJson(cartChangeModels);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -217,6 +186,7 @@ public class CheckoutActivity extends BaseActivity {
 
             @Override
             public void notifyError(@NonNull ANError anError) {
+                ConstantMethods.dismissProgressBar();
                 Toast.makeText(CheckoutActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
             }
         },this);
@@ -261,35 +231,59 @@ public class CheckoutActivity extends BaseActivity {
         }
     }
 
-    private JSONArray getOrderJson(List<CartChangeModel> cartChangeModels) {
+    private JSONObject getOrderJson(List<CartNewModel.CartChildModel> cartChildModels,int priceSum) {
         JSONObject parentObject = new JSONObject();
-        String amountStr = totalTxt.getText().toString();
-        String discountStr = discounntTxt.getText().toString();
-        String netAmountStr = netAmountTxt.getText().toString();
-        JSONArray jsonArray = new JSONArray();
+        Gson gson = new Gson();
         try {
-            for (int i = 0; i < cartChangeModels.size(); i++) {
+            JSONArray prodctDtlArr = new JSONArray();
+            for(int i=0;i<cartChildModels.size();i++) {
+                CartNewModel.Productid productid = cartChildModels.get(i).getProductid();
+                CartNewModel.CategoryId categoryId = cartChildModels.get(i).getCategoryId();
+                CartNewModel.SubCategoryId subCategoryId = cartChildModels.get(i).getSubCategoryId();
+                CartNewModel.Subcategory2 subcategory2 = cartChildModels.get(i).getSubcategory2();
+                Object o = cartChildModels.get(i).getSubcategory3();
+                int price = cartChildModels.get(i).getPrice();
+                List<CartNewModel.BrandDetail_> brandDetail = cartChildModels.get(i).getBrandDetails();
+                String productIdStr = productid.getId();
+                String catidStr = categoryId.getId();
+                String subcatidStr = subCategoryId.getId();
+                String subcat2idStr = null;
+                String subcat3idStr = null;
+                try{
+                    subcat2idStr = subcategory2.getId();
+                    subcat3idStr = subcategory2.getId();
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                    subcat2idStr = "";
+                    subcat3idStr = "";
+                }
+                String brndDtlStr = gson.toJson(brandDetail);
+                JSONArray jsonArray = new JSONArray(brndDtlStr);
                 JSONObject jsonObject = new JSONObject();
-                jsonObject.put("productId", cartChangeModels.get(i).getProductId());
-                jsonObject.put("brandid", cartChangeModels.get(i).getBrandId());
-                jsonObject.put("modallist", new JSONArray(cartChangeModels.get(i).getJsonArray()));
-                jsonObject.put("amount",Double.parseDouble(cartChangeModels.get(i).getTotalPrice()));
-                jsonObject.put("discount",Double.parseDouble(discountStr));
-                jsonObject.put("netamount",Double.parseDouble(netAmountStr));
-                jsonObject.put("shippingFees",0);
-                jsonObject.put("shippingDiscount",0);
-                jsonArray.put(i, jsonObject);
+                jsonObject.put("productId",productIdStr);
+                jsonObject.put("categoryId",catidStr);
+                jsonObject.put("subCategoryId",subcatidStr);
+                jsonObject.put("subcategory2",null);
+                jsonObject.put("subcategory3",null);
+                jsonObject.put("price",price);
+                jsonObject.put("brandDetails",jsonArray);
+                prodctDtlArr.put(i,jsonObject);
             }
-            parentObject.put("order_list", jsonArray);
+            parentObject.put("amount",priceSum);
+            parentObject.put("netamount",priceSum);
+            parentObject.put("discount",0);
+            parentObject.put("productdetails",prodctDtlArr);
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return jsonArray;
+        return parentObject;
     }
 
-    private void orderPlaced(JSONArray jsonArray) {
+    private void orderPlaced(JSONObject jsonObject) {
         ConstantMethods.showProgressbar(this);
-        CommonNetwork.postNetworkJsonArr(PLACE_ORDER, jsonArray, new JSONResult() {
+        CommonNetwork.postNetworkJsonObj(PLACE_ORDER, jsonObject, new JSONResult() {
             @Override
             public void notifySuccess(@NonNull JSONObject response) {
                 ConstantMethods.dismissProgressBar();
@@ -298,13 +292,10 @@ public class CheckoutActivity extends BaseActivity {
 //                    String message = response.getString("message");
                     if (confirmation.equals("success")) {
                         Toast.makeText(CheckoutActivity.this, "Order Placed Successfully", Toast.LENGTH_SHORT).show();
-                        JSONArray dataArr = response.getJSONArray("data");
-                        JSONArray cartIdArr = new JSONArray();
-                        for(int i=0;i<dataArr.length();i++){
-                            JSONObject cartObj = dataArr.getJSONObject(i);
-                            String cartId = cartObj.getString("_id");
-                            cartIdArr.put(i,cartId);
-                        }
+                        JSONObject resObj = response.getJSONObject("data");
+                        String cartId = resObj.getString("_id");
+//                        JSONArray cartIdArr = new JSONArray();
+//                        cartIdArr.put(0,cartId);
                         JSONObject cartIdObj = new JSONObject();
                         cartIdObj.put("_id",cartIdArray);
                         deleteCart(DELETE_CART+cartIdObj);

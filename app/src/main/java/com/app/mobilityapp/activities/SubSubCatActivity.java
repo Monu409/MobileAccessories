@@ -42,9 +42,6 @@ import static com.app.mobilityapp.app_utils.AppApis.GET_GLASS_CAT_DATA;
 
 public class SubSubCatActivity extends BaseActivity {
     private RecyclerView sscList;
-    List<String> list1 = new ArrayList<>();
-    List<String> list2 = new ArrayList<>();
-    List<String> list3 = new ArrayList<>();
     String id="";
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {

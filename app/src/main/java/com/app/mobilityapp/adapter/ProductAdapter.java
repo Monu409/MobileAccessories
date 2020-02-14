@@ -128,6 +128,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductH
                         } else {   // Toast.makeText(context,"Sorry No Product Found",Toast.LENGTH_LONG).show();
                             Intent intent = new Intent(context, ProductNamePriceActivity.class);
                             intent.putExtra("last_view","sub_cat");
+                            intent.putExtra("layer","one");
+                            intent.putExtra("cat_id",cartModel.getProductsModal().getId());
                             intent.putExtra("cat_name",cartModel.getProductsModal().getName());
                             context.startActivity(intent);
                         }

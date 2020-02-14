@@ -1,6 +1,7 @@
 package com.app.mobilityapp.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,18 +10,23 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.app.mobilityapp.R;
+import com.app.mobilityapp.activities.OrderDetailActivity;
 import com.app.mobilityapp.app_utils.CircleImageView;
+import com.app.mobilityapp.app_utils.ConstantMethods;
+import com.app.mobilityapp.modals.MyOrderModel;
 import com.app.mobilityapp.modals.OrderListModel;
 import com.bumptech.glide.Glide;
+
+import java.io.Serializable;
 import java.util.List;
 
 public class OrderListAdapter extends RecyclerView.Adapter<OrderListAdapter.OrderHolder> {
-    private List<OrderListModel> orderListModels;
+    private List<MyOrderModel.MyOrderChildModel> myOrderChildModels;
     private Context context;
     private LayoutInflater layoutInflater;
 
-    public OrderListAdapter(List<OrderListModel> orderListModels, Context context){
-        this.orderListModels = orderListModels;
+    public OrderListAdapter(List<MyOrderModel.MyOrderChildModel> myOrderChildModels, Context context){
+        this.myOrderChildModels = myOrderChildModels;
         this.context = context;
         layoutInflater = LayoutInflater.from(context);
     }
@@ -33,22 +39,25 @@ public class OrderListAdapter extends RecyclerView.Adapter<OrderListAdapter.Orde
 
     @Override
     public void onBindViewHolder(@NonNull OrderHolder holder, int position) {
-        holder.name.setText(orderListModels.get(position).getBrandName());
-        holder.catNameTxt.setText(orderListModels.get(position).getCatName());
-        holder.dateTxt.setText(orderListModels.get(position).getDateStr());
-        holder.orderIdTxt.setText(orderListModels.get(position).getOrderId());
-        holder.qty.setText("Total items: "+orderListModels.get(position).getQuantity());
-        holder.priceTxt.setText("₹ "+orderListModels.get(position).getTotalPrice());
-        Glide
-                .with(context)
-                .load(orderListModels.get(position).getImgUrl())
-                .centerCrop()
-                .into(holder.itmImg);
+        String orderId = myOrderChildModels.get(position).getOrderId();
+        int amount = myOrderChildModels.get(position).getAmount();
+        String dateTime = myOrderChildModels.get(position).getCreatedAt();
+        String showDate = ConstantMethods.changeDateFormate(dateTime);
+        List<MyOrderModel.Productdetail> productdetail = myOrderChildModels.get(position).getProductdetails();
+        holder.dateTxt.setText(showDate);
+        holder.orderIdTxt.setText("OrderId: "+orderId);
+        holder.priceTxt.setText("₹ "+amount);
+        holder.fullView.setOnClickListener(v->{
+            String orderIdUnSeen = myOrderChildModels.get(position).getId();
+            Intent intent = new Intent(context, OrderDetailActivity.class);
+            intent.putExtra("order_id", orderIdUnSeen);
+            context.startActivity(intent);
+        });
     }
 
     @Override
     public int getItemCount() {
-        return orderListModels.size();
+        return myOrderChildModels.size();
     }
 
     public class OrderHolder extends RecyclerView.ViewHolder {

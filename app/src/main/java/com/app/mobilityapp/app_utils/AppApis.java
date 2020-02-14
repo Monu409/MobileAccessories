@@ -3,7 +3,7 @@ package com.app.mobilityapp.app_utils;
 public interface AppApis {
     //    String BASE_URL = "http://192.168.0.65:3000/api/category";
     String BASE_URL = "http://132.148.158.82:3004/";
-//    String BASE_URL = "http://132.148.158.82:3004/auth/sendotp";
+//    String BASE_URL = "http://132.148.158.82:3004/api/order";
     String SEND_OTP = BASE_URL+"auth/sendotp";
     String USER_LOGIN = BASE_URL+"auth/login";
     String GET_CATEGORY = BASE_URL+"custom/category";
@@ -20,6 +20,7 @@ public interface AppApis {
     String GET_MODELS = BASE_URL+"custom/model";
     String UPLOAD_PROFILE_PIC = BASE_URL+"auth/Upload";
     String PRODUCT_DETAIL = BASE_URL+"custom/product";
+    String PRODUCT_DETAIL_CHANGE = BASE_URL+"token/user/listproduct/product";
     String GET_ALL_PROD_BRAND = BASE_URL+"api/product";
     String ADD_INTO_CART = BASE_URL+"api/cart";
     String PLACE_ORDER = BASE_URL+"api/order";

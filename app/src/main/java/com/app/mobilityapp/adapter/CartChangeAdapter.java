@@ -19,6 +19,7 @@ import com.app.mobilityapp.app_utils.CircleImageView;
 import com.app.mobilityapp.connection.CommonNetwork;
 import com.app.mobilityapp.connection.JSONResult;
 import com.app.mobilityapp.modals.CartChangeModel;
+import com.app.mobilityapp.modals.CartNewModel;
 import com.app.mobilityapp.modals.ProductPriceModel;
 import com.bumptech.glide.Glide;
 
@@ -32,12 +33,12 @@ import java.util.List;
 import static com.app.mobilityapp.app_utils.AppApis.DELETE_CART;
 
 public class CartChangeAdapter extends RecyclerView.Adapter<CartChangeAdapter.CartCHolder> {
-    private List<CartChangeModel> cartChangeModels;
+    private List<CartNewModel.CartChildModel> cartChildModels;
     private Context context;
     private LayoutInflater layoutInflater;
 
-    public CartChangeAdapter(List<CartChangeModel> cartChangeModels, Context context) {
-        this.cartChangeModels = cartChangeModels;
+    public CartChangeAdapter(List<CartNewModel.CartChildModel> cartChildModels, Context context) {
+        this.cartChildModels = cartChildModels;
         this.context = context;
         layoutInflater = LayoutInflater.from(context);
     }
@@ -51,42 +52,27 @@ public class CartChangeAdapter extends RecyclerView.Adapter<CartChangeAdapter.Ca
 
     @Override
     public void onBindViewHolder(@NonNull CartCHolder holder, int position) {
-        String qty = cartChangeModels.get(position).getQuantity();
-        holder.name.setText(cartChangeModels.get(position).getBrandName());
-        holder.qty.setText(qty);
-        holder.catName.setText(cartChangeModels.get(position).getCatName());
-        ArrayList<ProductPriceModel> productPriceModels = (ArrayList<ProductPriceModel>) cartChangeModels.get(position).getProductPriceModels();
-        holder.priceTxt.setText("₹ " + cartChangeModels.get(position).getTotalPrice());
+
+        CartNewModel.Productid productid = cartChildModels.get(position).getProductid();
+        String proName = productid.getName();
+        CartNewModel.CategoryId categoryId = cartChildModels.get(position).getCategoryId();
+        String catName = categoryId.getName();
+        CartNewModel.Image image = cartChildModels.get(position).getCategoryId().getImage();
+        String imgUrl = image.getImageurl();
+        int price = cartChildModels.get(position).getPrice();
+        holder.catName.setText(proName);
+        holder.name.setText(catName);
+        holder.priceTxt.setText("₹ "+price);
         Glide
                 .with(context)
-                .load(cartChangeModels.get(position).getImgUrl())
+                .load(imgUrl)
                 .centerCrop()
                 .into(holder.itmImg);
-
-        holder.editImg.setOnClickListener(v -> {
-            Intent intent = new Intent(context, EnterQuantityActivity.class);
-            intent.putExtra("view_name", "cart_unslctd");
-            intent.putExtra("qty_arr", cartChangeModels.get(position));
-            intent.putExtra("price_list", productPriceModels);
-            context.startActivity(intent);
-        });
-        if(qty.equals("0")) {
-            String cartIDWantToDelete = cartChangeModels.get(position).getCartId();
-            JSONObject jsonObject = new JSONObject();
-            JSONArray jsonArray = new JSONArray();
-            try {
-                jsonArray.put(0, cartIDWantToDelete);
-                jsonObject.put("_id", jsonArray);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            deleteCart(DELETE_CART+jsonObject);
-        }
     }
 
     @Override
     public int getItemCount() {
-        return cartChangeModels.size();
+        return cartChildModels.size();
     }
 
     public class CartCHolder extends RecyclerView.ViewHolder {
@@ -98,10 +84,10 @@ public class CartChangeAdapter extends RecyclerView.Adapter<CartChangeAdapter.Ca
             super(itemView);
             name = itemView.findViewById(R.id.name_txt);
             catName = itemView.findViewById(R.id.cat_name_txt);
-            qty = itemView.findViewById(R.id.qty_txt);
+//            qty = itemView.findViewById(R.id.qty_txt);
             priceTxt = itemView.findViewById(R.id.price_txt);
             itmImg = itemView.findViewById(R.id.brand_img);
-            editImg = itemView.findViewById(R.id.edit_qty);
+//            editImg = itemView.findViewById(R.id.edit_qty);
         }
     }
 

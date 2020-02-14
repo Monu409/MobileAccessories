@@ -115,11 +115,11 @@ public class EnterQuantityActivity extends BaseActivity {
                     jsonObject.put("modallist", jsonArray);
                     String jsonArrayPrif = jsonArray.toString();
                     ConstantMethods.setStringPreference("product_json",jsonArrayPrif,this);
-//                    if (previousViewName.equals("product")) {
-//                        addDataIntoCart(jsonObject, ADD_INTO_CART);
-//                    } else if (previousViewName.equals("cart_unslctd")) {
-//                        updateDataIntoCart(jsonObject, UPDATE_CART + idForUrl);
-//                    }
+                    if (previousViewName.equals("product")) {
+                        addDataIntoCart(jsonObject, ADD_INTO_CART);
+                    } else if (previousViewName.equals("cart_unslctd")) {
+                        updateDataIntoCart(jsonObject, UPDATE_CART + idForUrl);
+                    }
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -142,7 +142,7 @@ public class EnterQuantityActivity extends BaseActivity {
                 try {
                     String confirmation = response.getString("confirmation");
                     if (confirmation.equals("success")) {
-                        Toast.makeText(EnterQuantityActivity.this, "Added into cart_unslctd", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(EnterQuantityActivity.this, "Added into cart", Toast.LENGTH_SHORT).show();
                         onBackPressed();
                     }
                 } catch (JSONException e) {
