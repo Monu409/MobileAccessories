@@ -1,6 +1,16 @@
 package com.app.mobilityapp.activities;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.ActivityNotFoundException;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -9,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -16,11 +27,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 
+import com.androidnetworking.AndroidNetworking;
+import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
+import com.androidnetworking.interfaces.JSONObjectRequestListener;
+import com.androidnetworking.interfaces.UploadProgressListener;
 import com.app.mobilityapp.R;
+import com.app.mobilityapp.adapter.MyAdapter;
 import com.app.mobilityapp.app_utils.BaseActivity;
 import com.app.mobilityapp.app_utils.ConstantMethods;
+import com.app.mobilityapp.app_utils.FileUtils;
 import com.app.mobilityapp.app_utils.MultiSpinner;
 import com.app.mobilityapp.connection.CommonNetwork;
 import com.app.mobilityapp.connection.JSONResult;
@@ -33,16 +51,28 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
+import static com.app.mobilityapp.app_utils.AppApis.BASE_URL;
+import static com.app.mobilityapp.app_utils.AppApis.SEND_MEDIA_TO_CHAT;
+import static com.app.mobilityapp.app_utils.AppApis.SEND_MEDIA_TO_PRODUCT;
 import static com.app.mobilityapp.app_utils.AppApis.UPLOAD_PRODUCT;
 
 public class Add_ProductActivity extends BaseActivity {
     LinearLayout brand_root, price_root;
     JSONObject post_json;
     List<String> colors = new ArrayList<>(Arrays.asList("#FFEB3B", "#616468", "#616468", "#616468", "#616468"));
+    final int PICK_IMAGE_CAMERA = 1;
+    final int PICK_IMAGE_GALLERY = 2;
+    private ArrayList<String> pathlist;
+    private ArrayList<Uri> arrayList;
+    private GridView listView;
+    private JSONArray imageArr = new JSONArray();
 
     @Override
     protected int getLayoutResourceId() {
@@ -56,6 +86,8 @@ public class Add_ProductActivity extends BaseActivity {
         post_json = new JSONObject();
         post_brands = new ArrayList();
         post_prices = new ArrayList();
+        pathlist = new ArrayList<>();
+        arrayList = new ArrayList<>();
         findViewId();
         get_category("http://132.148.158.82:3004/custom/category", new JSONObject(), "category");
         get_category("http://132.148.158.82:3004/custom/brand", new JSONObject(), "brand");
@@ -81,14 +113,18 @@ public class Add_ProductActivity extends BaseActivity {
                     try {
                         putJson(post_json, "brandDetails", new JSONArray(new Gson().toJson(post_brands)));
                         putJson(post_json, "price", new JSONArray(new Gson().toJson(post_prices)));
-                        putJson(post_json, "colour", new JSONArray(new Gson().toJson(post_colors)));
                         putJson(post_json, "name", product_edt.getText().toString());
-                        putJson(post_json, "content", "");
+                        putJson(post_json, "content", contentEdt.getText().toString().trim());
+                        putJson(post_json, "image", imageArr);
+                        putJson(post_json, "colour", new JSONArray());
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                     Log.e("final json ", " to post " + post_json);
                     uploadProduct(post_json);
+                    break;
+                case R.id.add_image:
+                    selectImage();
                     break;
             }
         }
@@ -97,7 +133,8 @@ public class Add_ProductActivity extends BaseActivity {
     Spinner cat_spnr, scat_spnr, scat2_spnr;
     private TextView addview_btn, addprice_btn, continue_btn;
     MultiSpinner color_spnr;
-    EditText product_edt;
+    EditText product_edt,contentEdt;
+    private ImageView addImage;
 
     private void findViewId() {
         product_edt = findViewById(R.id.product_edt);
@@ -110,6 +147,9 @@ public class Add_ProductActivity extends BaseActivity {
         brand_root = findViewById(R.id.brand_root);
         price_root = findViewById(R.id.price_root);
         continue_btn = findViewById(R.id.continue_btn);
+        contentEdt = findViewById(R.id.content_edt);
+        addImage = findViewById(R.id.add_image);
+        listView = findViewById(R.id.gv);
         set_listeners();
     }
 
@@ -117,6 +157,7 @@ public class Add_ProductActivity extends BaseActivity {
         addview_btn.setOnClickListener(onclick);
         addprice_btn.setOnClickListener(onclick);
         continue_btn.setOnClickListener(onclick);
+        addImage.setOnClickListener(onclick);
         cat_spnr.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -409,13 +450,13 @@ public class Add_ProductActivity extends BaseActivity {
                     String confirmation = response.getString("confirmation");
                     if (confirmation.equals("success")) {
                         Toast.makeText(Add_ProductActivity.this, "Product add successfully", Toast.LENGTH_SHORT).show();
+                        onBackPressed();
                     } else {
                         Toast.makeText(Add_ProductActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                Toast.makeText(Add_ProductActivity.this, "", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -424,4 +465,200 @@ public class Add_ProductActivity extends BaseActivity {
             }
         }, this);
     }
+
+
+    private void selectImage() {
+        try {
+            PackageManager pm = getPackageManager();
+            int hasPerm = pm.checkPermission(Manifest.permission.CAMERA, getPackageName());
+            if (hasPerm == PackageManager.PERMISSION_GRANTED) {
+                final CharSequence[] options = {"Take Photo", "Choose From Gallery","Cancel"};
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Select Option");
+                builder.setItems(options, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int item) {
+                        if (options[item].equals("Take Photo")) {
+                            dialog.dismiss();
+                            cameraImage();
+                        } else if (options[item].equals("Choose From Gallery")) {
+                            dialog.dismiss();
+                            showChooser();
+                        } else if (options[item].equals("Cancel")) {
+                            dialog.dismiss();
+                        }
+                    }
+                });
+                builder.show();
+            } else
+                Toast.makeText(this, "Camera Permission error", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(this, "Camera Permission error", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+    }
+    private Uri imageToUploadUri;
+    private void cameraImage() {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy-hh-mm-ss");
+        String format = simpleDateFormat.format(new Date());
+        Intent chooserIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        File f = new File(Environment.getExternalStorageDirectory(), format + "_IMAGE.jpg");
+        chooserIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
+        imageToUploadUri = Uri.fromFile(f);
+        startActivityForResult(chooserIntent, PICK_IMAGE_CAMERA);
+    }
+
+    private void showChooser() {
+        // Use the GET_CONTENT intent from the utility class
+        Intent target = createGetContentIntent();
+        // Create the chooser Intent
+        Intent intent = Intent.createChooser(target, getString(R.string.app_name));
+        try {
+            startActivityForResult(intent, PICK_IMAGE_GALLERY);
+        } catch (ActivityNotFoundException e) {
+            // The reason for the existence of aFileChooser
+        }
+    }
+
+    public static Intent createGetContentIntent() {
+        // Implicitly allow the user to select a particular kind of data
+        final Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        // The MIME data type filter
+        intent.setType("*/*");
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        // Only return URIs that can be opened with ContentResolver
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        return intent;
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_IMAGE_CAMERA && resultCode == Activity.RESULT_OK) {
+            if (imageToUploadUri != null) {
+                Uri selectedImage = imageToUploadUri;
+                final String path = FileUtils.getPath(this, selectedImage);
+                Log.d("Single File Selected", path);
+                pathlist.add(path);
+                arrayList.add(selectedImage);
+                MyAdapter mAdapter = new MyAdapter(this, arrayList);
+                listView.setAdapter(mAdapter);
+            } else {
+                Toast.makeText(this, "Error while capturing Image", Toast.LENGTH_LONG).show();
+            }
+        }
+
+        switch (requestCode) {
+            case PICK_IMAGE_GALLERY:
+                // If the file selection was successful
+                if (resultCode == RESULT_OK) {
+                    if (data.getClipData() != null) {
+                        int count = data.getClipData().getItemCount();
+                        int currentItem = 0;
+                        while (currentItem < count) {
+                            Uri imageUri = data.getClipData().getItemAt(currentItem).getUri();
+                            //do something with the image (save it to some directory or whatever you need to do with it here)
+                            currentItem = currentItem + 1;
+                            Log.d("Uri Selected", imageUri.toString());
+                            try {
+                                // Get the file path from the URI
+                                String path = FileUtils.getPath(this, imageUri);
+
+                                Log.d("Multiple File Selected", path);
+                                pathlist.add(path);
+                                arrayList.add(imageUri);
+                            } catch (Exception e) {
+
+                            }
+                        }
+                        if(arrayList.size()>10){
+                            Toast.makeText(this, "Can't select more then 10 images", Toast.LENGTH_SHORT).show();
+                            arrayList.clear();
+                        }
+                        else {
+                            MyAdapter mAdapter = new MyAdapter(this, arrayList);
+                            listView.setAdapter(mAdapter);
+                        }
+                    } else if (data.getData() != null) {
+                        //do something with the image (save it to some directory or whatever you need to do with it here)
+                        final Uri uri = data.getData();
+                        try {
+                            // Get the file path from the URI
+                            final String path = FileUtils.getPath(this, uri);
+                            Log.d("Single File Selected", path);
+                            pathlist.add(path);
+                            arrayList.add(uri);
+                            MyAdapter mAdapter = new MyAdapter(this, arrayList);
+                            listView.setAdapter(mAdapter);
+
+                        } catch (Exception e) {
+                            Log.e("", "File select error", e);
+                        }
+                    }
+                    getAllImagePaths();
+                }
+                break;
+
+            case PICK_IMAGE_CAMERA:
+                if (resultCode == RESULT_OK) {
+                    try {
+//                        mImageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), Uri.parse(mCurrentPhotoPath));
+//                        mImageView.setImageBitmap(mImageBitmap);
+                        Uri uri = Uri.parse("");
+                        final String path = FileUtils.getPath(this, uri);
+                        Log.d("Single File Selected", path);
+                        pathlist.add(path);
+                        arrayList.add(uri);
+                        MyAdapter mAdapter = new MyAdapter(this, arrayList);
+                        listView.setAdapter(mAdapter);
+                        getAllImagePaths();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+        }
+
+    }
+
+    private void getAllImagePaths(){
+        for(int i=0;i<pathlist.size();i++){
+            File file = new File(pathlist.get(i));
+            uploadMedia(file);
+        }
+    }
+    int mInt = 0;
+    private void uploadMedia(File file) {
+        AndroidNetworking
+                .upload(SEND_MEDIA_TO_PRODUCT)
+                .addMultipartFile("image", file)
+                //.addMultipartFile("baseurl", BASE_URL)
+                .addMultipartParameter("baseurl",BASE_URL)
+                .addMultipartParameter("fileSize", String.valueOf(file.getTotalSpace()))
+                .setTag("uploadTest")
+                .setPriority(Priority.HIGH)
+                .build()
+                .setUploadProgressListener(new UploadProgressListener() {
+                    @Override
+                    public void onProgress(long bytesUploaded, long totalBytes) {
+                        Log.e("progress", "" + bytesUploaded);
+                    }
+                })
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.e("progress", "" + response);
+                        try {
+                            imageArr.put(mInt,response);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        mInt = mInt+1;
+                    }
+
+                    @Override
+                    public void onError(ANError error) {
+                        Log.e("progress", "" + error);
+                    }
+                });
+    }
+
 }
