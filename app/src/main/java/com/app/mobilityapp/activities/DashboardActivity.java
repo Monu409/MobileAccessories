@@ -13,6 +13,7 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -34,12 +35,20 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.view.MenuItemCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.viewpager.widget.ViewPager;
+
+import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.error.ANError;
+import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.app.mobilityapp.adapter.CartChangeAdapter;
 import com.app.mobilityapp.adapter.SliderAdapterExample;
 import com.app.mobilityapp.app_utils.BaseActivity;
@@ -52,9 +61,11 @@ import com.app.mobilityapp.fragments.GlassFragment;
 import com.app.mobilityapp.modals.CartChangeModel;
 import com.app.mobilityapp.modals.ProductsModal;
 import com.app.mobilityapp.R;
+import com.bumptech.glide.Glide;
 import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.smarteist.autoimageslider.IndicatorAnimations;
 import com.smarteist.autoimageslider.SliderAnimations;
@@ -68,24 +79,17 @@ import java.util.List;
 import ss.com.bannerslider.Slider;
 
 import static com.app.mobilityapp.app_utils.AppApis.ADD_INTO_CART;
+import static com.app.mobilityapp.app_utils.AppApis.GET_BANNER;
 import static com.app.mobilityapp.app_utils.AppApis.GET_CATEGORY;
 import static com.app.mobilityapp.app_utils.AppApis.GET_PROFILE;
 import static com.app.mobilityapp.app_utils.AppApis.PROFILE_UPDATE;
 
-public class DashboardActivity extends BaseActivity implements JSONResult {
-//    Slider slider;
-    String img1 = "https://rukminim1.flixcart.com/image/832/832/screen-guard/tempered-glass/c/x/d/kg-mobile-accessories-tg-2-original-imae88hxxn294rhx.jpeg";
-    String img2 = "https://pkkharido.com/wp-content/uploads/2019/08/ma.jpeg";
-    String img3 = "https://infiswap.com/wp-content/uploads/2017/10/SWSA25.jpg";
-    List<String> imgList = new ArrayList<>();
+public class DashboardActivity extends BaseActivity implements JSONResult ,NavigationView.OnNavigationItemSelectedListener{
     private SliderView sliderView;
     public String caseCatId = "";
     public String glassCatId = "";
     public String chargerCatId = "";
     private List<String> catList = new ArrayList<>();
-    Uri fileUri = Uri.parse(img1);
-    Uri fileUri2 = Uri.parse(img2);
-    Uri fileUri3 = Uri.parse(img3);
     private BottomNavigationView navigationView;
     private static final int navigation_add_product = 1;
     private ImageView menuImg,callImg;
@@ -94,6 +98,10 @@ public class DashboardActivity extends BaseActivity implements JSONResult {
     private LinearLayout menuView,sellerView;
     private boolean menuVisible;
     private RelativeLayout headerView;
+    private AppBarConfiguration mAppBarConfiguration;
+    private DrawerLayout drawer;
+    private ImageView profilePic;
+    private TextView nameTxt,emailTxt;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -114,13 +122,6 @@ public class DashboardActivity extends BaseActivity implements JSONResult {
         aboutTxt = findViewById(R.id.about_txt);
         sellerView = findViewById(R.id.seller_view);
         helpSprtTxt = findViewById(R.id.help_sprt_txt);
-        imgList.add(fileUri.toString());
-        imgList.add(fileUri2.toString());
-        imgList.add(fileUri3.toString());
-        sliderView.setSliderAdapter(new SliderAdapterExample(this,imgList));
-        sliderView.startAutoCycle();
-        sliderView.setIndicatorAnimation(IndicatorAnimations.WORM);
-        sliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);
 
         ImageView searchImg = findViewById(R.id.srch_img);
         searchEdt.addTextChangedListener(new TextWatcher() {
@@ -165,16 +166,7 @@ public class DashboardActivity extends BaseActivity implements JSONResult {
             return false;
         });
 
-        menuImg.setOnClickListener(v->{
-            if(menuVisible){
-                menuView.setVisibility(View.GONE);
-                menuVisible = false;
-            }
-            else {
-                menuView.setVisibility(View.VISIBLE);
-                menuVisible = true;
-            }
-        });
+
         sliderView.setOnClickListener(v->{
             menuView.setVisibility(View.GONE);
             menuVisible = false;
@@ -215,6 +207,66 @@ public class DashboardActivity extends BaseActivity implements JSONResult {
         navigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         setCartCount();
 
+        drawer = findViewById(R.id.drawer_layout);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        // Passing each menu ID as a set of Ids because each
+        // menu should be considered as top level destinations.
+        mAppBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow,
+                R.id.nav_tools, R.id.nav_share, R.id.nav_send)
+                .setDrawerLayout(drawer)
+                .build();
+        View hView =  navigationView.getHeaderView(0);
+        profilePic = hView.findViewById(R.id.profile_pic);
+        nameTxt = hView.findViewById(R.id.user_name);
+        emailTxt = hView.findViewById(R.id.user_email);
+
+
+        menuImg.setOnClickListener(v->{
+//            if(menuVisible){
+//                menuView.setVisibility(View.GONE);
+//                menuVisible = false;
+//            }
+//            else {
+//                menuView.setVisibility(View.VISIBLE);
+//                menuVisible = true;
+//            }
+            drawer.openDrawer(Gravity.START);
+        });
+
+        getProfileData();
+        getBannerData();
+
+    }
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+//        drawer.openDrawer(Gravity.RIGHT);
+        int id = item.getItemId();
+        switch (id){
+            case R.id.my_profile:
+                startActivity(new Intent(this, UpdateProfileActivity.class));
+                break;
+            case R.id.my_ledger:
+                startActivity(new Intent(this, CreditSttmntActivity.class));
+                break;
+            case R.id.my_order:
+                startActivity(new Intent(this, OrderListActivity.class));
+                break;
+            case R.id.become_seller:
+                dialogForBecomeSeller();
+                break;
+            case R.id.about_us:
+                startActivity(new Intent(this, AboutUsActivity.class));
+                break;
+            case R.id.hlp_suport:
+                startActivity(new Intent(this, HelpSupportActivity.class));
+                break;
+            case R.id.logout:
+                alertDialogForLogout();
+                break;
+        }
+        return false;
     }
 
     @Override
@@ -227,7 +279,7 @@ public class DashboardActivity extends BaseActivity implements JSONResult {
 
     @Override
     protected int getLayoutResourceId() {
-        return R.layout.activity_dashboard;
+        return R.layout.test_drawer;
     }
     @Override
     public void notifySuccess(JSONObject response) {
@@ -600,5 +652,77 @@ public class DashboardActivity extends BaseActivity implements JSONResult {
         });
 
         alert.show();
+    }
+
+    private void getProfileData() {
+        ConstantMethods.showProgressbar(this);
+        String userId = ConstantMethods.getStringPreference("user_id", this);
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("_id", userId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        CommonNetwork.postNetworkJsonObj(GET_PROFILE, jsonObject, new JSONResult() {
+            @Override
+            public void notifySuccess(@NonNull JSONObject response) {
+                ConstantMethods.dismissProgressBar();
+                try {
+                    JSONArray jsonArray = response.getJSONArray("data");
+                    JSONObject userInfo = jsonArray.getJSONObject(0);
+                    String name = userInfo.getString("displayName");
+                    String email = userInfo.getString("email");
+                    String userPicture = userInfo.getString("userPicture");
+                    nameTxt.setText(name);
+                    emailTxt.setText(email);
+                    Glide
+                            .with(DashboardActivity.this)
+                            .load(userPicture)
+                            .centerCrop()
+                            .into(profilePic);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void notifyError(@NonNull ANError anError) {
+                ConstantMethods.dismissProgressBar();
+            }
+        }, this);
+    }
+
+    public void getBannerData(){
+        List<String> urlList = new ArrayList<>();
+        AndroidNetworking
+                .get(GET_BANNER)
+                .build()
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            String status = response.getString("confirmation");
+                            if(status.equals("success")){
+                                JSONArray jsonArray = response.getJSONArray("data");
+                                for(int i=0;i<jsonArray.length();i++){
+                                    JSONObject childObj = jsonArray.getJSONObject(i);
+                                    String bannerUrl = childObj.getString("imgUrl");
+                                    urlList.add(bannerUrl);
+                                }
+                                sliderView.setSliderAdapter(new SliderAdapterExample(DashboardActivity.this,urlList));
+                                sliderView.startAutoCycle();
+                                sliderView.setIndicatorAnimation(IndicatorAnimations.WORM);
+                                sliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+
+                    }
+                });
     }
 }

@@ -3,10 +3,11 @@ package com.app.mobilityapp.modals;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.List;
 
 
-public class OrderDetailModel {
+public class OrderDetailModel implements Serializable {
 
     @SerializedName("confirmation")
     @Expose
@@ -31,7 +32,7 @@ public class OrderDetailModel {
         this.data = data;
     }
 
-    public class Brand {
+    public class Brand implements Serializable {
 
         @SerializedName("image")
         @Expose
@@ -157,7 +158,7 @@ public class OrderDetailModel {
 
     }
 
-    public class BrandDetail {
+    public class BrandDetail implements Serializable {
 
         @SerializedName("brand")
         @Expose
@@ -196,7 +197,7 @@ public class OrderDetailModel {
     }
 
 
-    public class BrandDetail_ {
+    public class BrandDetail_ implements Serializable{
 
         @SerializedName("brand")
         @Expose
@@ -235,7 +236,7 @@ public class OrderDetailModel {
     }
 
 
-    public class CategoryId {
+    public class CategoryId implements Serializable {
 
         @SerializedName("name")
         @Expose
@@ -262,7 +263,7 @@ public class OrderDetailModel {
 
     }
 
-    public class CreatedBy {
+    public class CreatedBy implements Serializable {
 
         @SerializedName("displayName")
         @Expose
@@ -565,7 +566,7 @@ public class OrderDetailModel {
     }
 
 
-    public class CreatedBy_ {
+    public class CreatedBy_ implements Serializable {
 
         @SerializedName("displayName")
         @Expose
@@ -615,7 +616,7 @@ public class OrderDetailModel {
     }
 
 
-    public class Data {
+    public class Data implements Serializable {
 
         @SerializedName("orderId")
         @Expose
@@ -785,7 +786,7 @@ public class OrderDetailModel {
 
     }
 
-    public class Image {
+    public class Image implements Serializable {
 
         @SerializedName("imgName")
         @Expose
@@ -857,7 +858,7 @@ public class OrderDetailModel {
     }
 
 
-    public class Image_ {
+    public class Image_ implements Serializable {
 
         @SerializedName("imagename")
         @Expose
@@ -885,7 +886,7 @@ public class OrderDetailModel {
     }
 
 
-    public class Image__ {
+    public class Image__  implements Serializable{
 
         @SerializedName("imagename")
         @Expose
@@ -913,7 +914,7 @@ public class OrderDetailModel {
     }
 
 
-    public class Modalid {
+    public class Modalid  implements Serializable{
 
         @SerializedName("image")
         @Expose
@@ -1039,7 +1040,7 @@ public class OrderDetailModel {
 
     }
 
-    public class Modallist {
+    public class Modallist implements Serializable {
 
         @SerializedName("modalid")
         @Expose
@@ -1077,7 +1078,7 @@ public class OrderDetailModel {
 
     }
 
-    public class Price {
+    public class Price implements Serializable {
 
         @SerializedName("from")
         @Expose
@@ -1127,7 +1128,7 @@ public class OrderDetailModel {
     }
 
 
-    public class ProductId {
+    public class ProductId implements Serializable {
 
         @SerializedName("name")
         @Expose
@@ -1320,7 +1321,7 @@ public class OrderDetailModel {
     }
 
 
-    public class Productdetail {
+    public class Productdetail implements Serializable {
 
         @SerializedName("productId")
         @Expose
@@ -1425,7 +1426,7 @@ public class OrderDetailModel {
     }
 
 
-    public class SubCategoryId {
+    public class SubCategoryId implements Serializable {
 
         @SerializedName("name")
         @Expose

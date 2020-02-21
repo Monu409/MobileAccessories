@@ -22,14 +22,17 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
 import com.androidnetworking.AndroidNetworking;
+import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
+import com.androidnetworking.interfaces.UploadProgressListener;
 import com.app.mobilityapp.app_utils.BaseActivity;
 import com.app.mobilityapp.app_utils.CircleImageView;
 import com.app.mobilityapp.app_utils.ConstantMethods;
 import com.app.mobilityapp.connection.CommonNetwork;
 import com.app.mobilityapp.connection.JSONResult;
 import com.app.mobilityapp.R;
+import com.bumptech.glide.Glide;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,6 +51,7 @@ import static com.app.mobilityapp.app_utils.AppApis.BASE_URL;
 import static com.app.mobilityapp.app_utils.AppApis.GET_PROFILE;
 import static com.app.mobilityapp.app_utils.AppApis.PROFILE_UPDATE;
 import static com.app.mobilityapp.app_utils.AppApis.UPLOAD_PROFILE_PIC;
+import static com.app.mobilityapp.app_utils.AppApis.UPLOAD_PROFILE_PICTURE;
 
 public class UpdateProfileActivity extends BaseActivity {
     public static final int PICK_IMAGE_CAMERA = 100;
@@ -55,19 +59,20 @@ public class UpdateProfileActivity extends BaseActivity {
     private CircleImageView profileImg;
     private ImageView camImg;
     private String imgPath;
-    private EditText nameEdt,emailEdt,passwordEdt,dobEdt,phoneEdt,addressEdt,gstEdt;
+    private EditText nameEdt, emailEdt, passwordEdt, dobEdt, phoneEdt, addressEdt, gstEdt;
     private Button updateBtn;
     private File destinationFile;
     private String ADDRESS_MATCHER = "[!#$%&(){|}~:;<=>?@*+,./^_`\\'\\\" \\t\\r\\n\\f-]+";
-    private String GSTINFORMAT_REGEX1 =  "^([0]{1}[1-9]{1}|[1-2]{1}[0-9]{1}|[3]{1}[0-7]{1})([A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}[Z]{1}[0-9A-Z]{1})+$";
+    private String GSTINFORMAT_REGEX1 = "^([0]{1}[1-9]{1}|[1-2]{1}[0-9]{1}|[3]{1}[0-7]{1})([A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}[Z]{1}[0-9A-Z]{1})+$";
     String userType;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ConstantMethods.setTitleAndBack(this,"Profile");
+        ConstantMethods.setTitleAndBack(this, "Profile");
         profileImg = findViewById(R.id.profile_img);
         camImg = findViewById(R.id.cam_img);
-        camImg.setOnClickListener(v->selectImage());
+        camImg.setOnClickListener(v -> selectImage());
         nameEdt = findViewById(R.id.input_fname);
         emailEdt = findViewById(R.id.input_email);
         passwordEdt = findViewById(R.id.input_pass);
@@ -76,28 +81,27 @@ public class UpdateProfileActivity extends BaseActivity {
         updateBtn = findViewById(R.id.update_btn);
         addressEdt = findViewById(R.id.input_address);
         gstEdt = findViewById(R.id.input_gstno);
-        userType = ConstantMethods.getStringPreference("user_type",this);
+        userType = ConstantMethods.getStringPreference("user_type", this);
+        blackColorEditTexts();
 
-        enableOrDisableEditTexts(false);
 //        dobEdt.setOnClickListener(v->{
 //            ConstantMethods.setDate(dobEdt,this);
 //        });
-        updateBtn.setOnClickListener(v->{
-            if(updateBtn.getText().toString().equals("Edit Profile")) {
-                enableOrDisableEditTexts(true);
+        updateBtn.setOnClickListener(v -> {
+            if (updateBtn.getText().toString().equals("Edit Profile")) {
+                grayColorEditTexts();
                 updateBtn.setText("Save Profile");
-            }
-            else {
+            } else {
                 postProfileData();
             }
         });
         getProfileData();
-        String getProfileImg = ConstantMethods.getStringPreference("saved_image_path",this);
-        if(getProfileImg!=null) {
-            Bitmap bitmap = decodeToBase64(getProfileImg);
-            if(!getProfileImg.equals(""))
-                profileImg.setImageBitmap(bitmap);
-        }
+//        String getProfileImg = ConstantMethods.getStringPreference("saved_image_path", this);
+//        if (getProfileImg != null) {
+//            Bitmap bitmap = decodeToBase64(getProfileImg);
+//            if (!getProfileImg.equals(""))
+//                profileImg.setImageBitmap(bitmap);
+//        }
     }
 
     public static Bitmap decodeToBase64(String input) {
@@ -109,37 +113,36 @@ public class UpdateProfileActivity extends BaseActivity {
     protected int getLayoutResourceId() {
         return R.layout.activity_update_profile;
     }
-    
-    private void postProfileData(){
-        String nameStr  = nameEdt.getText().toString().trim();
+
+    private void postProfileData() {
+        String nameStr = nameEdt.getText().toString().trim();
         String emailStr = emailEdt.getText().toString();
         String phoneStr = phoneEdt.getText().toString();
-        String passStr  = passwordEdt.getText().toString();
-        String addressStr   = addressEdt.getText().toString();
-        String gstNoStr   = gstEdt.getText().toString();
-        if(formValidation(nameStr,phoneStr,addressStr,gstNoStr)){
+        String passStr = passwordEdt.getText().toString();
+        String addressStr = addressEdt.getText().toString();
+        String gstNoStr = gstEdt.getText().toString();
+        if (formValidation(nameStr, phoneStr, addressStr, gstNoStr)) {
             ConstantMethods.showProgressbar(this);
-            String id = ConstantMethods.getStringPreference("user_id",this);
+            String id = ConstantMethods.getStringPreference("user_id", this);
             JSONObject jsonObject = new JSONObject();
             try {
-                jsonObject.put("displayName",nameStr);
+                jsonObject.put("displayName", nameStr);
 //                jsonObject.put("dob",dobStr);
-                jsonObject.put("email",emailStr);
-                jsonObject.put("phone",phoneStr);
+                jsonObject.put("email", emailStr);
+                jsonObject.put("phone", phoneStr);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            CommonNetwork.putNetworkJsonObj(PROFILE_UPDATE+"/"+id, jsonObject, new JSONResult() {
+            CommonNetwork.putNetworkJsonObj(PROFILE_UPDATE + "/" + id, jsonObject, new JSONResult() {
                 @Override
                 public void notifySuccess(@NonNull JSONObject response) {
                     ConstantMethods.dismissProgressBar();
                     try {
                         String confirmation = response.getString("confirmation");
-                        if(confirmation.equals("success")){
-//                            updateProfilePic(destinationFile);
+                        if (confirmation.equals("success")) {
+                            blackColorEditTexts();
                             Toast.makeText(UpdateProfileActivity.this, "Update successfully", Toast.LENGTH_SHORT).show();
                             updateBtn.setText("Edit Profile");
-                            enableOrDisableEditTexts(false);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -149,71 +152,35 @@ public class UpdateProfileActivity extends BaseActivity {
                 @Override
                 public void notifyError(@NonNull ANError anError) {
                     ConstantMethods.dismissProgressBar();
-                    Log.e("response",""+anError);
+                    Log.e("response", "" + anError);
                 }
-            },this);
+            }, this);
         }
-
-//        else {
-//            ConstantMethods.showProgressbar(this);
-//            String id = ConstantMethods.getStringPreference("user_id",this);
-//            JSONObject jsonObject = new JSONObject();
-//            try {
-//                jsonObject.put("displayName",nameStr);
-////                jsonObject.put("dob",dobStr);
-//                jsonObject.put("email",emailStr);
-//                jsonObject.put("phone",phoneStr);
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//            CommonNetwork.putNetworkJsonObj(PROFILE_UPDATE+"/"+id, jsonObject, new JSONResult() {
-//                @Override
-//                public void notifySuccess(@NonNull JSONObject response) {
-//                    ConstantMethods.dismissProgressBar();
-//                    try {
-//                        String confirmation = response.getString("confirmation");
-//                        if(confirmation.equals("success")){
-////                            updateProfilePic(destinationFile);
-//                            Toast.makeText(UpdateProfileActivity.this, "Update successfully", Toast.LENGTH_SHORT).show();
-//                            updateBtn.setText("Edit Profile");
-//                            enableOrDisableEditTexts(false);
-//                        }
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//
-//                @Override
-//                public void notifyError(@NonNull ANError anError) {
-//                    ConstantMethods.dismissProgressBar();
-//                    Log.e("response",""+anError);
-//                }
-//            },this);
-//        }
     }
 
-    private void getProfileData(){
+    private void getProfileData() {
         ConstantMethods.showProgressbar(this);
-        String userId = ConstantMethods.getStringPreference("user_id",this);
+        String userId = ConstantMethods.getStringPreference("user_id", this);
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("_id",userId);
+            jsonObject.put("_id", userId);
         } catch (JSONException e) {
             e.printStackTrace();
         }
         CommonNetwork.postNetworkJsonObj(GET_PROFILE, jsonObject, new JSONResult() {
             @Override
             public void notifySuccess(@NonNull JSONObject response) {
-              ConstantMethods.dismissProgressBar();
+                ConstantMethods.dismissProgressBar();
                 try {
                     JSONArray jsonArray = response.getJSONArray("data");
                     JSONObject userInfo = jsonArray.getJSONObject(0);
                     String name = userInfo.getString("displayName");
                     String email = userInfo.getString("email");
                     String phone = userInfo.getString("phone");
+                    String userPicture = userInfo.getString("userPicture");
                     JSONObject addressObj = userInfo.getJSONObject("addressId");
                     String addressStr = addressObj.getString("address");
-                    if(addressStr.equals("null")){
+                    if (addressStr.equals("null")) {
                         addressStr = "No address specified";
                     }
                     String gstNo = userInfo.getString("gstno");
@@ -222,6 +189,11 @@ public class UpdateProfileActivity extends BaseActivity {
                     phoneEdt.setText(phone);
                     addressEdt.setText(addressStr);
                     gstEdt.setText(gstNo);
+                    Glide
+                            .with(UpdateProfileActivity.this)
+                            .load(userPicture)
+                            .centerCrop()
+                            .into(profileImg);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -231,14 +203,15 @@ public class UpdateProfileActivity extends BaseActivity {
             public void notifyError(@NonNull ANError anError) {
                 ConstantMethods.dismissProgressBar();
             }
-        },this);
+        }, this);
     }
+
     private void selectImage() {
         try {
             PackageManager pm = getPackageManager();
             int hasPerm = pm.checkPermission(Manifest.permission.CAMERA, getPackageName());
             if (hasPerm == PackageManager.PERMISSION_GRANTED) {
-                final CharSequence[] options = {"Take Photo", "Choose From Gallery","Cancel"};
+                final CharSequence[] options = {"Take Photo", "Choose From Gallery", "Cancel"};
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("Select Option");
                 builder.setItems(options, new DialogInterface.OnClickListener() {
@@ -295,9 +268,8 @@ public class UpdateProfileActivity extends BaseActivity {
 
                 imgPath = destination.getAbsolutePath();
                 profileImg.setImageBitmap(bitmap);
-                String convertBase64 = encodeToBase64(bitmap);
-                ConstantMethods.setStringPreference("saved_image_path",convertBase64,this);
-
+                File file = new File(imgPath);
+                uploadMedia(file);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -312,9 +284,8 @@ public class UpdateProfileActivity extends BaseActivity {
                 imgPath = getRealPathFromURI(selectedImage);
                 destinationFile = new File(imgPath);
                 profileImg.setImageBitmap(bitmap);
-                String convertBase64 = encodeToBase64(bitmap);
-                ConstantMethods.setStringPreference("saved_image_path",convertBase64,this);
-
+                File file = new File(imgPath);
+                uploadMedia(file);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -330,24 +301,24 @@ public class UpdateProfileActivity extends BaseActivity {
     }
 
 
-    private void updateProfilePic(File file){
-        String userId = ConstantMethods.getStringPreference("user_id",this);
+    private void updateProfilePic(File file) {
+        String userId = ConstantMethods.getStringPreference("user_id", this);
         AndroidNetworking
                 .put(UPLOAD_PROFILE_PIC)
                 .addFileBody(file)
                 .addHeaders("Content-type", "image/jpeg")
-                .addBodyParameter("login_id",userId)
-                .addBodyParameter("baseurl",BASE_URL+"images/profile/")
+                .addBodyParameter("login_id", userId)
+                .addBodyParameter("baseurl", BASE_URL + "images/profile/")
                 .build()
                 .getAsJSONObject(new JSONObjectRequestListener() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.e("response",""+response);
+                        Log.e("response", "" + response);
                     }
 
                     @Override
                     public void onError(ANError anError) {
-                        Log.e("response",""+anError);
+                        Log.e("response", "" + anError);
                     }
                 });
     }
@@ -363,45 +334,134 @@ public class UpdateProfileActivity extends BaseActivity {
         return imageEncoded;
     }
 
-    private void enableOrDisableEditTexts(boolean able){
-        nameEdt.setEnabled(able);
-        phoneEdt.setEnabled(able);
-        emailEdt.setEnabled(able);
-        addressEdt.setEnabled(able);
-        gstEdt.setEnabled(able);
+    private void grayColorEditTexts() {
+        nameEdt.setTextColor(getResources().getColor(R.color.gray_color));
+        phoneEdt.setTextColor(getResources().getColor(R.color.gray_color));
+        emailEdt.setTextColor(getResources().getColor(R.color.gray_color));
+        addressEdt.setTextColor(getResources().getColor(R.color.gray_color));
+        gstEdt.setTextColor(getResources().getColor(R.color.gray_color));
+        nameEdt.setEnabled(true);
+        phoneEdt.setEnabled(true);
+        emailEdt.setEnabled(true);
+        addressEdt.setEnabled(true);
+        gstEdt.setEnabled(true);
     }
-    private boolean formValidation(String nameStr,String phoneStr,String addressStr,String gstNoStr){
+
+    private void blackColorEditTexts() {
+        nameEdt.setTextColor(getResources().getColor(R.color.textcolor));
+        phoneEdt.setTextColor(getResources().getColor(R.color.textcolor));
+        emailEdt.setTextColor(getResources().getColor(R.color.textcolor));
+        addressEdt.setTextColor(getResources().getColor(R.color.textcolor));
+        gstEdt.setTextColor(getResources().getColor(R.color.textcolor));
+        nameEdt.setEnabled(false);
+        phoneEdt.setEnabled(false);
+        emailEdt.setEnabled(false);
+        addressEdt.setEnabled(false);
+        gstEdt.setEnabled(false);
+    }
+
+    private boolean formValidation(String nameStr, String phoneStr, String addressStr, String gstNoStr) {
         boolean valid = false;
-        if(userType.equals("3")){
-            if(nameStr.isEmpty()|| phoneStr.isEmpty()){
-                ConstantMethods.getAlertMessage(this,"Enter name and mobile");
+        if (userType.equals("3")) {
+            if (nameStr.isEmpty() || phoneStr.isEmpty()) {
+                ConstantMethods.getAlertMessage(this, "Enter name and mobile");
                 valid = false;
-            }
-            else if(phoneStr.length()>13||phoneStr.length()<10){
+            } else if (phoneStr.length() > 13 || phoneStr.length() < 10) {
                 Toast.makeText(this, "Enter valid mobile", Toast.LENGTH_SHORT).show();
                 valid = false;
-            }
-            else {
+            } else {
                 valid = true;
             }
-        }
-        else if(userType.equals("4")){
-            if(nameStr.isEmpty()||gstNoStr.isEmpty()||phoneStr.isEmpty()||addressStr.isEmpty()){
-                ConstantMethods.getAlertMessage(this,"Enter name,mobile,address and GST No.");
-            }
-            else if(phoneStr.length()>13||phoneStr.length()<10){
+        } else if (userType.equals("4")) {
+            if (nameStr.isEmpty() || gstNoStr.isEmpty() || phoneStr.isEmpty() || addressStr.isEmpty()) {
+                ConstantMethods.getAlertMessage(this, "Enter name,mobile,address and GST No.");
+            } else if (phoneStr.length() > 13 || phoneStr.length() < 10) {
                 Toast.makeText(this, "Enter valid mobile", Toast.LENGTH_SHORT).show();
                 valid = false;
-            }
-            else if(!gstNoStr.matches(GSTINFORMAT_REGEX1)) {
+            } else if (!gstNoStr.matches(GSTINFORMAT_REGEX1)) {
                 ConstantMethods.getAlertMessage(this, "Enter valid GST No.");
                 valid = false;
-            }
-            else {
+            } else {
                 valid = true;
             }
         }
         return valid;
     }
+
+    private void uploadMedia(File file) {
+        AndroidNetworking
+                .upload(UPLOAD_PROFILE_PICTURE)
+                .addMultipartFile("image", file)
+                //.addMultipartFile("baseurl", BASE_URL)
+                .addMultipartParameter("baseurl", BASE_URL)
+                .addMultipartParameter("fileSize", String.valueOf(file.getTotalSpace()))
+                .setTag("uploadTest")
+                .setPriority(Priority.HIGH)
+                .build()
+                .setUploadProgressListener(new UploadProgressListener() {
+                    @Override
+                    public void onProgress(long bytesUploaded, long totalBytes) {
+                        Log.e("progress", "" + bytesUploaded);
+                    }
+                })
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.e("progress", "" + response);
+                        Toast.makeText(UpdateProfileActivity.this, "Profile image uploaded", Toast.LENGTH_SHORT).show();
+                        try {
+                            String imageUrl = response.getString("imageurl");
+                            postProfilePicture(imageUrl);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+//                        try {
+//                            response.put("senderFor","5dd6714a4b01823cc68a81bc");
+//                            response.put("content","");
+//                            sendMessage(response);
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+
+                    }
+
+                    @Override
+                    public void onError(ANError error) {
+                        Log.e("progress", "" + error);
+                    }
+                });
+    }
+
+
+    private void postProfilePicture(String imageUrl) {
+        String id = ConstantMethods.getStringPreference("user_id", this);
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("userPicture", imageUrl);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        CommonNetwork.putNetworkJsonObj(PROFILE_UPDATE + "/" + id, jsonObject, new JSONResult() {
+            @Override
+            public void notifySuccess(@NonNull JSONObject response) {
+                ConstantMethods.dismissProgressBar();
+                try {
+                    String confirmation = response.getString("confirmation");
+                    if (confirmation.equals("success")) {
+                        Toast.makeText(UpdateProfileActivity.this, "Update successfully", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void notifyError(@NonNull ANError anError) {
+                ConstantMethods.dismissProgressBar();
+                Log.e("response", "" + anError);
+            }
+        }, this);
+    }
+
 
 }

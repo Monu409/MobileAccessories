@@ -52,7 +52,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-
 import static com.app.mobilityapp.app_utils.AppApis.BASE_URL;
 import static com.app.mobilityapp.app_utils.AppApis.GET_CONVERSATION_LIST;
 import static com.app.mobilityapp.app_utils.AppApis.SEND_MEDIA_TO_CHAT;

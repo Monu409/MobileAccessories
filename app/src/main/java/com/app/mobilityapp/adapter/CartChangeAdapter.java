@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.androidnetworking.error.ANError;
 import com.app.mobilityapp.R;
+import com.app.mobilityapp.activities.EditCartActivity;
 import com.app.mobilityapp.activities.EnterQuantityActivity;
 import com.app.mobilityapp.app_utils.CircleImageView;
 import com.app.mobilityapp.connection.CommonNetwork;
@@ -52,12 +54,11 @@ public class CartChangeAdapter extends RecyclerView.Adapter<CartChangeAdapter.Ca
 
     @Override
     public void onBindViewHolder(@NonNull CartCHolder holder, int position) {
-
         CartNewModel.Productid productid = cartChildModels.get(position).getProductid();
         String proName = productid.getName();
         CartNewModel.CategoryId categoryId = cartChildModels.get(position).getCategoryId();
         String catName = categoryId.getName();
-        CartNewModel.Image image = cartChildModels.get(position).getCategoryId().getImage();
+        CartNewModel.Image_ image = cartChildModels.get(position).getCategoryId().getImage();
         String imgUrl = image.getImageurl();
         int price = cartChildModels.get(position).getPrice();
         holder.catName.setText(proName);
@@ -68,6 +69,12 @@ public class CartChangeAdapter extends RecyclerView.Adapter<CartChangeAdapter.Ca
                 .load(imgUrl)
                 .centerCrop()
                 .into(holder.itmImg);
+        String cartId = cartChildModels.get(position).getId();
+        holder.fullView.setOnClickListener(v->{
+            Intent intent = new Intent(context, EditCartActivity.class);
+            intent.putExtra("cart_id",cartId);
+            context.startActivity(intent);
+        });
     }
 
     @Override
@@ -79,15 +86,15 @@ public class CartChangeAdapter extends RecyclerView.Adapter<CartChangeAdapter.Ca
         public TextView name, qty, priceTxt, catName;
         public CircleImageView itmImg;
         public ImageView editImg;
+        RelativeLayout fullView;
 
         public CartCHolder(@NonNull View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.name_txt);
             catName = itemView.findViewById(R.id.cat_name_txt);
-//            qty = itemView.findViewById(R.id.qty_txt);
             priceTxt = itemView.findViewById(R.id.price_txt);
             itmImg = itemView.findViewById(R.id.brand_img);
-//            editImg = itemView.findViewById(R.id.edit_qty);
+            fullView = itemView.findViewById(R.id.full_view);
         }
     }
 

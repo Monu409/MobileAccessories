@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/my_profile"
+            android:icon="@drawable/profile_icon"
+            android:title="My Profile" />
+        <item
+            android:id="@+id/my_ledger"
+            android:icon="@drawable/statement"
+            android:title="My Ledger" />
+        <item
+            android:id="@+id/my_order"
+            android:icon="@drawable/orders_unslctd"
+            android:title="My Order" />
+        <item
+            android:id="@+id/become_seller"
+            android:icon="@drawable/change"
+            android:title="Becomes a Seller" />
+        <item
+            android:id="@+id/about_us"
+            android:icon="@drawable/info"
+            android:title="About Us" />
+        <item
+            android:id="@+id/hlp_suport"
+            android:icon="@drawable/support"
+            android:title="Help &amp; Support" />
+        <item
+            android:id="@+id/logout"
+            android:icon="@drawable/logout"
+            android:title="Logout" />
+    </group>
+
+</menu>

@@ -3,7 +3,7 @@ package com.app.mobilityapp.app_utils;
 public interface AppApis {
     //    String BASE_URL = "http://192.168.0.65:3000/api/category";
     String BASE_URL = "http://132.148.158.82:3004/";
-//    String BASE_URL = "http://132.148.158.82:3004/api/order";
+//    String BASE_URL = "http://132.148.158.82:3004/api/banner";
     String SEND_OTP = BASE_URL+"auth/sendotp";
     String USER_LOGIN = BASE_URL+"auth/login";
     String GET_CATEGORY = BASE_URL+"custom/category";
@@ -38,4 +38,6 @@ public interface AppApis {
     String GET_CONVERSATION_LIST = BASE_URL+"token/getmessage/conversation";
     String SEND_MEDIA_TO_CHAT = BASE_URL+"auth/commonupload/chating";
     String SEND_MEDIA_TO_PRODUCT = BASE_URL+"auth/commonupload/product";
+    String UPLOAD_PROFILE_PICTURE = BASE_URL+"auth/commonupload/profile";
+    String GET_BANNER = BASE_URL+"api/banner";
 }
