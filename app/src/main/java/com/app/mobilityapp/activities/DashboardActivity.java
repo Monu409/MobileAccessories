@@ -34,6 +34,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.app.ActivityCompat;
+import androidx.core.view.GravityCompat;
 import androidx.core.view.MenuItemCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -235,7 +236,7 @@ public class DashboardActivity extends BaseActivity implements JSONResult ,Navig
             drawer.openDrawer(Gravity.START);
         });
 
-        getProfileData();
+
         getBannerData();
 
     }
@@ -357,6 +358,7 @@ public class DashboardActivity extends BaseActivity implements JSONResult ,Navig
         super.onResume();
         invalidateOptionsMenu();
         setCartCount();
+        getProfileData();
     }
     TextView textCartItemCount;
     @Override
@@ -474,8 +476,13 @@ public class DashboardActivity extends BaseActivity implements JSONResult ,Navig
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        finishAffinity();
+        if(drawer.isDrawerOpen(GravityCompat.START)) {
+           drawer.closeDrawers();
+        }
+        else {
+            super.onBackPressed();
+            finishAffinity();
+        }
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener

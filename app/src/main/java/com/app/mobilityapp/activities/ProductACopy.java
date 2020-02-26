@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -32,6 +34,8 @@ import com.app.mobilityapp.modals.ProBrndModal;
 import com.app.mobilityapp.modals.ProModlModel;
 import com.app.mobilityapp.modals.ProductPriceModel;
 import com.app.mobilityapp.modals.QuantityModel;
+import com.google.android.material.bottomnavigation.BottomNavigationItemView;
+import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.Gson;
 import com.smarteist.autoimageslider.IndicatorAnimations;
@@ -95,12 +99,7 @@ public class ProductACopy extends BaseActivity {
         GridLayoutManager glm1 = new GridLayoutManager(ProductACopy.this, 2);
         prod_model.setLayoutManager(glm1);
         rec_price.setLayoutManager(new GridLayoutManager(this,3));
-        onclickInterface = new onClickInterface() {
-            @Override
-            public void setClick(int abc) {
-                Toast.makeText(ProductACopy.this, "Position is" + abc, Toast.LENGTH_LONG).show();
-            }
-        };
+        onclickInterface = abc -> Toast.makeText(ProductACopy.this, "Position is" + abc, Toast.LENGTH_LONG).show();
         productId = getIntent().getStringExtra("brand_id");
 
         addToCartBtn.setOnClickListener(v->{
@@ -109,6 +108,7 @@ public class ProductACopy extends BaseActivity {
             addDataIntoCart(jsonObject,ADD_INTO_CART);
         });
         Log.e("prod_brand_id", productId);
+        setCartCount();
 //        setCartCount();
 
 
@@ -383,4 +383,41 @@ public class ProductACopy extends BaseActivity {
         quantityModels.clear();
         ConstantMethods.saveQtyListShared(quantityModels,this,"local_qty_models");
     }
+
+    private void setCartCount() {
+        CommonNetwork.getNetworkJsonObj(ADD_INTO_CART, new JSONResult() {
+            @Override
+            public void notifySuccess(@NonNull JSONObject response) {
+                try {
+                    JSONArray jsonArray = response.getJSONArray("data");
+                    int size = jsonArray.length();
+                    String cartSize = String.valueOf(size);
+                    if(cartSize.equals("")){
+                        cartSize = "0";
+                    }
+                    addBadgeView(cartSize);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void notifyError(@NonNull ANError anError) {
+            }
+        },this);
+    }
+
+    private void addBadgeView(String count) {
+        try {
+            BottomNavigationMenuView menuView = (BottomNavigationMenuView) navigationView.getChildAt(0);
+            BottomNavigationItemView itemView = (BottomNavigationItemView) menuView.getChildAt(1);
+            View notificationBadge = LayoutInflater.from(this).inflate(R.layout.notification_badge, menuView, false);
+            TextView textView = notificationBadge.findViewById(R.id.count_txt);
+            textView.setText(count);
+            itemView.addView(notificationBadge);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

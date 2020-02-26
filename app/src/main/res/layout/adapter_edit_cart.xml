@@ -45,9 +45,8 @@
                     android:textStyle="bold"
                     android:textSize="17sp"
                     android:layout_toRightOf="@+id/brand_img"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="5dp"
                     android:layout_marginLeft="10dp"
-                    android:layout_centerVertical="true"
                     />
 <!--                <TextView-->
 <!--                    android:id="@+id/name_txt"-->
@@ -68,9 +67,10 @@
                     android:textStyle="bold"
                     android:gravity="center"
                     android:textSize="17sp"
-                    android:layout_toLeftOf="@+id/edit_qty"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="15dp"
+                    android:layout_toRightOf="@+id/brand_img"
+                    android:layout_marginTop="5dp"
+                    android:layout_below="@+id/cat_name_txt"
+                    android:layout_marginLeft="10dp"
                     />
 
                 <ImageView
@@ -78,9 +78,18 @@
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/delete_itm"
+                    android:layout_marginRight="20dp"
+                    android:src="@drawable/edit_qntity"/>
+
+                <ImageView
+                    android:id="@+id/delete_itm"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_centerVertical="true"
                     android:layout_alignParentRight="true"
                     android:layout_marginRight="10dp"
-                    android:src="@drawable/edit_qntity"/>
+                    android:src="@drawable/delete2"/>
 
             </RelativeLayout>
         </androidx.cardview.widget.CardView>

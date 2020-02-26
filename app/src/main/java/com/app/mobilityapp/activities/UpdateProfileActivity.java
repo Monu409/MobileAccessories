@@ -38,11 +38,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -244,7 +246,6 @@ public class UpdateProfileActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_IMAGE_CAMERA) {
             try {
-                Uri selectedImage = data.getData();
                 Bitmap bitmap = (Bitmap) data.getExtras().get("data");
                 ByteArrayOutputStream bytes = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 50, bytes);
@@ -252,8 +253,13 @@ public class UpdateProfileActivity extends BaseActivity {
                 Log.e("Activity", "Pick from Camera::>>> ");
 
                 String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
-                File destination = new File(Environment.getExternalStorageDirectory() + "/" +
-                        getString(R.string.app_name), "IMG_" + timeStamp + ".jpg");
+                String filePath = Environment.getExternalStorageDirectory() + "/" +
+                        getString(R.string.app_name);
+                File destination = new File(filePath, "IMG_" + timeStamp + ".jpg");
+                File dir = new File(filePath);
+                if (!dir.exists()) {
+                    dir.mkdirs();
+                }
                 FileOutputStream fo;
                 try {
                     destination.createNewFile();
@@ -266,10 +272,15 @@ public class UpdateProfileActivity extends BaseActivity {
                     e.printStackTrace();
                 }
 
-                imgPath = destination.getAbsolutePath();
+                String imgPath = destination.getAbsolutePath();
+
                 profileImg.setImageBitmap(bitmap);
                 File file = new File(imgPath);
                 uploadMedia(file);
+
+//                profileImg.setImageBitmap(bmp);
+//                File file = new File(imgPath);
+//                uploadMedia(file);
             } catch (Exception e) {
                 e.printStackTrace();
             }

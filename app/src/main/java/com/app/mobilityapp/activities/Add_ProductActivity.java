@@ -603,7 +603,7 @@ public class Add_ProductActivity extends BaseActivity {
                     try {
 //                        mImageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), Uri.parse(mCurrentPhotoPath));
 //                        mImageView.setImageBitmap(mImageBitmap);
-                        Uri uri = Uri.parse("");
+                        Uri uri = data.getData();
                         final String path = FileUtils.getPath(this, uri);
                         Log.d("Single File Selected", path);
                         pathlist.add(path);

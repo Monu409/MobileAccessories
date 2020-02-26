@@ -25,17 +25,33 @@
 
 
     <color name="textcolornew">#FFFFFF</color>
+    <color name="white">#FFFFFF</color>
     <color name="colorPrimaryDark">#F2E735</color>
     <color name="colorAccent">#D81B60</color>
 
     <color name="colorPrimary1">#616468</color>
     <color name="colorPrimaryDark1">#F2E735</color>
-    <color name="colorAccent1">#D81B60</color>
+    <color name="colorAccent1">#AC101D</color>
     <color name="textcolor1">#9C9552</color>
     <color name="colorPrimary2">#F35454</color>
     <color name="colorPrimaryDark2">#F2E735</color>
     <color name="colorAccent2">#D81B60</color>
     <color name="colorPrimaryBlue">#FF4175C0</color>
+    <color name="bottom_lay_color">#0D63E2</color>
+
+
+
+
+
+
+    <color name="bottom_lay_color12">#4B76B8</color>
+    <color name="bottom_lay_color1">#CA4A41</color>
+
+
+
+
+
+
     <color name="colorPrimaryDarkBlue">#F2E735</color>
     <color name="colorAccentBlue">#D81B60</color>
     <color name="grey">#545454</color>

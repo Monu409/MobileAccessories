@@ -42,8 +42,8 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="My Products"
-            android:textColor="@color/textcolor"
-            android:background="@color/colorPrimary"
+            android:textColor="@color/textcolornew"
+            android:background="@color/bottom_lay_color1"
             android:gravity="center"
             android:textStyle="bold"
             android:layout_marginRight="4dp" />
@@ -52,8 +52,8 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="Order Received"
-            android:textColor="@color/textcolor"
-            android:background="@color/colorPrimary"
+            android:textColor="@color/textcolornew"
+            android:background="@color/bottom_lay_color1"
             android:gravity="center"
             android:textStyle="bold"
             android:layout_marginRight="4dp"/>
@@ -62,8 +62,8 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="Seller Ledger"
-            android:textColor="@color/textcolor"
-            android:background="@color/colorPrimary"
+            android:textColor="@color/textcolornew"
+            android:background="@color/bottom_lay_color1"
             android:gravity="center"
             android:textStyle="bold"/>
 

@@ -157,8 +157,8 @@
                         android:id="@+id/update_btn"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/button_height"
-                        android:textColor="@color/textcolor"
-                        android:background="@color/colorPrimary"
+                        android:textColor="@color/white"
+                        android:background="@color/bottom_lay_color1"
                         android:textAllCaps="false"
                         android:text="Edit Profile"/>
 

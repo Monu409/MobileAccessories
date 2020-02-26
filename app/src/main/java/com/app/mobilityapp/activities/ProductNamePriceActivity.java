@@ -213,74 +213,79 @@ public class ProductNamePriceActivity extends BaseActivity {
                     String confirmation = response.getString("confirmation");
                     if (confirmation.equals("success")) {
                         JSONArray jsonArray = response.getJSONArray("data");
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            JSONObject jsonObject = jsonArray.getJSONObject(i);
-                            String name = jsonObject.getString("name");
-                            String content = jsonObject.getString("content");
-                            String brandId = jsonObject.getString("_id");
-                            JSONArray priceArr = jsonObject.getJSONArray("price");
-                            JSONObject priceObjFirst = priceArr.getJSONObject(0);
-                            JSONObject priceObjLast = priceArr.getJSONObject(priceArr.length() - 1);
-                            String maxPrice = priceObjFirst.getString("amount");
-                            String minPrice = priceObjLast.getString("amount");
-                            String fPrice = minPrice + "-" + maxPrice;
-                            String moqStr = "";
-                            JSONObject subcategory3 = null;
-                            try {
-                                subcategory3 = jsonObject.getJSONObject("subcategory3");
-                                moqStr = subcategory3.getString("moq");
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-
-                            JSONObject subcategory2 = null;
-                            try {
-                                subcategory2 = jsonObject.getJSONObject("subcategory2");
-                                moqStr = subcategory2.getString("moq");
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-
-                            JSONObject subCategoryId = null;
-                            try {
-                                subCategoryId = jsonObject.getJSONObject("subCategoryId");
-                                moqStr = subCategoryId.getString("moq");
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-
-                            JSONArray imgArr = null;
-                            try {
-                                imgArr = jsonObject.getJSONArray("image");
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-
-                            ProBrndModal proBrndModal = new ProBrndModal();
-                            proBrndModal.setName(name);
-                            proBrndModal.setContent(String.valueOf(Html.fromHtml(content)));
-                            proBrndModal.setId(brandId);
-                            proBrndModal.setPriceRange("₹ " + fPrice);
-                            proBrndModal.setMoqStr(moqStr);
-                            proBrndModal.setImgArr(imgArr);
-                            proBrndModals.add(proBrndModal);
+                        if(jsonArray.length()==0){
+                            Toast.makeText(ProductNamePriceActivity.this, "No Data Found", Toast.LENGTH_SHORT).show();
                         }
-                        ProductNamePriceAdapter productBrandAdapter = new ProductNamePriceAdapter(proBrndModals, ProductNamePriceActivity.this);
-                        brandList.setAdapter(productBrandAdapter);
-                        productBrandAdapter.onListClick(proBrndModal -> {
-                            Log.e("position", "" + proBrndModal);
-                            Intent intent = new Intent(ProductNamePriceActivity.this, ProductACopy.class);
-//                            Intent intent = new Intent(ProductNamePriceActivity.this, ProductActivity.class);
-                            Log.e("brand_name", proBrndModal.getName());
-                            Log.e("brand_des", proBrndModal.getContent());
+                        else {
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                String name = jsonObject.getString("name");
+                                String content = jsonObject.getString("content");
+                                String brandId = jsonObject.getString("_id");
+                                JSONArray priceArr = jsonObject.getJSONArray("price");
+                                JSONObject priceObjFirst = priceArr.getJSONObject(0);
+                                JSONObject priceObjLast = priceArr.getJSONObject(priceArr.length() - 1);
+                                String maxPrice = priceObjFirst.getString("amount");
+                                String minPrice = priceObjLast.getString("amount");
+                                String fPrice = minPrice + "-" + maxPrice;
+                                String moqStr = "";
+                                JSONObject subcategory3 = null;
+                                try {
+                                    subcategory3 = jsonObject.getJSONObject("subcategory3");
+                                    moqStr = subcategory3.getString("moq");
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
 
-                            intent.putExtra("brand_id", proBrndModal.getId());
-                            intent.putExtra("brand_name", proBrndModal.getName());
-                            intent.putExtra("brand_des", proBrndModal.getContent());
-                            intent.putExtra("brand_img", proBrndModal.getImgUrl());
-                            intent.putExtra("img_array", proBrndModal.getImgArr().toString());
-                            ProductNamePriceActivity.this.startActivity(intent);
-                        });
+                                JSONObject subcategory2 = null;
+                                try {
+                                    subcategory2 = jsonObject.getJSONObject("subcategory2");
+                                    moqStr = subcategory2.getString("moq");
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+
+                                JSONObject subCategoryId = null;
+                                try {
+                                    subCategoryId = jsonObject.getJSONObject("subCategoryId");
+                                    moqStr = subCategoryId.getString("moq");
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+
+                                JSONArray imgArr = null;
+                                try {
+                                    imgArr = jsonObject.getJSONArray("image");
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+
+                                ProBrndModal proBrndModal = new ProBrndModal();
+                                proBrndModal.setName(name);
+                                proBrndModal.setContent(String.valueOf(Html.fromHtml(content)));
+                                proBrndModal.setId(brandId);
+                                proBrndModal.setPriceRange("₹ " + fPrice);
+                                proBrndModal.setMoqStr(moqStr);
+                                proBrndModal.setImgArr(imgArr);
+                                proBrndModals.add(proBrndModal);
+                            }
+                            ProductNamePriceAdapter productBrandAdapter = new ProductNamePriceAdapter(proBrndModals, ProductNamePriceActivity.this);
+                            brandList.setAdapter(productBrandAdapter);
+                            productBrandAdapter.onListClick(proBrndModal -> {
+                                Log.e("position", "" + proBrndModal);
+                                Intent intent = new Intent(ProductNamePriceActivity.this, ProductACopy.class);
+//                            Intent intent = new Intent(ProductNamePriceActivity.this, ProductActivity.class);
+                                Log.e("brand_name", proBrndModal.getName());
+                                Log.e("brand_des", proBrndModal.getContent());
+
+                                intent.putExtra("brand_id", proBrndModal.getId());
+                                intent.putExtra("brand_name", proBrndModal.getName());
+                                intent.putExtra("brand_des", proBrndModal.getContent());
+                                intent.putExtra("brand_img", proBrndModal.getImgUrl());
+                                intent.putExtra("img_array", proBrndModal.getImgArr().toString());
+                                ProductNamePriceActivity.this.startActivity(intent);
+                            });
+                        }
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

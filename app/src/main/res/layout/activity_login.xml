@@ -53,8 +53,8 @@
                 android:id="@+id/login_btn"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/button_height"
-                android:textColor="@color/textcolor"
-                android:background="@color/colorPrimary"
+                android:textColor="@color/white"
+                android:background="@color/bottom_lay_color"
                 android:text="Login"/>
 
         </LinearLayout>
@@ -67,7 +67,7 @@
         android:layout_height="wrap_content"
         android:text="Forgot Password"
         android:textStyle="bold"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/bottom_lay_color"
         android:layout_below="@+id/login_view"
         android:layout_alignParentRight="true"
         android:layout_marginRight="10dp"

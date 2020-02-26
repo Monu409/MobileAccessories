@@ -45,10 +45,12 @@ public class MultiViewTypeAdapter extends RecyclerView.Adapter {
     }
 
     public static class ChatHolderImage extends RecyclerView.ViewHolder {
-        ImageView chatImg;
+        ImageView chatImg, incomingImg;
+
         public ChatHolderImage(@NonNull View itemView) {
             super(itemView);
             chatImg = itemView.findViewById(R.id.img_chat);
+            incomingImg = itemView.findViewById(R.id.img_chat_in);
         }
     }
 
@@ -83,10 +85,9 @@ public class MultiViewTypeAdapter extends RecyclerView.Adapter {
         if (TextUtils.isEmpty(imgUrl)) {
             imgUrl = "";
         }
-        if(!imgUrl.isEmpty()){
+        if (!imgUrl.isEmpty()) {
             returnValue = 1;
-        }
-        else {
+        } else {
             returnValue = 2;
         }
         return returnValue;
@@ -94,31 +95,52 @@ public class MultiViewTypeAdapter extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int listPosition) {
-
         ConversationChildModel conversationChildModel = chatModels.get(listPosition);
-        String imgUrl = conversationChildModel.getImageurl();
-        if (TextUtils.isEmpty(imgUrl)) {
-            imgUrl = "";
-        }
-        if (!imgUrl.isEmpty()){
-            ChatHolderImage chatHolderImage = (ChatHolderImage)holder;
-            Glide
-                    .with(context)
-                    .load(chatModels.get(listPosition).getImageurl())
-                    .centerCrop()
-                    .into(chatHolderImage.chatImg);
-            chatHolderImage.chatImg.setOnClickListener(v->{
-                Intent intent = new Intent(context, FullImageActivity.class);
-                intent.putExtra("image_url",chatModels.get(listPosition).getImageurl());
-                context.startActivity(intent);
-            });
-        }
-        else {
-            ChatHolder chatHolder = (ChatHolder)holder;
-            if (mySendId.equals(chatModels.get(listPosition).getSenderBy())) {
+        if (mySendId.equals(chatModels.get(listPosition).getSenderBy())) {       //here is the outgoing messages
+            String imgUrl = conversationChildModel.getImageurl();
+            if (TextUtils.isEmpty(imgUrl)) {
+                imgUrl = "";
+            }
+            if (!imgUrl.isEmpty()) {
+                ChatHolderImage chatHolderImage = (ChatHolderImage) holder;
+                Glide
+                        .with(context)
+                        .load(chatModels.get(listPosition).getImageurl())
+                        .centerCrop()
+                        .into(chatHolderImage.chatImg);
+                ((ChatHolderImage) holder).incomingImg.setVisibility(View.GONE);
+                chatHolderImage.chatImg.setOnClickListener(v -> {
+                    Intent intent = new Intent(context, FullImageActivity.class);
+                    intent.putExtra("image_url", chatModels.get(listPosition).getImageurl());
+                    context.startActivity(intent);
+                });
+            }
+            else{
+                ChatHolder chatHolder = (ChatHolder)holder;
                 chatHolder.sentTxt.setText(chatModels.get(listPosition).getContent());
                 chatHolder.incomngTxt.setVisibility(View.GONE);
-            } else {
+            }
+        } else {
+            String imgUrl = conversationChildModel.getImageurl();
+            if (TextUtils.isEmpty(imgUrl)) {
+                imgUrl = "";
+            }
+            if (!imgUrl.isEmpty()) {
+                ChatHolderImage chatHolderImage = (ChatHolderImage) holder;
+                Glide
+                        .with(context)
+                        .load(chatModels.get(listPosition).getImageurl())
+                        .centerCrop()
+                        .into(chatHolderImage.incomingImg);
+                ((ChatHolderImage) holder).chatImg.setVisibility(View.GONE);
+                chatHolderImage.incomingImg.setOnClickListener(v -> {
+                    Intent intent = new Intent(context, FullImageActivity.class);
+                    intent.putExtra("image_url", chatModels.get(listPosition).getImageurl());
+                    context.startActivity(intent);
+                });
+            }
+            else{
+                ChatHolder chatHolder = (ChatHolder)holder;
                 chatHolder.incomngTxt.setText(chatModels.get(listPosition).getContent());
                 chatHolder.sentTxt.setVisibility(View.GONE);
             }

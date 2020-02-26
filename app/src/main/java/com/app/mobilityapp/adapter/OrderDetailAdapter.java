@@ -46,6 +46,7 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
         holder.fullView.setOnClickListener(v->{
             Intent intent = new Intent(context, SubOrderActivity.class);
             intent.putExtra("data",brandDetail1.get(position));
+            intent.putExtra("data2",productdetails.get(position));
             context.startActivity(intent);
         });
 

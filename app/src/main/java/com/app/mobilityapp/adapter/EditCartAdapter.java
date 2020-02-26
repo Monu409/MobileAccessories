@@ -1,20 +1,24 @@
 package com.app.mobilityapp.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.app.mobilityapp.R;
+import com.app.mobilityapp.activities.EditEnterQuantityActivity;
 import com.app.mobilityapp.app_utils.CircleImageView;
 import com.app.mobilityapp.modals.EditCartModel;
 import com.bumptech.glide.Glide;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -22,10 +26,12 @@ public class EditCartAdapter extends RecyclerView.Adapter<EditCartAdapter.ECHold
     private Context context;
     private EditCartModel editCartModel;
     private LayoutInflater layoutInflater;
+    String cartId;
 
-    public EditCartAdapter(Context context, EditCartModel editCartModel){
+    public EditCartAdapter(Context context, EditCartModel editCartModel,String cartId){
         this.context = context;
         this.editCartModel = editCartModel;
+        this.cartId = cartId;
         layoutInflater = LayoutInflater.from(context);
     }
     @NonNull
@@ -54,6 +60,17 @@ public class EditCartAdapter extends RecyclerView.Adapter<EditCartAdapter.ECHold
                 .placeholder(R.drawable.test)
                 .centerCrop()
                 .into(holder.circleImageView);
+        holder.fullView.setOnClickListener(v->{
+            EditCartModel.Brand brand = brandDetail.get(position).getBrand();
+            List<EditCartModel.Price> prices = editCartModel.getData().getProductid().getPrice();
+            Intent intent = new Intent(context, EditEnterQuantityActivity.class);
+            intent.putExtra("modal_lists",(ArrayList)modallists);
+            intent.putExtra("brandDetail_id",brandDetail.get(position).getId());
+            intent.putExtra("brand_id",brand.getId());
+            intent.putExtra("price_list",(ArrayList)prices);
+            intent.putExtra("cart_id",cartId);
+            context.startActivity(intent);
+        });
     }
 
     @Override
@@ -66,6 +83,7 @@ public class EditCartAdapter extends RecyclerView.Adapter<EditCartAdapter.ECHold
         TextView catName,productName,quantity;
         ImageView editCart;
         CircleImageView circleImageView;
+        RelativeLayout fullView;
         public ECHolder(@NonNull View itemView) {
             super(itemView);
             catName = itemView.findViewById(R.id.cat_name_txt);
@@ -73,6 +91,7 @@ public class EditCartAdapter extends RecyclerView.Adapter<EditCartAdapter.ECHold
             quantity = itemView.findViewById(R.id.qty_txt);
             editCart = itemView.findViewById(R.id.edit_qty);
             circleImageView = itemView.findViewById(R.id.brand_img);
+            fullView = itemView.findViewById(R.id.full_view);
         }
     }
 }

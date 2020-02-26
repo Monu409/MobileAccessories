@@ -30,7 +30,6 @@ public class EnterQuantityACopy extends BaseActivity {
     private String productIdforJson, brandId;
     private ProductModelListAdapter1 productModelAdapter;
     private ArrayList<ProModlModel> proModlModels;
-    private String idForUrl;
     private List<ProductPriceModel> productPriceModels;
     int mQty = 0;
     int position;
@@ -103,15 +102,7 @@ public class EnterQuantityACopy extends BaseActivity {
                     }
                     localQuantityModels1.add(position,conversationModel);
                     ConstantMethods.saveQtyListShared(localQuantityModels1,this,"local_qty_models");
-//                    String jsonArrayPrif = jsonObject.toString();
-//                    ConstantMethods.setStringPreference("product_json",jsonArrayPrif,this);
                     onBackPressed();
-//                    if (previousViewName.equals("product")) {
-//                        addDataIntoCart(jsonObject, ADD_INTO_CART);
-//                    } else if (previousViewName.equals("cart_unslctd")) {
-//                        updateDataIntoCart(jsonObject, UPDATE_CART + idForUrl);
-//                    }
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

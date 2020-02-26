@@ -2,7 +2,6 @@ package com.app.mobilityapp.activities;
 
 import android.os.Bundle;
 import android.widget.TextView;
-
 import com.app.mobilityapp.R;
 import com.app.mobilityapp.app_utils.BaseActivity;
 import com.app.mobilityapp.app_utils.CircleImageView;

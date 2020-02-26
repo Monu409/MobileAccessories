@@ -40,4 +40,5 @@ public interface AppApis {
     String SEND_MEDIA_TO_PRODUCT = BASE_URL+"auth/commonupload/product";
     String UPLOAD_PROFILE_PICTURE = BASE_URL+"auth/commonupload/profile";
     String GET_BANNER = BASE_URL+"api/banner";
+    String EDIT_CART = BASE_URL+"token/cardbrand/cart";
 }
