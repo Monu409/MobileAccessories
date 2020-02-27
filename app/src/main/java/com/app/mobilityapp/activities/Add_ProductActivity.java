@@ -110,18 +110,24 @@ public class Add_ProductActivity extends BaseActivity {
                     }
                     break;
                 case R.id.continue_btn:
-                    try {
-                        putJson(post_json, "brandDetails", new JSONArray(new Gson().toJson(post_brands)));
-                        putJson(post_json, "price", new JSONArray(new Gson().toJson(post_prices)));
-                        putJson(post_json, "name", product_edt.getText().toString());
-                        putJson(post_json, "content", contentEdt.getText().toString().trim());
-                        putJson(post_json, "image", imageArr);
-                        putJson(post_json, "colour", new JSONArray());
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                    String productName = product_edt.getText().toString();
+                    if(productName.isEmpty()){
+                        Toast.makeText(Add_ProductActivity.this, "Enter product name", Toast.LENGTH_SHORT).show();
                     }
-                    Log.e("final json ", " to post " + post_json);
-                    uploadProduct(post_json);
+                    else {
+                        try {
+                            putJson(post_json, "brandDetails", new JSONArray(new Gson().toJson(post_brands)));
+                            putJson(post_json, "price", new JSONArray(new Gson().toJson(post_prices)));
+                            putJson(post_json, "name", product_edt.getText().toString());
+                            putJson(post_json, "content", contentEdt.getText().toString().trim());
+                            putJson(post_json, "image", imageArr);
+                            putJson(post_json, "colour", new JSONArray());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        Log.e("final json ", " to post " + post_json);
+                        uploadProduct(post_json);
+                    }
                     break;
                 case R.id.add_image:
                     selectImage();
@@ -131,10 +137,9 @@ public class Add_ProductActivity extends BaseActivity {
     };
 
     Spinner cat_spnr, scat_spnr, scat2_spnr;
-    private TextView addview_btn, addprice_btn, continue_btn;
+    private TextView addview_btn, addprice_btn, continue_btn,addImage;
     MultiSpinner color_spnr;
     EditText product_edt,contentEdt;
-    private ImageView addImage;
 
     private void findViewId() {
         product_edt = findViewById(R.id.product_edt);

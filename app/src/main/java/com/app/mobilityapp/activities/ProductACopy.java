@@ -90,14 +90,14 @@ public class ProductACopy extends BaseActivity {
         addToCartBtn = findViewById(R.id.add_to_cart);
 
         prod_brand = findViewById(R.id.prod_brand);
-        prod_model = findViewById(R.id.prod_model);
+//        prod_model = findViewById(R.id.prod_model);
         rec_price = findViewById(R.id.rec_price);
         navigationView = findViewById(R.id.navigation);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ProductACopy.this);
         prod_brand.setLayoutManager(linearLayoutManager);
-        GridLayoutManager glm1 = new GridLayoutManager(ProductACopy.this, 2);
-        prod_model.setLayoutManager(glm1);
+//        GridLayoutManager glm1 = new GridLayoutManager(ProductACopy.this, 2);
+//        prod_model.setLayoutManager(glm1);
         rec_price.setLayoutManager(new GridLayoutManager(this,3));
         onclickInterface = abc -> Toast.makeText(ProductACopy.this, "Position is" + abc, Toast.LENGTH_LONG).show();
         productId = getIntent().getStringExtra("brand_id");

@@ -7,10 +7,10 @@
     android:orientation="vertical"
     android:background="#ffffff">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/navigation">
+<!--    <ScrollView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:layout_above="@+id/navigation">-->
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -105,7 +105,8 @@
                 android:layout_below="@+id/txt_brand"
                 android:layout_margin="2dp"
                 android:orientation="vertical"
-                android:padding="3dp">
+                android:padding="3dp"
+                android:layout_above="@+id/add_to_cart">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/prod_brand"
@@ -113,7 +114,8 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/txt_brand"
                     android:layout_margin="2dp"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    />
 
             </LinearLayout>
 
@@ -123,57 +125,12 @@
                 android:layout_height="40dp"
                 android:background="@drawable/custom_tool"
                 android:text="Add to cart"
-                android:layout_below="@+id/lnr_brand"/>
-
-            <TextView
-                android:id="@+id/txt_modal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/lnr_brand"
-                android:gravity="center"
-                android:text="Select Model"
-                android:visibility="invisible" />
-
-            <LinearLayout
-                android:id="@+id/lnr_modal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/txt_modal"
-                android:background="@drawable/layout_background"
-                android:orientation="horizontal"
-                android:layout_margin="2dp"
-                android:padding="3dp"
-                android:visibility="gone">
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/prod_model"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="#ffffff"
-                    android:visibility="visible" />
-
-            </LinearLayout>
-
-
-         <TextView
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:text="Slected Product"
-             android:layout_below="@+id/lnr_brand"
-             android:id="@+id/txt_selcted_prod"
-             android:visibility="gone"/>
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rec_selected_product"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="#ffffff"
-                android:visibility="gone"
-                android:layout_below="@+id/txt_selcted_prod"
+                android:layout_alignParentBottom="true"
                 />
 
         </RelativeLayout>
 
-    </ScrollView>
+<!--    </ScrollView>-->
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/navigation"

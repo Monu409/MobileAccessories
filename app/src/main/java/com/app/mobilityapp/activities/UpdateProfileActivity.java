@@ -346,11 +346,11 @@ public class UpdateProfileActivity extends BaseActivity {
     }
 
     private void grayColorEditTexts() {
-        nameEdt.setTextColor(getResources().getColor(R.color.gray_color));
-        phoneEdt.setTextColor(getResources().getColor(R.color.gray_color));
-        emailEdt.setTextColor(getResources().getColor(R.color.gray_color));
-        addressEdt.setTextColor(getResources().getColor(R.color.gray_color));
-        gstEdt.setTextColor(getResources().getColor(R.color.gray_color));
+        nameEdt.setTextColor(getResources().getColor(R.color.textcolor));
+        phoneEdt.setTextColor(getResources().getColor(R.color.textcolor));
+        emailEdt.setTextColor(getResources().getColor(R.color.textcolor));
+        addressEdt.setTextColor(getResources().getColor(R.color.textcolor));
+        gstEdt.setTextColor(getResources().getColor(R.color.textcolor));
         nameEdt.setEnabled(true);
         phoneEdt.setEnabled(true);
         emailEdt.setEnabled(true);
@@ -359,11 +359,11 @@ public class UpdateProfileActivity extends BaseActivity {
     }
 
     private void blackColorEditTexts() {
-        nameEdt.setTextColor(getResources().getColor(R.color.textcolor));
-        phoneEdt.setTextColor(getResources().getColor(R.color.textcolor));
-        emailEdt.setTextColor(getResources().getColor(R.color.textcolor));
-        addressEdt.setTextColor(getResources().getColor(R.color.textcolor));
-        gstEdt.setTextColor(getResources().getColor(R.color.textcolor));
+        nameEdt.setTextColor(getResources().getColor(R.color.gray_color));
+        phoneEdt.setTextColor(getResources().getColor(R.color.gray_color));
+        emailEdt.setTextColor(getResources().getColor(R.color.gray_color));
+        addressEdt.setTextColor(getResources().getColor(R.color.gray_color));
+        gstEdt.setTextColor(getResources().getColor(R.color.gray_color));
         nameEdt.setEnabled(false);
         phoneEdt.setEnabled(false);
         emailEdt.setEnabled(false);
