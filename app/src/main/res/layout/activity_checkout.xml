@@ -194,7 +194,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_alignParentBottom="true"
-                android:background="@color/bottom_lay_color">
+                android:background="@drawable/custom_tool">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -202,6 +202,7 @@
                     android:layout_centerVertical="true"
                     android:textStyle="bold"
                     android:textSize="18sp"
+                    android:visibility="gone"
                     android:textColor="@color/textcolor"
                     android:layout_marginLeft="20dp"/>
 
@@ -211,12 +212,11 @@
                     android:layout_height="40dp"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="6dp"
-                    android:background="@color/bottom_lay_color"
                     android:text="Continue"
+                    android:background="@drawable/custom_tool"
                     android:textAllCaps="false"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginRight="20dp"
-                    android:textColor="@color/white" />
+                    android:layout_centerInParent="true"
+                    android:textColor="@color/textcolor" />
             </RelativeLayout>
         </RelativeLayout>
 

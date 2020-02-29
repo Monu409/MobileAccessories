@@ -1,9 +1,12 @@
 package com.app.mobilityapp.activities;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Rect;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
@@ -11,6 +14,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.widget.FrameLayout;
+import android.widget.GridLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -25,6 +34,7 @@ import com.app.mobilityapp.app_utils.BaseActivity;
 import com.app.mobilityapp.app_utils.ConstantMethods;
 import com.app.mobilityapp.connection.CommonNetwork;
 import com.app.mobilityapp.connection.JSONResult;
+import com.app.mobilityapp.modals.LocalQuantityModel;
 import com.app.mobilityapp.modals.ProBrndModal;
 import com.app.mobilityapp.R;
 
@@ -155,7 +165,8 @@ public class ProductNamePriceActivity extends BaseActivity {
         switch (id) {
             case R.id.action_filter:
 //                showFilterDialog();
-                CreateAlertDialog();
+//                CreateAlertDialog();
+                showDialog();
                 break;
         }
 
@@ -175,7 +186,6 @@ public class ProductNamePriceActivity extends BaseActivity {
                             sortVal = 1;
                             JSONObject jsonObject = getInitialJSONObject();
                             jsonObject.put("sort", sortVal);
-                            Log.e("request", jsonObject.toString());
                             getProductData(url,jsonObject);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -187,7 +197,6 @@ public class ProductNamePriceActivity extends BaseActivity {
                             sortVal = -1;
                             JSONObject jsonObject = getInitialJSONObject();
                             jsonObject.put("sort", sortVal);
-                            Log.e("request", jsonObject.toString());
                             getProductData(url,jsonObject);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -318,6 +327,49 @@ public class ProductNamePriceActivity extends BaseActivity {
             e.printStackTrace();
         }
         return jsonObject;
+    }
+
+    public void showDialog() {
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(true);
+        dialog.setContentView(R.layout.radio_dialog);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        RadioGroup radioGroup = dialog.findViewById(R.id.radio_grp);
+        RadioButton highRdo = dialog.findViewById(R.id.radio_high);
+        RadioButton lowRdo = dialog.findViewById(R.id.radio_low);
+        highRdo.setChecked(false);
+        lowRdo.setChecked(false);
+
+        radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            Toast.makeText(ProductNamePriceActivity.this, ""+checkedId, Toast.LENGTH_SHORT).show();
+            switch (checkedId) {
+                case R.id.radio_high:
+                    try {
+                        sortVal = 1;
+                        JSONObject jsonObject = getInitialJSONObject();
+                        jsonObject.put("sort", sortVal);
+                        getProductData(url,jsonObject);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    dialog.dismiss();
+                    break;
+                case R.id.radio_low:
+                    try {
+                        sortVal = -1;
+                        JSONObject jsonObject = getInitialJSONObject();
+                        jsonObject.put("sort", sortVal);
+                        getProductData(url,jsonObject);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    dialog.dismiss();
+                    break;
+            }
+        });
+
+        dialog.show();
     }
 }
 

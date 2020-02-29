@@ -57,50 +57,6 @@ public class OrderListActivity extends BaseActivity {
                     OrderListAdapter orderListAdapter = new OrderListAdapter(myOrderChildModels,OrderListActivity.this);
                     myOrderList.setAdapter(orderListAdapter);
                 }
-//                try {
-//                    String confirmation = response.getString("confirmation");
-//                    if(confirmation.equals("success")){
-//                        List<OrderListModel> orderListModels = new ArrayList<>();
-//                        JSONArray jsonArray = response.getJSONArray("data");
-//                        for(int i=0;i<jsonArray.length();i++){
-//                            int totalQty = 0;
-//                            JSONObject childObj = jsonArray.getJSONObject(i);
-//                            String orderId = childObj.getString("orderId");
-//                            String listPrice = childObj.getString("amount");
-////                            JSONObject brandidObj = childObj.getJSONObject("brandid");
-////                            JSONObject productIdObj = childObj.getJSONObject("productId");
-////                            JSONObject categoryIdObj = productIdObj.getJSONObject("categoryId");
-////                            String itemName = brandidObj.getString("name");
-////                            String itemImg = brandidObj.getString("imgUrl");
-//                            String catNameStr = categoryIdObj.getString("name");
-//                            JSONArray modelListArr = childObj.getJSONArray("modallist");
-//                            String createdAt = childObj.getString("createdAt");
-//                            String[] dateStr = createdAt.split("T");
-//                            String nowDateStr = dateStr[0];
-//                            String showDate = ConstantMethods.changeDateFormate(nowDateStr);
-//                            for(int j=0;j<modelListArr.length();j++){
-//                                JSONObject modalListObj = modelListArr.getJSONObject(j);
-//                                String qtyStr = modalListObj.getString("quantity");
-//                                int qtyInt = Integer.parseInt(qtyStr);
-//                                totalQty = totalQty+qtyInt;
-//                            }
-//                            OrderListModel orderListModel = new OrderListModel();
-////                            orderListModel.setBrandName(itemName);
-//                            orderListModel.setOrderId("ORDER ID: "+orderId);
-//                            orderListModel.setTotalPrice(listPrice);
-//                            orderListModel.setDateStr(showDate);
-////                            orderListModel.setImgUrl(itemImg);
-//                            orderListModel.setCatName(catNameStr);
-//                            orderListModel.setQuantity(String.valueOf(totalQty));
-//                            orderListModel.setJsonArray(modelListArr.toString());
-//                            orderListModels.add(orderListModel);
-//                        }
-//                        OrderListAdapter orderListAdapter = new OrderListAdapter(orderListModels,OrderListActivity.this);
-//                        myOrderList.setAdapter(orderListAdapter);
-//                    }
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
             }
 
             @Override

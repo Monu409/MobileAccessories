@@ -69,6 +69,8 @@
         <activity android:name=".activities.EditCartActivity" />
         <activity android:name=".activities.SubOrderActivity" />
         <activity android:name=".activities.EditEnterQuantityActivity" />
+        <activity android:name=".activities.MyProductActivity" />
+        <activity android:name=".activities.OrderReceivedActivity" />
 
         <service android:name=".firebase.MyFirebaseInstanceIdService">
             <intent-filter>

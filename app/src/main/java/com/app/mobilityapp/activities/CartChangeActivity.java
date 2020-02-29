@@ -52,19 +52,15 @@ public class CartChangeActivity extends BaseActivity {
         ConstantMethods.setTitleAndBack(this, "Cart");
         cartList = findViewById(R.id.cart_list);
         checkoutTxt = findViewById(R.id.checkout_txt);
-        priceTxt = findViewById(R.id.total_txt);
-        priceTxt = findViewById(R.id.total_txt);
+//        priceTxt = findViewById(R.id.total_txt);
+//        priceTxt = findViewById(R.id.total_txt);
         emptyCartView = findViewById(R.id.empty_cart_view);
         fullCartView = findViewById(R.id.cart_full_view);
-        continueShopTxt = findViewById(R.id.continue_shop_txt);
-        continueShopTxtBotm = findViewById(R.id.continue_shop_txt_botm);
+
         cartList.setLayoutManager(new LinearLayoutManager(this));
         checkoutTxt.setOnClickListener(v->{
             startActivity(new Intent(this,CheckoutActivity.class));
         });
-        View.OnClickListener onClickListener = v -> startActivity(new Intent(this, DashboardActivity.class));
-        continueShopTxt.setOnClickListener(onClickListener);
-        continueShopTxtBotm.setOnClickListener(onClickListener);
     }
 
     @Override
@@ -105,7 +101,7 @@ public class CartChangeActivity extends BaseActivity {
                         int price = cartChildModels.get(i).getPrice();
                         priceSum = priceSum+price;
                     }
-                    priceTxt.setText("₹ "+priceSum);
+//                    priceTxt.setText("₹ "+priceSum);
                 }
             }
             @Override

@@ -26,15 +26,13 @@
             <RelativeLayout
                 android:id="@+id/full_view"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
+                android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp">
                 <com.app.mobilityapp.app_utils.CircleImageView
                     android:layout_width="60dp"
                     android:layout_height="60dp"
                     android:id="@+id/brand_img"
                     android:layout_marginLeft="5dp"
-                    android:layout_centerVertical="true"
                     android:layout_marginTop="5dp"
                     android:src="@drawable/call"/>
                 <TextView
@@ -58,31 +56,25 @@
                     android:layout_marginLeft="10dp"
                     />
 
-<!--                <TextView-->
-<!--                    android:id="@+id/price_txt"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:textStyle="bold"-->
-<!--                    android:textSize="17sp"-->
-<!--                    android:layout_toRightOf="@+id/brand_img"-->
-<!--                    android:layout_below="@+id/name_txt"-->
-<!--                    android:layout_marginLeft="10dp"-->
-<!--                    android:textColor="@color/colorAccent"-->
-<!--                    />-->
+                <View
+                    android:id="@+id/line_view"
+                    android:layout_marginTop="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#ECEAEA"
+                    android:layout_below="@+id/brand_img"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"/>
 
                 <TextView
-                    android:visibility="gone"
-                    android:id="@+id/des_txt"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Content hereContent hereContent hereContent hereContent hereContent hereContent hereContent here"
-                    android:maxLines="2"
+                    android:text="Price"
+                    android:textColor="@color/colorAccent"
+                    android:layout_below="@+id/line_view"
+                    android:layout_marginTop="10dp"
                     android:layout_marginLeft="10dp"
-                    android:layout_toRightOf="@+id/brand_img"
-                    android:layout_below="@+id/name_txt"
-                    android:layout_toLeftOf="@+id/qty_txt"
-                    android:layout_marginRight="5dp"
-                    />
+                    android:layout_toLeftOf="@+id/price_txt"/>
 
                 <TextView
                     android:id="@+id/price_txt"
@@ -94,18 +86,33 @@
                     android:gravity="center"
                     android:textSize="17sp"
                     android:layout_alignParentRight="true"
+                    android:layout_below="@+id/line_view"
                     android:layout_centerVertical="true"
-                    android:layout_marginRight="15dp"
+                    android:layout_marginRight="10dp"
                     />
 
-<!--                <ImageView-->
-<!--                    android:id="@+id/edit_qty"-->
-<!--                    android:layout_width="25dp"-->
-<!--                    android:layout_height="25dp"-->
-<!--                    android:layout_centerVertical="true"-->
-<!--                    android:layout_alignParentRight="true"-->
-<!--                    android:layout_marginRight="10dp"-->
-<!--                    android:src="@drawable/edit_qntity"/>-->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:text=" Remove "
+                    android:layout_below="@+id/price_txt"
+                    android:background="@drawable/rectangle_shape"
+                    android:gravity="center"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginLeft="10dp"
+                    android:padding="10dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:text=" Review and Order "
+                    android:layout_below="@+id/price_txt"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/blue_rect"
+                    android:padding="5dp"
+                    android:textColor="@color/textcolornew"
+                    android:gravity="center"/>
 
             </RelativeLayout>
         </androidx.cardview.widget.CardView>

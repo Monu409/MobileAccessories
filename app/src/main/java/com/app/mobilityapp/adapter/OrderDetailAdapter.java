@@ -13,6 +13,8 @@ import com.app.mobilityapp.R;
 import com.app.mobilityapp.activities.SubOrderActivity;
 import com.app.mobilityapp.app_utils.CircleImageView;
 import com.app.mobilityapp.modals.OrderDetailModel;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.ODHolder> {
@@ -45,8 +47,9 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
         holder.priceTxt.setText("₹ "+price);
         holder.fullView.setOnClickListener(v->{
             Intent intent = new Intent(context, SubOrderActivity.class);
-            intent.putExtra("data",brandDetail1.get(position));
+            intent.putExtra("data",(ArrayList)brandDetail1);
             intent.putExtra("data2",productdetails.get(position));
+            intent.putExtra("preview","buyer_view");
             context.startActivity(intent);
         });
 

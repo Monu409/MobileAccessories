@@ -60,7 +60,7 @@ public class EditCartAdapter extends RecyclerView.Adapter<EditCartAdapter.ECHold
                 .placeholder(R.drawable.test)
                 .centerCrop()
                 .into(holder.circleImageView);
-        holder.fullView.setOnClickListener(v->{
+        holder.editCart.setOnClickListener(v->{
             EditCartModel.Brand brand = brandDetail.get(position).getBrand();
             List<EditCartModel.Price> prices = editCartModel.getData().getProductid().getPrice();
             Intent intent = new Intent(context, EditEnterQuantityActivity.class);
@@ -81,7 +81,7 @@ public class EditCartAdapter extends RecyclerView.Adapter<EditCartAdapter.ECHold
 
     public class ECHolder extends RecyclerView.ViewHolder{
         TextView catName,productName,quantity;
-        ImageView editCart;
+        ImageView editCart,deleteImg;
         CircleImageView circleImageView;
         RelativeLayout fullView;
         public ECHolder(@NonNull View itemView) {
@@ -92,6 +92,7 @@ public class EditCartAdapter extends RecyclerView.Adapter<EditCartAdapter.ECHold
             editCart = itemView.findViewById(R.id.edit_qty);
             circleImageView = itemView.findViewById(R.id.brand_img);
             fullView = itemView.findViewById(R.id.full_view);
+            deleteImg = itemView.findViewById(R.id.delete_itm);
         }
     }
 }

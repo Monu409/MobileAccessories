@@ -865,7 +865,7 @@ public class OrderDetailModel implements Serializable {
         private Object imagename;
         @SerializedName("imageurl")
         @Expose
-        private Object imageurl;
+        private String imageurl;
 
         public Object getImagename() {
             return imagename;
@@ -875,11 +875,11 @@ public class OrderDetailModel implements Serializable {
             this.imagename = imagename;
         }
 
-        public Object getImageurl() {
+        public String getImageurl() {
             return imageurl;
         }
 
-        public void setImageurl(Object imageurl) {
+        public void setImageurl(String imageurl) {
             this.imageurl = imageurl;
         }
 

@@ -21,43 +21,15 @@
             android:layout_height="40dp"
             android:orientation="horizontal"
             android:layout_alignParentBottom="true"
-            android:weightSum="3"
-            android:background="@color/bottom_lay_color">
-
-            <TextView
-                android:id="@+id/continue_shop_txt_botm"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:text="Continue Shoping"
-                android:gravity="center"
-                android:layout_weight="1"
-                android:textColor="@color/white"
-                android:textStyle="bold"/>
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@color/textcolor"/>
-            <TextView
-                android:id="@+id/total_txt"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:text="₹ 16000"
-                android:gravity="center"
-                android:layout_weight="1"
-                android:textColor="@color/white"
-                android:textStyle="bold"/>
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@color/textcolor"/>
+            android:background="@drawable/custom_tool">
             <TextView
                 android:id="@+id/checkout_txt"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:text="Checkout"
+                android:text="Confirm Order"
                 android:gravity="center"
                 android:layout_weight="1"
-                android:textColor="@color/white"
+                android:textColor="@color/textcolor"
                 android:textStyle="bold"/>
 
         </LinearLayout>

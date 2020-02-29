@@ -102,7 +102,7 @@ public class DashboardActivity extends BaseActivity implements JSONResult ,Navig
     private AppBarConfiguration mAppBarConfiguration;
     private DrawerLayout drawer;
     private ImageView profilePic;
-    private TextView nameTxt,emailTxt;
+    private TextView nameTxt,emailTxt,myProducts,orderRcvd;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -123,6 +123,8 @@ public class DashboardActivity extends BaseActivity implements JSONResult ,Navig
         aboutTxt = findViewById(R.id.about_txt);
         sellerView = findViewById(R.id.seller_view);
         helpSprtTxt = findViewById(R.id.help_sprt_txt);
+        myProducts = findViewById(R.id.my_products);
+        orderRcvd = findViewById(R.id.order_rcvd);
 
         ImageView searchImg = findViewById(R.id.srch_img);
         searchEdt.addTextChangedListener(new TextWatcher() {
@@ -154,12 +156,15 @@ public class DashboardActivity extends BaseActivity implements JSONResult ,Navig
         helpSprtTxt.setOnClickListener(v->startActivity(new Intent(this, HelpSupportActivity.class)));
         callImg.setOnClickListener(v->onCallBtnClick());
         logoutTxt.setOnClickListener(v->alertDialogForLogout());
+        myProducts.setOnClickListener(v->startActivity(new Intent(this, MyProductActivity.class)));
+        orderRcvd.setOnClickListener(v->startActivity(new Intent(this, OrderReceivedActivity.class)));
 
         searchEdt.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 String query = searchEdt.getText().toString();
                 Intent intent = new Intent(DashboardActivity.this,ProductNamePriceActivity.class);
                 intent.putExtra("last_view","search");
+                intent.putExtra("layer","three");
                 intent.putExtra("search_key",query);
                 startActivity(intent);
                 return true;
@@ -191,8 +196,7 @@ public class DashboardActivity extends BaseActivity implements JSONResult ,Navig
         String userType = ConstantMethods.getStringPreference("user_type",this);
         if(userType.equals("4")){
             Menu menu = navigationView.getMenu();
-            menu.add(Menu.NONE, navigation_add_product, Menu.NONE, getString(R.string.add_product))
-                    .setIcon(R.drawable.addproduct);
+            menu.add(Menu.NONE, navigation_add_product, Menu.NONE, getString(R.string.add_product)).setIcon(R.drawable.addproduct);
             changeUserTxt.setVisibility(View.GONE);
             sellerView.setVisibility(View.VISIBLE);
         }
@@ -276,6 +280,9 @@ public class DashboardActivity extends BaseActivity implements JSONResult ,Navig
         menuView.setVisibility(View.GONE);
         menuVisible = false;
         searchEdt.setText("");
+        if(drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawers();
+        }
     }
 
     @Override
@@ -662,7 +669,7 @@ public class DashboardActivity extends BaseActivity implements JSONResult ,Navig
     }
 
     private void getProfileData() {
-        ConstantMethods.showProgressbar(this);
+//        ConstantMethods.showProgressbar(this);
         String userId = ConstantMethods.getStringPreference("user_id", this);
         JSONObject jsonObject = new JSONObject();
         try {
@@ -673,7 +680,7 @@ public class DashboardActivity extends BaseActivity implements JSONResult ,Navig
         CommonNetwork.postNetworkJsonObj(GET_PROFILE, jsonObject, new JSONResult() {
             @Override
             public void notifySuccess(@NonNull JSONObject response) {
-                ConstantMethods.dismissProgressBar();
+//                ConstantMethods.dismissProgressBar();
                 try {
                     JSONArray jsonArray = response.getJSONArray("data");
                     JSONObject userInfo = jsonArray.getJSONObject(0);
@@ -694,7 +701,7 @@ public class DashboardActivity extends BaseActivity implements JSONResult ,Navig
 
             @Override
             public void notifyError(@NonNull ANError anError) {
-                ConstantMethods.dismissProgressBar();
+//                ConstantMethods.dismissProgressBar();
             }
         }, this);
     }

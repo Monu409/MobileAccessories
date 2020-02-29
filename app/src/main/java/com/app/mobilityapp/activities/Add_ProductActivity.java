@@ -2,11 +2,13 @@ package com.app.mobilityapp.activities;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -16,9 +18,12 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.GridLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -454,8 +459,7 @@ public class Add_ProductActivity extends BaseActivity {
                 try {
                     String confirmation = response.getString("confirmation");
                     if (confirmation.equals("success")) {
-                        Toast.makeText(Add_ProductActivity.this, "Product add successfully", Toast.LENGTH_SHORT).show();
-                        onBackPressed();
+                        showDialog(Add_ProductActivity.this);
                     } else {
                         Toast.makeText(Add_ProductActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
                     }
@@ -664,6 +668,33 @@ public class Add_ProductActivity extends BaseActivity {
                         Log.e("progress", "" + error);
                     }
                 });
+    }
+
+    public void showDialog(Activity activity) {
+        final Dialog dialog = new Dialog(activity);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.dialog_custom_layout);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        Window window = dialog.getWindow();
+        window.setLayout(GridLayout.LayoutParams.MATCH_PARENT, GridLayout.LayoutParams.MATCH_PARENT);
+        TextView msgTxt = dialog.findViewById(R.id.msg_txt);
+        TextView leftTxt = dialog.findViewById(R.id.txt_left);
+        TextView rightTxt = dialog.findViewById(R.id.txt_right);
+        msgTxt.setText("Product Added successfully");
+        leftTxt.setText("Go To My Product");
+        rightTxt.setText("Add Mode");
+        rightTxt.setOnClickListener(v -> {
+            startActivity(new Intent(Add_ProductActivity.this,Add_ProductActivity.class));
+            dialog.dismiss();
+        });
+
+        leftTxt.setOnClickListener(v -> {
+            startActivity(new Intent(Add_ProductActivity.this,MyProductActivity.class));
+            dialog.dismiss();
+        });
+
+        dialog.show();
     }
 
 }

@@ -6,8 +6,8 @@
 
 
     <item
-        android:id="@+id/action_filter"
-        android:icon="@drawable/filter"
+        android:id="@+id/action_chat"
+        android:icon="@drawable/chat_unslct"
         app:showAsAction="always|withText"
         android:title="Filter"
         />

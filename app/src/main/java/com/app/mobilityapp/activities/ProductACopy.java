@@ -1,17 +1,27 @@
 package com.app.mobilityapp.activities;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -358,10 +368,11 @@ public class ProductACopy extends BaseActivity {
                 ConstantMethods.dismissProgressBar();
                 try {
                     String confirmation = response.getString("confirmation");
-                    if (confirmation.equals("success")) {
-                        Toast.makeText(ProductACopy.this, "Added into cart", Toast.LENGTH_SHORT).show();
-                        onBackPressed();
-                    }
+//                    if (confirmation.equals("success")) {
+//                        Toast.makeText(ProductACopy.this, "Added into cart", Toast.LENGTH_SHORT).show();
+//                        onBackPressed();
+//                    }
+                    showDialog(ProductACopy.this);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -419,5 +430,60 @@ public class ProductACopy extends BaseActivity {
             e.printStackTrace();
         }
     }
+
+    public void showDialog(Activity activity) {
+        final Dialog dialog = new Dialog(activity);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.dialog_custom_layout);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        Window window = dialog.getWindow();
+        window.setLayout(GridLayout.LayoutParams.MATCH_PARENT, GridLayout.LayoutParams.MATCH_PARENT);
+
+        FrameLayout mDialogNo = dialog.findViewById(R.id.frmNo);
+        TextView msgTxt = dialog.findViewById(R.id.msg_txt);
+        TextView leftTxt = dialog.findViewById(R.id.txt_left);
+        TextView rightTxt = dialog.findViewById(R.id.txt_right);
+        msgTxt.setText("Successfully added into cart");
+        leftTxt.setText("Go To Bag");
+        rightTxt.setText("Continue Shopping");
+        rightTxt.setOnClickListener(v -> {
+            startActivity(new Intent(ProductACopy.this,DashboardActivity.class));
+            List<LocalQuantityModel> quantityModels =  ConstantMethods.getQtyArrayListShared(ProductACopy.this,"local_qty_models");
+            quantityModels.clear();
+            ConstantMethods.saveQtyListShared(quantityModels,this,"local_qty_models");
+            dialog.dismiss();
+        });
+
+        leftTxt.setOnClickListener(v -> {
+            startActivity(new Intent(ProductACopy.this,CartChangeActivity.class));
+            List<LocalQuantityModel> quantityModels =  ConstantMethods.getQtyArrayListShared(ProductACopy.this,"local_qty_models");
+            quantityModels.clear();
+            ConstantMethods.saveQtyListShared(quantityModels,this,"local_qty_models");
+            dialog.dismiss();
+        });
+
+        dialog.show();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.chat_menu, menu);
+        return true;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.action_chat:
+                startActivity(new Intent(this,ChatActivity.class));
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
 
 }

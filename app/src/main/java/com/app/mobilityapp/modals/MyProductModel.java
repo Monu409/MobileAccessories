@@ -511,7 +511,7 @@ import java.util.List;
             private List<Price> price = null;
             @SerializedName("image")
             @Expose
-            private List<Object> image = null;
+            private List<Image> image = null;
             @SerializedName("createdAt")
             @Expose
             private String createdAt;
@@ -626,11 +626,11 @@ import java.util.List;
                 this.price = price;
             }
 
-            public List<Object> getImage() {
+            public List<Image> getImage() {
                 return image;
             }
 
-            public void setImage(List<Object> image) {
+            public void setImage(List<Image> image) {
                 this.image = image;
             }
 

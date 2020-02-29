@@ -2,44 +2,41 @@ package com.app.mobilityapp.activities;
 
 import android.os.Bundle;
 import android.widget.TextView;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.app.mobilityapp.R;
+import com.app.mobilityapp.adapter.SubOrderDetailAdapter;
 import com.app.mobilityapp.app_utils.BaseActivity;
 import com.app.mobilityapp.app_utils.CircleImageView;
 import com.app.mobilityapp.app_utils.ConstantMethods;
 import com.app.mobilityapp.modals.OrderDetailModel;
+import com.app.mobilityapp.modals.OrderRcvdModel;
 import com.bumptech.glide.Glide;
 
 import java.util.List;
 
 public class SubOrderActivity extends BaseActivity {
-    private CircleImageView productImg;
-    private TextView nameTxt,qtyTxt;
+    private RecyclerView subOrdrList;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ConstantMethods.setTitleAndBack(this,"Order Detail");
-        productImg = findViewById(R.id.brand_img);
-        nameTxt = findViewById(R.id.cat_name_txt);
-        qtyTxt= findViewById(R.id.qty_txt);
-        OrderDetailModel.BrandDetail_ brandDetail = (OrderDetailModel.BrandDetail_)getIntent().getSerializableExtra("data");
-        List<OrderDetailModel.Modallist> modallistList = brandDetail.getModallist();
-        OrderDetailModel.Brand brand = brandDetail.getBrand();
-        int sumQty = 0;
-        for(int i=0;i<modallistList.size();i++){
-            int qty = modallistList.get(i).getQuantity();
-            sumQty = sumQty+qty;
+        subOrdrList= findViewById(R.id.sub_ordr_list);
+        subOrdrList.setLayoutManager(new LinearLayoutManager(this));
+        String preView = getIntent().getStringExtra("preview");
+        if(preView.equals("seller_view")){
+            List<OrderRcvdModel.OrderRcvdModelChild> orderRcvdModelChildren = (List<OrderRcvdModel.OrderRcvdModelChild>)getIntent().getSerializableExtra("child_model");
+            SubOrderDetailAdapter subOrderDetailAdapter = new SubOrderDetailAdapter(orderRcvdModelChildren,this,"seller");
+            subOrdrList.setAdapter(subOrderDetailAdapter);
         }
-        String name = brand.getName();
-        String urlImg = brand.getImgUrl();
-        Glide
-                .with(this)
-                .load(urlImg)
-                .placeholder(R.drawable.test)
-                .centerCrop()
-                .into(productImg);
+        else if(preView.equals("buyer_view")){
+            List<OrderDetailModel.BrandDetail_> brandDetail = (List<OrderDetailModel.BrandDetail_>)getIntent().getSerializableExtra("data");
+            SubOrderDetailAdapter subOrderDetailAdapter = new SubOrderDetailAdapter(brandDetail,this,"","");
+            subOrdrList.setAdapter(subOrderDetailAdapter);
+        }
 
-        nameTxt.setText(name);
-        qtyTxt.setText("Qty: "+sumQty);
     }
 
     @Override
