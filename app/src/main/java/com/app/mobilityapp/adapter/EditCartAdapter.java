@@ -27,11 +27,13 @@ public class EditCartAdapter extends RecyclerView.Adapter<EditCartAdapter.ECHold
     private EditCartModel editCartModel;
     private LayoutInflater layoutInflater;
     String cartId;
+    private GetSubCartCatId getSubCartCatId;
 
-    public EditCartAdapter(Context context, EditCartModel editCartModel,String cartId){
+    public EditCartAdapter(Context context, EditCartModel editCartModel,String cartId,GetSubCartCatId getSubCartCatId){
         this.context = context;
         this.editCartModel = editCartModel;
         this.cartId = cartId;
+        this.getSubCartCatId = getSubCartCatId;
         layoutInflater = LayoutInflater.from(context);
     }
     @NonNull
@@ -60,6 +62,11 @@ public class EditCartAdapter extends RecyclerView.Adapter<EditCartAdapter.ECHold
                 .placeholder(R.drawable.test)
                 .centerCrop()
                 .into(holder.circleImageView);
+
+        String subCartId = brandDetail.get(position).getId();
+
+        holder.deleteImg.setOnClickListener(v->getSubCartCatId.getSubCartId(subCartId,cartId));
+
         holder.editCart.setOnClickListener(v->{
             EditCartModel.Brand brand = brandDetail.get(position).getBrand();
             List<EditCartModel.Price> prices = editCartModel.getData().getProductid().getPrice();
@@ -94,5 +101,9 @@ public class EditCartAdapter extends RecyclerView.Adapter<EditCartAdapter.ECHold
             fullView = itemView.findViewById(R.id.full_view);
             deleteImg = itemView.findViewById(R.id.delete_itm);
         }
+    }
+
+    public interface GetSubCartCatId{
+        void getSubCartId(String subCartId,String cartId);
     }
 }

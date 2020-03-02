@@ -52,30 +52,10 @@ public class SubCatLastAdapter extends RecyclerView.Adapter<SubCatLastAdapter.Pr
                 .load(productsModals.get(position).getImgUrl())
                 .centerCrop()
                 .into(holder.subCatImg);
-       /* holder.fullView.setOnClickListener(v->{
-            CartModel cartModel = new CartModel();
-            cartModel.setProductsModal(productsModals.get(position));
-            Intent intent = new Intent(context, SubCatActivityLast.class);
-            intent.putExtra("cart_model_data",cartModel);
-            intent.putExtra("prodid",cartModel.getProductsModal().getId());
-            Log.e("subcatid",cartModel.getProductsModal().getId());
-          //  intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-            context.startActivity(intent);
-        });*/
         holder.fullView.setOnClickListener(v->{
-
             CartModel cartModel = new CartModel();
             cartModel.setProductsModal(productsModals.get(position));
-          /*  Intent intent = new Intent(context, SubCatActivityLast.class);
-            intent.putExtra("cart_model_data",cartModel);
-            intent.putExtra("prodid",cartModel.getProductsModal().getId());*/
             Log.e("subcatid",cartModel.getProductsModal().getId());
-
-
-
-
             Intent intent = new Intent(context, ProductNamePriceActivity.class);
             intent.putExtra("last_view","sub_cat");
             intent.putExtra("layer","three");

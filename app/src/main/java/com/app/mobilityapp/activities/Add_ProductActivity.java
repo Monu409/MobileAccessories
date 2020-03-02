@@ -7,7 +7,6 @@ import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -22,7 +21,6 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -50,6 +48,7 @@ import com.app.mobilityapp.connection.JSONResult;
 import com.app.mobilityapp.modals.AddedBrands;
 import com.app.mobilityapp.modals.AddedPrice;
 import com.app.mobilityapp.modals.ConsModel;
+import com.app.mobilityapp.modals.MyProductModel;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
@@ -64,7 +63,6 @@ import java.util.Date;
 import java.util.List;
 
 import static com.app.mobilityapp.app_utils.AppApis.BASE_URL;
-import static com.app.mobilityapp.app_utils.AppApis.SEND_MEDIA_TO_CHAT;
 import static com.app.mobilityapp.app_utils.AppApis.SEND_MEDIA_TO_PRODUCT;
 import static com.app.mobilityapp.app_utils.AppApis.UPLOAD_PRODUCT;
 
@@ -84,19 +82,37 @@ public class Add_ProductActivity extends BaseActivity {
         return R.layout.add_product_activity;
     }
 
+    String page_type = "";
+    MyProductModel.MyProductChild productChild;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ConstantMethods.setTitleAndBack(this, "Add Product");
         post_json = new JSONObject();
         post_brands = new ArrayList();
         post_prices = new ArrayList();
         pathlist = new ArrayList<>();
         arrayList = new ArrayList<>();
+        if (getIntent().getExtras() != null) {
+            page_type = getIntent().getStringExtra("page_type");
+            productChild = gson.fromJson(getIntent().getStringExtra("data"), MyProductModel.MyProductChild.class);
+        }
+
         findViewId();
         get_category("http://132.148.158.82:3004/custom/category", new JSONObject(), "category");
         get_category("http://132.148.158.82:3004/custom/brand", new JSONObject(), "brand");
-        add_new_price(new AddedPrice());
+        if (page_type == null || page_type.equals("")) {
+            ConstantMethods.setTitleAndBack(this, "Add Product");
+            add_new_price(new AddedPrice());
+        } else {
+            ConstantMethods.setTitleAndBack(this, "Edit Product");
+            if (productChild != null) {
+                editPrices(productChild.getPrice());
+                contentEdt.setText(productChild.getContent());
+                product_edt.setText(productChild.getName());
+            }
+            Log.e("edit price", " is now here");
+        }
     }
 
     View.OnClickListener onclick = new View.OnClickListener() {
@@ -116,13 +132,12 @@ public class Add_ProductActivity extends BaseActivity {
                     break;
                 case R.id.continue_btn:
                     String productName = product_edt.getText().toString();
-                    if(productName.isEmpty()){
+                    if (productName.isEmpty()) {
                         Toast.makeText(Add_ProductActivity.this, "Enter product name", Toast.LENGTH_SHORT).show();
-                    }
-                    else {
+                    } else {
                         try {
-                            putJson(post_json, "brandDetails", new JSONArray(new Gson().toJson(post_brands)));
-                            putJson(post_json, "price", new JSONArray(new Gson().toJson(post_prices)));
+                            putJson(post_json, "brandDetails", new JSONArray(gson.toJson(post_brands)));
+                            putJson(post_json, "price", new JSONArray(gson.toJson(post_prices)));
                             putJson(post_json, "name", product_edt.getText().toString());
                             putJson(post_json, "content", contentEdt.getText().toString().trim());
                             putJson(post_json, "image", imageArr);
@@ -142,9 +157,9 @@ public class Add_ProductActivity extends BaseActivity {
     };
 
     Spinner cat_spnr, scat_spnr, scat2_spnr;
-    private TextView addview_btn, addprice_btn, continue_btn,addImage;
+    private TextView addview_btn, addprice_btn, continue_btn, addImage;
     MultiSpinner color_spnr;
-    EditText product_edt,contentEdt;
+    EditText product_edt, contentEdt;
 
     private void findViewId() {
         product_edt = findViewById(R.id.product_edt);
@@ -227,13 +242,14 @@ public class Add_ProductActivity extends BaseActivity {
     List<String> post_colors;
 
     private void add_new_brand(final AddedBrands brands) {
-        post_brands.add(brands);
         final View view1 = getLayoutInflater().inflate(R.layout.brand_item, brand_root, false);
         final ImageView delete_btn = view1.findViewById(R.id.delete_btn);
         final Spinner brand_spinr = view1.findViewById(R.id.brand_spinr);
         final MultiSpinner model_spnr = view1.findViewById(R.id.model_spinr);
 
         brand_spinr.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, all_brands));
+//        brand_spinr.setSelection(getIndex(all_brands, brands.getBrand_id()));
+
         view1.setTag(brand_root.getChildCount());
         if (brand_root.getChildCount() == 0) {
             delete_btn.setVisibility(View.GONE);
@@ -278,6 +294,7 @@ public class Add_ProductActivity extends BaseActivity {
 
             }
         });
+        post_brands.add(brands);
     }
 
     private boolean check_duplicate(List<AddedBrands> post_brands, ConsModel cat) {
@@ -300,6 +317,7 @@ public class Add_ProductActivity extends BaseActivity {
         final EditText from_edt = view1.findViewById(R.id.from_edt);
         final EditText to_edt = view1.findViewById(R.id.to_edt);
         final EditText price_edt = view1.findViewById(R.id.price_edt);
+
 
         view1.setTag(price_root.getChildCount());
         if (price_root.getChildCount() == 0) {
@@ -359,6 +377,13 @@ public class Add_ProductActivity extends BaseActivity {
         from_edt.addTextChangedListener(textWatcher);
         to_edt.addTextChangedListener(textWatcher);
         price_edt.addTextChangedListener(textWatcher);
+
+        if (prices.getAmount() != null) {
+            from_edt.setText(prices.getFrom());
+            to_edt.setText(prices.getTo());
+            price_edt.setText(prices.getAmount());
+        }
+
     }
 
 
@@ -375,28 +400,42 @@ public class Add_ProductActivity extends BaseActivity {
             public void notifySuccess(@NonNull JSONObject response) {
                 try {
                     if (response.getString("confirmation").equalsIgnoreCase("success")) {
+                        String data = response.getString("data");
                         switch (type) {
                             case "category":
-                                catList = new ArrayList<>(Arrays.asList(new Gson().fromJson(response.getString("data"), ConsModel[].class)));
+                                catList = new ArrayList<>(Arrays.asList(gson.fromJson(data, ConsModel[].class)));
                                 cat_spnr.setAdapter(new ArrayAdapter<>(Add_ProductActivity.this, android.R.layout.simple_list_item_1, catList));
+                                if (page_type != null && !page_type.equals("")) {
+                                    cat_spnr.setSelection(getIndex(catList, productChild.getCategoryId().getName()));
+                                }
                                 break;
                             case "subcategory":
-                                sub_catList = new ArrayList<>(Arrays.asList(new Gson().fromJson(response.getString("data"), ConsModel[].class)));
+                                sub_catList = new ArrayList<>(Arrays.asList(gson.fromJson(data, ConsModel[].class)));
                                 scat_spnr.setAdapter(new ArrayAdapter<>(Add_ProductActivity.this, android.R.layout.simple_list_item_1, sub_catList));
                                 ((ViewGroup) scat_spnr.getParent()).setVisibility(View.VISIBLE);
+                                if (page_type != null && !page_type.equals("")) {
+                                    scat_spnr.setSelection(getIndex(sub_catList, productChild.getSubCategoryId().getName()));
+                                }
                                 break;
                             case "subcategory2":
-                                sub_cat2List = new ArrayList<>(Arrays.asList(new Gson().fromJson(response.getString("data"), ConsModel[].class)));
+                                sub_cat2List = new ArrayList<>(Arrays.asList(gson.fromJson(data, ConsModel[].class)));
                                 scat2_spnr.setAdapter(new ArrayAdapter<>(Add_ProductActivity.this, android.R.layout.simple_list_item_1, sub_cat2List));
                                 ((ViewGroup) scat2_spnr.getParent()).setVisibility(View.VISIBLE);
+                                if (page_type != null && !page_type.equals("")) {
+                                    scat2_spnr.setSelection(getIndex(sub_catList, productChild.getSubcategory2().getName()));
+                                }
                                 break;
                             case "brand":
-                                all_brands = new ArrayList<>(Arrays.asList(new Gson().fromJson(response.getString("data"), ConsModel[].class)));
+                                all_brands = new ArrayList<>(Arrays.asList(gson.fromJson(data, ConsModel[].class)));
                                 ConsModel consModel = new ConsModel();
                                 consModel.setName("Please Select");
                                 consModel.setId("0");
                                 all_brands.add(0, consModel);
-                                add_new_brand(new AddedBrands());
+                                if (page_type != null && !page_type.equals("")) {
+                                    editBrands();
+                                } else {
+                                    add_new_brand(new AddedBrands());
+                                }
                                 break;
                             case "models":
                                 break;
@@ -421,7 +460,7 @@ public class Add_ProductActivity extends BaseActivity {
             public void notifySuccess(@NonNull JSONObject response) {
                 try {
                     if (response.getString("confirmation").equalsIgnoreCase("success")) {
-                        List<ConsModel> models = new ArrayList<>(Arrays.asList(new Gson().fromJson(response.getString("data"), ConsModel[].class)));
+                        List<ConsModel> models = new ArrayList<>(Arrays.asList(gson.fromJson(response.getString("data"), ConsModel[].class)));
                         if (models.size() == 0)
                             ((ViewGroup) model_spnr.getParent()).setVisibility(View.GONE);
                         else
@@ -481,7 +520,7 @@ public class Add_ProductActivity extends BaseActivity {
             PackageManager pm = getPackageManager();
             int hasPerm = pm.checkPermission(Manifest.permission.CAMERA, getPackageName());
             if (hasPerm == PackageManager.PERMISSION_GRANTED) {
-                final CharSequence[] options = {"Take Photo", "Choose From Gallery","Cancel"};
+                final CharSequence[] options = {"Take Photo", "Choose From Gallery", "Cancel"};
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("Select Option");
                 builder.setItems(options, new DialogInterface.OnClickListener() {
@@ -506,7 +545,9 @@ public class Add_ProductActivity extends BaseActivity {
             e.printStackTrace();
         }
     }
+
     private Uri imageToUploadUri;
+
     private void cameraImage() {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy-hh-mm-ss");
         String format = simpleDateFormat.format(new Date());
@@ -532,13 +573,14 @@ public class Add_ProductActivity extends BaseActivity {
     public static Intent createGetContentIntent() {
         // Implicitly allow the user to select a particular kind of data
         final Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        // The MIME data type filter
+        // The MIME data page_type filter
         intent.setType("*/*");
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         // Only return URIs that can be opened with ContentResolver
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         return intent;
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -579,11 +621,10 @@ public class Add_ProductActivity extends BaseActivity {
 
                             }
                         }
-                        if(arrayList.size()>10){
+                        if (arrayList.size() > 10) {
                             Toast.makeText(this, "Can't select more then 10 images", Toast.LENGTH_SHORT).show();
                             arrayList.clear();
-                        }
-                        else {
+                        } else {
                             MyAdapter mAdapter = new MyAdapter(this, arrayList);
                             listView.setAdapter(mAdapter);
                         }
@@ -628,19 +669,62 @@ public class Add_ProductActivity extends BaseActivity {
 
     }
 
-    private void getAllImagePaths(){
-        for(int i=0;i<pathlist.size();i++){
+    private void getAllImagePaths() {
+        for (int i = 0; i < pathlist.size(); i++) {
             File file = new File(pathlist.get(i));
             uploadMedia(file);
         }
     }
+
+    /***** Edit Code here
+     * @param prices*****/
+
+    Gson gson = new Gson();
+
+    private void editPrices(List<MyProductModel.Price> prices) {
+        for (MyProductModel.Price price : prices) {
+            add_new_price(gson.fromJson(gson.toJson(price), AddedPrice.class));
+        }
+    }
+
+    private void editBrands() {
+        List<MyProductModel.BrandDetail> brands = productChild.getBrandDetails();
+        for (MyProductModel.BrandDetail brand : brands) {
+            AddedBrands addedBrands = new AddedBrands();
+            addedBrands.setBrand_id(brand.getBrand().getId());
+            for (MyProductModel.Model model : brand.getModel()) {
+                addedBrands.addModel_ids(model.getId());
+            }
+            add_new_brand(addedBrands);
+        }
+    }
+
+
+    private int getIndex(List<ConsModel> list, String s) {
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).toString().equals(s) || list.get(i).getId().equals(s)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+//    private int getBIndex(List list, String s) {
+//        for (int i = 0; i < list.size(); i++) {
+//            if (list.get(i).toString().equals(s)) {
+//                return i;
+//            }
+//        }
+//        return -1;
+//    }
+
     int mInt = 0;
+
     private void uploadMedia(File file) {
         AndroidNetworking
                 .upload(SEND_MEDIA_TO_PRODUCT)
                 .addMultipartFile("image", file)
                 //.addMultipartFile("baseurl", BASE_URL)
-                .addMultipartParameter("baseurl",BASE_URL)
+                .addMultipartParameter("baseurl", BASE_URL)
                 .addMultipartParameter("fileSize", String.valueOf(file.getTotalSpace()))
                 .setTag("uploadTest")
                 .setPriority(Priority.HIGH)
@@ -656,11 +740,11 @@ public class Add_ProductActivity extends BaseActivity {
                     public void onResponse(JSONObject response) {
                         Log.e("progress", "" + response);
                         try {
-                            imageArr.put(mInt,response);
+                            imageArr.put(mInt, response);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        mInt = mInt+1;
+                        mInt = mInt + 1;
                     }
 
                     @Override
@@ -685,12 +769,12 @@ public class Add_ProductActivity extends BaseActivity {
         leftTxt.setText("Go To My Product");
         rightTxt.setText("Add Mode");
         rightTxt.setOnClickListener(v -> {
-            startActivity(new Intent(Add_ProductActivity.this,Add_ProductActivity.class));
+            startActivity(new Intent(Add_ProductActivity.this, Add_ProductActivity.class));
             dialog.dismiss();
         });
 
         leftTxt.setOnClickListener(v -> {
-            startActivity(new Intent(Add_ProductActivity.this,MyProductActivity.class));
+            startActivity(new Intent(Add_ProductActivity.this, MyProductActivity.class));
             dialog.dismiss();
         });
 

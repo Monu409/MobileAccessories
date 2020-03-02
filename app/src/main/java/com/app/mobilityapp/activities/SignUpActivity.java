@@ -58,16 +58,13 @@ public class SignUpActivity extends BaseActivity {
         nameEdt = findViewById(R.id.input_fname);
         emailEdt = findViewById(R.id.input_email);
         phoneEdt = findViewById(R.id.input_mobile);
-        passEdt = findViewById(R.id.input_pass);
-        rePassEdt = findViewById(R.id.input_retypepass);
+//        passEdt = findViewById(R.id.input_pass);
+//        rePassEdt = findViewById(R.id.input_retypepass);
         userTypeSpnr = findViewById(R.id.type_user_spnr);
         signupBtn = findViewById(R.id.sign_up_btn);
         cityEdt = findViewById(R.id.city_edt);
         gstNo = findViewById(R.id.input_gst);
         addresssEdt = findViewById(R.id.input_address);
-//        String s = "&^%$#";
-//        boolean b = s.matches(ADDRESS_MATCHER);
-//        Log.e("b",""+b);
 
         cityEdt.addTextChangedListener(new TextWatcher() {
             @Override
@@ -101,9 +98,6 @@ public class SignUpActivity extends BaseActivity {
         ArrayAdapter aa = new ArrayAdapter(this,android.R.layout.simple_spinner_item,typeList);
         aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         userTypeSpnr.setAdapter(aa);
-//        userTypeSpnr.setOnItemSelectedListener((parent, view, position, id) -> {
-//            String selectedVal = parent.getItemAtPosition(position).toString();
-//        });
         userTypeSpnr.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -122,52 +116,37 @@ public class SignUpActivity extends BaseActivity {
             String nameStr = nameEdt.getText().toString();
             String emailStr = emailEdt.getText().toString();
             String mobileStr = phoneEdt.getText().toString();
-            String passStr = passEdt.getText().toString();
-            String rePassStr = rePassEdt.getText().toString();
+//            String passStr = passEdt.getText().toString();
+//            String rePassStr = rePassEdt.getText().toString();
             String gstNoStr = gstNo.getText().toString();
             String typeStr = userTypeSpnr.getSelectedItem().toString();
             String typeStrKey = (String)getKeyFromValue(userMap,typeStr);
-//            if(nameStr.isEmpty()||emailStr.isEmpty()||mobileStr.isEmpty()||passStr.isEmpty()||rePassStr.isEmpty()){
-//                Toast.makeText(this, "Enter all the fields", Toast.LENGTH_SHORT).show();
-//            }
-//            else if(!ConstantMethods.isValidMail(emailStr)){
-//                Toast.makeText(this, "Enter a valid email", Toast.LENGTH_SHORT).show();
-//            }
-//            else if(!ConstantMethods.isValidMobile(mobileStr)){
-//                Toast.makeText(this, "Enter a valid mobile", Toast.LENGTH_SHORT).show();
-//            }
-//            else if(!passStr.equals(rePassStr)){
-//                Toast.makeText(this, "Password does'nt match", Toast.LENGTH_SHORT).show();
-//            }
-//            else if(typeStr.equals("Select user type")){
-//                Toast.makeText(this, "Please select any user type", Toast.LENGTH_SHORT).show();
-//            }
             if(fieldsValidation()) {
                 if (typeStrKey.equals("4")) {
                     if (!gstNoStr.matches(GSTINFORMAT_REGEX1)) {
                         ConstantMethods.getAlertMessage(this, "Enter valid GST No.");
                     } else {
-                        validSign(nameStr, emailStr, mobileStr, passStr, typeStrKey, gstNoStr);
+                        validSign(nameStr, emailStr, mobileStr, typeStrKey, gstNoStr);
                     }
                 } else if (typeStrKey.equals("3")) {
                     if (gstNoStr.isEmpty()) {
-                        validSign(nameStr, emailStr, mobileStr, passStr, typeStrKey, gstNoStr);
+                        validSign(nameStr, emailStr, mobileStr, typeStrKey, gstNoStr);
                     } else if (!gstNoStr.matches(GSTINFORMAT_REGEX1)) {
                         ConstantMethods.getAlertMessage(this, "Enter valid GST No.");
                     } else {
-                        validSign(nameStr, emailStr, mobileStr, passStr, typeStrKey, gstNoStr);
+                        validSign(nameStr, emailStr, mobileStr, typeStrKey, gstNoStr);
                     }
                 }
             }
         });
     }
-    private void validSign(String nameStr,String emailStr,String mobileStr,String passStr,String typeStrKey,String gstNoStr){
+    private void validSign(String nameStr,String emailStr,String mobileStr,String typeStrKey,String gstNoStr){
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("displayName",nameStr);
             jsonObject.put("email",emailStr);
             jsonObject.put("phone",mobileStr);
-            jsonObject.put("password",passStr);
+            jsonObject.put("password","");
             jsonObject.put("userType",typeStrKey);
             jsonObject.put("userRollId","5d7dffecb909fc0dec41f14e");
             jsonObject.put("address", cityStr);
@@ -189,15 +168,15 @@ public class SignUpActivity extends BaseActivity {
         String nameStr = nameEdt.getText().toString();
         String emailStr = emailEdt.getText().toString();
         String mobileStr = phoneEdt.getText().toString();
-        String passStr = passEdt.getText().toString();
-        String rePassStr = rePassEdt.getText().toString();
+//        String passStr = passEdt.getText().toString();
+//        String rePassStr = rePassEdt.getText().toString();
         String gstNoStr = gstNo.getText().toString();
         String addressStr = addresssEdt.getText().toString();
         String typeStr = userTypeSpnr.getSelectedItem().toString();
         String typeStrKey = (String)getKeyFromValue(userMap,typeStr);
         String cityStr = cityEdt.getText().toString();
 //        String mobileFirstPos = String.valueOf(mobileStr.charAt(0));
-        if(nameStr.isEmpty()||emailStr.isEmpty()||mobileStr.isEmpty()||passStr.isEmpty()||rePassStr.isEmpty()){
+        if(nameStr.isEmpty()||emailStr.isEmpty()||mobileStr.isEmpty()){
             Toast.makeText(this, "Enter all the fields", Toast.LENGTH_SHORT).show();
             isValid = false;
         }
@@ -209,10 +188,10 @@ public class SignUpActivity extends BaseActivity {
             Toast.makeText(this, "Enter a valid mobile", Toast.LENGTH_SHORT).show();
             isValid = false;
         }
-        else if(!passStr.equals(rePassStr)){
-            Toast.makeText(this, "Password does'nt match", Toast.LENGTH_SHORT).show();
-            isValid = false;
-        }
+//        else if(!passStr.equals(rePassStr)){
+//            Toast.makeText(this, "Password does'nt match", Toast.LENGTH_SHORT).show();
+//            isValid = false;
+//        }
         else if(typeStr.equals("Select user type")){
             Toast.makeText(this, "Please select any user type", Toast.LENGTH_SHORT).show();
             isValid = false;

@@ -44,7 +44,7 @@ public class ProductModelListAdapter1 extends RecyclerView.Adapter<ProductModelL
         holder.setIsRecyclable(false);
         ProModlModel proModlModel = proModlModels.get(position);
         holder.nameTxt.setText(proModlModel.getName());
-        holder.edt_qty.setText(proModlModel.getQty());
+        holder.edt_qty.setText("");
 
         holder.edt_qty.addTextChangedListener(new TextWatcher() {
             @Override

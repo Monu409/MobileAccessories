@@ -461,7 +461,7 @@ public class DashboardActivity extends BaseActivity implements JSONResult ,Navig
     }
 
     private void alertDialogForLogout(){
-        AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(this,R.style.AlertDialogCustom);
         builder1.setTitle("Logout");
         builder1.setMessage("Do you want to logout?");
         builder1.setCancelable(true);

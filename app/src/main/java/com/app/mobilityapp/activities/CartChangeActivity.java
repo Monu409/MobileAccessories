@@ -10,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -37,10 +38,10 @@ import static com.app.mobilityapp.app_utils.AppApis.ADD_INTO_CART;
 import static com.app.mobilityapp.app_utils.AppApis.DELETE_CART;
 import static com.app.mobilityapp.app_utils.AppApis.PLACE_ORDER;
 
-public class CartChangeActivity extends BaseActivity {
+public class CartChangeActivity extends BaseActivity implements CartChangeAdapter.GetCartID {
     private RecyclerView cartList;
     private JSONArray jsonForOrder;
-    private TextView checkoutTxt,priceTxt,continueShopTxtBotm;
+    private TextView checkoutTxt, priceTxt, continueShopTxtBotm;
     private LinearLayout emptyCartView;
     private RelativeLayout fullCartView;
     private JSONArray cartIdArray = new JSONArray();
@@ -52,14 +53,12 @@ public class CartChangeActivity extends BaseActivity {
         ConstantMethods.setTitleAndBack(this, "Cart");
         cartList = findViewById(R.id.cart_list);
         checkoutTxt = findViewById(R.id.checkout_txt);
-//        priceTxt = findViewById(R.id.total_txt);
-//        priceTxt = findViewById(R.id.total_txt);
         emptyCartView = findViewById(R.id.empty_cart_view);
         fullCartView = findViewById(R.id.cart_full_view);
 
         cartList.setLayoutManager(new LinearLayoutManager(this));
-        checkoutTxt.setOnClickListener(v->{
-            startActivity(new Intent(this,CheckoutActivity.class));
+        checkoutTxt.setOnClickListener(v -> {
+            startActivity(new Intent(this, CheckoutActivity.class));
         });
     }
 
@@ -82,33 +81,91 @@ public class CartChangeActivity extends BaseActivity {
             public void notifySuccess(@NonNull JSONObject response) {
                 ConstantMethods.dismissProgressBar();
                 Gson gson = new Gson();
-                CartNewModel cartNewModel = gson.fromJson(String.valueOf(response),CartNewModel.class);
+                CartNewModel cartNewModel = gson.fromJson(String.valueOf(response), CartNewModel.class);
                 String confirmation = cartNewModel.getConfirmation();
-                if(confirmation.equals("success")){
+                if (confirmation.equals("success")) {
                     List<CartNewModel.CartChildModel> cartChildModels = cartNewModel.getData();
-                    CartChangeAdapter cartChangeAdapter = new CartChangeAdapter(cartChildModels, CartChangeActivity.this);
+                    CartChangeAdapter cartChangeAdapter = new CartChangeAdapter(cartChildModels, CartChangeActivity.this, CartChangeActivity.this);
                     cartList.setAdapter(cartChangeAdapter);
-                    if(cartChildModels.size()!=0){
+                    if (cartChildModels.size() != 0) {
                         fullCartView.setVisibility(View.VISIBLE);
                         emptyCartView.setVisibility(View.GONE);
-                    }
-                    else{
+                    } else {
                         fullCartView.setVisibility(View.GONE);
                         emptyCartView.setVisibility(View.VISIBLE);
                     }
                     int priceSum = 0;
-                    for(int i=0;i<cartChildModels.size();i++){
+                    for (int i = 0; i < cartChildModels.size(); i++) {
                         int price = cartChildModels.get(i).getPrice();
-                        priceSum = priceSum+price;
+                        priceSum = priceSum + price;
                     }
 //                    priceTxt.setText("₹ "+priceSum);
                 }
             }
+
             @Override
             public void notifyError(@NonNull ANError anError) {
                 ConstantMethods.dismissProgressBar();
                 Toast.makeText(CartChangeActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
             }
-        },this);
+        }, this);
+    }
+
+    @Override
+    public void getId(String cartId) {
+        alertDialogForLogout(cartId);
+    }
+
+    //{"_id":["5e5c92d96f6a170ed18e7411"]}
+    private void deleteCart(String catdId) {
+        JSONObject cartIdObj = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
+        jsonArray.put(catdId);
+        try {
+            cartIdObj.put("_id", jsonArray);
+            CommonNetwork.deleteNetworkJsonObj(DELETE_CART + cartIdObj, new JSONResult() {
+                @Override
+                public void notifySuccess(@NonNull JSONObject response) {
+                    Log.e("response", "" + response);
+                    String confirmation = null;
+                    try {
+                        confirmation = response.getString("confirmation");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    if (confirmation.equals("success")) {
+                        Toast.makeText(CartChangeActivity.this, "Cart item deleted", Toast.LENGTH_SHORT).show();
+                        getCartDetail();
+                    }
+                }
+
+                @Override
+                public void notifyError(@NonNull ANError anError) {
+                    Log.e("response", "" + anError);
+                }
+            }, this);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void alertDialogForLogout(String cartId){
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(this,R.style.AlertDialogCustom);
+        builder1.setTitle("Delete Cart");
+        builder1.setMessage("Do you want to Delete this item");
+        builder1.setCancelable(true);
+
+        builder1.setPositiveButton(
+                "Yes",
+                (dialog, id) -> {
+                    deleteCart(cartId);
+                });
+
+        builder1.setNegativeButton(
+                "No",
+                (dialog, id) -> dialog.cancel());
+
+        AlertDialog alert11 = builder1.create();
+        alert11.show();
     }
 }

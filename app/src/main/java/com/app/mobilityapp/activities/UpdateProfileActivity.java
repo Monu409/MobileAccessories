@@ -20,6 +20,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
@@ -46,8 +48,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import static com.app.mobilityapp.app_utils.AppApis.BASE_URL;
 import static com.app.mobilityapp.app_utils.AppApis.GET_PROFILE;
@@ -72,44 +78,31 @@ public class UpdateProfileActivity extends BaseActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ConstantMethods.setTitleAndBack(this, "Profile");
-        profileImg = findViewById(R.id.profile_img);
-        camImg = findViewById(R.id.cam_img);
-        camImg.setOnClickListener(v -> selectImage());
-        nameEdt = findViewById(R.id.input_fname);
-        emailEdt = findViewById(R.id.input_email);
-        passwordEdt = findViewById(R.id.input_pass);
-        //dobEdt = findViewById(R.id.input_dob);
-        phoneEdt = findViewById(R.id.input_mobile);
-        updateBtn = findViewById(R.id.update_btn);
-        addressEdt = findViewById(R.id.input_address);
-        gstEdt = findViewById(R.id.input_gstno);
-        userType = ConstantMethods.getStringPreference("user_type", this);
-        blackColorEditTexts();
-
-//        dobEdt.setOnClickListener(v->{
-//            ConstantMethods.setDate(dobEdt,this);
-//        });
-        updateBtn.setOnClickListener(v -> {
-            if (updateBtn.getText().toString().equals("Edit Profile")) {
-                grayColorEditTexts();
-                updateBtn.setText("Save Profile");
-            } else {
-                postProfileData();
-            }
-        });
-        getProfileData();
-//        String getProfileImg = ConstantMethods.getStringPreference("saved_image_path", this);
-//        if (getProfileImg != null) {
-//            Bitmap bitmap = decodeToBase64(getProfileImg);
-//            if (!getProfileImg.equals(""))
-//                profileImg.setImageBitmap(bitmap);
-//        }
+        if (checkAndRequestPermissions()) {
+            profileImg = findViewById(R.id.profile_img);
+            camImg = findViewById(R.id.cam_img);
+            camImg.setOnClickListener(v -> selectImage());
+            nameEdt = findViewById(R.id.input_fname);
+            emailEdt = findViewById(R.id.input_email);
+            passwordEdt = findViewById(R.id.input_pass);
+            phoneEdt = findViewById(R.id.input_mobile);
+            updateBtn = findViewById(R.id.update_btn);
+            addressEdt = findViewById(R.id.input_address);
+            gstEdt = findViewById(R.id.input_gstno);
+            userType = ConstantMethods.getStringPreference("user_type", this);
+            blackColorEditTexts();
+            updateBtn.setOnClickListener(v -> {
+                if (updateBtn.getText().toString().equals("Edit Profile")) {
+                    grayColorEditTexts();
+                    updateBtn.setText("Save Profile");
+                } else {
+                    postProfileData();
+                }
+            });
+            getProfileData();
+        }
     }
 
-    public static Bitmap decodeToBase64(String input) {
-        byte[] decodedByte = Base64.decode(input, 0);
-        return BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.length);
-    }
 
     @Override
     protected int getLayoutResourceId() {
@@ -129,7 +122,6 @@ public class UpdateProfileActivity extends BaseActivity {
             JSONObject jsonObject = new JSONObject();
             try {
                 jsonObject.put("displayName", nameStr);
-//                jsonObject.put("dob",dobStr);
                 jsonObject.put("email", emailStr);
                 jsonObject.put("phone", phoneStr);
             } catch (JSONException e) {
@@ -277,10 +269,6 @@ public class UpdateProfileActivity extends BaseActivity {
                 profileImg.setImageBitmap(bitmap);
                 File file = new File(imgPath);
                 uploadMedia(file);
-
-//                profileImg.setImageBitmap(bmp);
-//                File file = new File(imgPath);
-//                uploadMedia(file);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -309,40 +297,6 @@ public class UpdateProfileActivity extends BaseActivity {
         int column_index = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA);
         cursor.moveToFirst();
         return cursor.getString(column_index);
-    }
-
-
-    private void updateProfilePic(File file) {
-        String userId = ConstantMethods.getStringPreference("user_id", this);
-        AndroidNetworking
-                .put(UPLOAD_PROFILE_PIC)
-                .addFileBody(file)
-                .addHeaders("Content-type", "image/jpeg")
-                .addBodyParameter("login_id", userId)
-                .addBodyParameter("baseurl", BASE_URL + "images/profile/")
-                .build()
-                .getAsJSONObject(new JSONObjectRequestListener() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.e("response", "" + response);
-                    }
-
-                    @Override
-                    public void onError(ANError anError) {
-                        Log.e("response", "" + anError);
-                    }
-                });
-    }
-
-    public static String encodeToBase64(Bitmap image) {
-        Bitmap immage = image;
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        immage.compress(Bitmap.CompressFormat.PNG, 100, baos);
-        byte[] b = baos.toByteArray();
-        String imageEncoded = Base64.encodeToString(b, Base64.DEFAULT);
-
-        Log.d("Image Log:", imageEncoded);
-        return imageEncoded;
     }
 
     private void grayColorEditTexts() {
@@ -403,7 +357,6 @@ public class UpdateProfileActivity extends BaseActivity {
         AndroidNetworking
                 .upload(UPLOAD_PROFILE_PICTURE)
                 .addMultipartFile("image", file)
-                //.addMultipartFile("baseurl", BASE_URL)
                 .addMultipartParameter("baseurl", BASE_URL)
                 .addMultipartParameter("fileSize", String.valueOf(file.getTotalSpace()))
                 .setTag("uploadTest")
@@ -426,13 +379,6 @@ public class UpdateProfileActivity extends BaseActivity {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-//                        try {
-//                            response.put("senderFor","5dd6714a4b01823cc68a81bc");
-//                            response.put("content","");
-//                            sendMessage(response);
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                        }
 
                     }
 
@@ -472,6 +418,95 @@ public class UpdateProfileActivity extends BaseActivity {
                 Log.e("response", "" + anError);
             }
         }, this);
+    }
+
+    public static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
+
+    private boolean checkAndRequestPermissions() {
+        int camera = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
+        int wtite = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int read = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+//        int call = ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE);
+        List<String> listPermissionsNeeded = new ArrayList<>();
+        if (wtite != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+        if (camera != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.CAMERA);
+        }
+        if (read != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+        }
+//        if (call != PackageManager.PERMISSION_GRANTED) {
+//            listPermissionsNeeded.add(Manifest.permission.CALL_PHONE);
+//        }
+        if (!listPermissionsNeeded.isEmpty()) {
+            ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), REQUEST_ID_MULTIPLE_PERMISSIONS);
+            return true;
+        }
+        return true;
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        Log.d("in fragment on request", "Permission callback called-------");
+        switch (requestCode) {
+            case REQUEST_ID_MULTIPLE_PERMISSIONS: {
+
+                Map<String, Integer> perms = new HashMap<>();
+                // Initialize the map with both permissions
+                perms.put(Manifest.permission.WRITE_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.CAMERA, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.READ_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+                // Fill with actual results from user
+                if (grantResults.length > 0) {
+                    for (int i = 0; i < permissions.length; i++)
+                        perms.put(permissions[i], grantResults[i]);
+                    // Check for both permissions
+                    if (perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                            && perms.get(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED && perms.get(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                        Log.d("in fragment on request", "CAMERA & WRITE_EXTERNAL_STORAGE READ_EXTERNAL_STORAGE permission granted");
+                        // process the normal flow
+                        //else any one or both the permissions are not granted
+                    } else {
+                        Log.d("in fragment on request", "Some permissions are not granted ask again ");
+                        //permission is denied (this is the first time, when "never ask again" is not checked) so ask again explaining the usage of permission
+//                        // shouldShowRequestPermissionRationale will return true
+                        //show the dialog or snackbar saying its necessary and try again otherwise proceed with setup.
+                        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA) || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                            showDialogOK("Camera and Storage Permission required for this app",
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            switch (which) {
+                                                case DialogInterface.BUTTON_POSITIVE:
+                                                    checkAndRequestPermissions();
+                                                    break;
+                                                case DialogInterface.BUTTON_NEGATIVE:
+                                                    // proceed with logic by disabling the related features or quit the app.
+                                                    break;
+                                            }
+                                        }
+                                    });
+                        } else {
+                            Toast.makeText(this, "Go to settings and enable permissions", Toast.LENGTH_LONG)
+                                    .show();
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    private void showDialogOK(String message, DialogInterface.OnClickListener okListener) {
+        new AlertDialog.Builder(this)
+                .setMessage(message)
+                .setPositiveButton("OK", okListener)
+                .setNegativeButton("Cancel", okListener)
+                .create()
+                .show();
     }
 
 

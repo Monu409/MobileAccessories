@@ -29,6 +29,8 @@ import com.app.mobilityapp.modals.LocalQuantityModel;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.security.MessageDigest;
@@ -39,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -244,6 +247,23 @@ public class ConstantMethods {
         Type type = new TypeToken<ArrayList<LocalQuantityModel>>() {}.getType();
         return gson.fromJson(json, type);
     }
+
+//    private static void saveMap(Context context, Map<String,List<LocalQuantityModel>> inputMap){
+//        String jsonString = new Gson().toJson(jsonMap);
+//        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+//        SharedPreferences.Editor editor = sharedPreferences.edit();
+//        editor.putString("map", jsonString);
+//        editor.apply();
+//    }
+//
+//    private static Map<String,List<LocalQuantityModel>> loadMap(Context context){
+//        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+//        String defValue = new Gson().toJson(new HashMap<String, List<String>>());
+//        String json=sharedPreferences.getString("map",defValue);
+//        TypeToken<HashMap<String,List<String>>> token = new TypeToken<HashMap<String,List<String>>>() {};
+//        HashMap<String,List<LocalQuantityModel>> retrievedMap=new Gson().fromJson(json,token.getType());
+//        return retrievedMap;
+//    }
 
     public static void getAlertMessage(Context context,String message){
         AlertDialog.Builder builder = new AlertDialog.Builder(context);

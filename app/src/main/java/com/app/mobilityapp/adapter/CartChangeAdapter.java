@@ -38,7 +38,14 @@ public class CartChangeAdapter extends RecyclerView.Adapter<CartChangeAdapter.Ca
     private List<CartNewModel.CartChildModel> cartChildModels;
     private Context context;
     private LayoutInflater layoutInflater;
+    private GetCartID getCartID;
 
+    public CartChangeAdapter(List<CartNewModel.CartChildModel> cartChildModels, Context context,GetCartID getCartID) {
+        this.cartChildModels = cartChildModels;
+        this.context = context;
+        this.getCartID = getCartID;
+        layoutInflater = LayoutInflater.from(context);
+    }
     public CartChangeAdapter(List<CartNewModel.CartChildModel> cartChildModels, Context context) {
         this.cartChildModels = cartChildModels;
         this.context = context;
@@ -75,6 +82,10 @@ public class CartChangeAdapter extends RecyclerView.Adapter<CartChangeAdapter.Ca
             intent.putExtra("cart_id",cartId);
             context.startActivity(intent);
         });
+        holder.removeTxt.setOnClickListener(v->{
+            getCartID.getId(cartId);
+        });
+
     }
 
     @Override
@@ -83,7 +94,7 @@ public class CartChangeAdapter extends RecyclerView.Adapter<CartChangeAdapter.Ca
     }
 
     public class CartCHolder extends RecyclerView.ViewHolder {
-        public TextView name, qty, priceTxt, catName;
+        public TextView name, qty, priceTxt, catName,removeTxt;
         public CircleImageView itmImg;
         public ImageView editImg;
         RelativeLayout fullView;
@@ -95,7 +106,12 @@ public class CartChangeAdapter extends RecyclerView.Adapter<CartChangeAdapter.Ca
             priceTxt = itemView.findViewById(R.id.price_txt);
             itmImg = itemView.findViewById(R.id.brand_img);
             fullView = itemView.findViewById(R.id.full_view);
+            removeTxt = itemView.findViewById(R.id.remove_txt);
         }
+    }
+
+    public interface GetCartID{
+        void getId(String cartId);
     }
 
     private void deleteCart(String url){

@@ -43,4 +43,6 @@ public interface AppApis {
     String EDIT_CART = BASE_URL+"token/cardbrand/cart";
     String SELLER_PRODUCTS = BASE_URL+"token/vendor/listproduct/product";
     String SELLER_ORDER_RECEIVED = BASE_URL+"token/myorder/sellerorder";
+    String DELETE_BRANDS = BASE_URL+"token/deletebrand/cart";
+    String MY_PRODUCT_STATUS = BASE_URL+"custom/product/";
 }

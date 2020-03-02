@@ -27,6 +27,7 @@ public class OtpActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ConstantMethods.setTitleAndBack(this,"Enter OTP");
         String phoneNo = getIntent().getStringExtra("mobile_num");
         otpEdt = findViewById(R.id.input_otp);
         sendOtp = findViewById(R.id.otp_btn);
