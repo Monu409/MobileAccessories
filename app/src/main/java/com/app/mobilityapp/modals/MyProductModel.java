@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 import java.util.List;
 
-public class MyProductModel{
+public class MyProductModel implements Serializable {
 
     @SerializedName("confirmation")
     @Expose
@@ -31,7 +31,7 @@ public class MyProductModel{
         this.data = data;
     }
 
-    public class Brand {
+    public class Brand implements Serializable {
 
         @SerializedName("image")
         @Expose
@@ -91,7 +91,7 @@ public class MyProductModel{
 
     }
 
-    public class BrandDetail {
+    public class BrandDetail implements Serializable {
 
         @SerializedName("brand")
         @Expose
@@ -129,7 +129,7 @@ public class MyProductModel{
 
     }
 
-    public class CategoryId {
+    public class CategoryId implements Serializable {
 
         @SerializedName("name")
         @Expose
@@ -167,7 +167,7 @@ public class MyProductModel{
 
     }
 
-    public class CreatedBy {
+    public class CreatedBy implements Serializable {
 
         @SerializedName("displayName")
         @Expose
@@ -661,7 +661,7 @@ public class MyProductModel{
 
     }
 
-    public class Image {
+    public class Image implements Serializable {
 
         @SerializedName("imagename")
         @Expose
@@ -688,7 +688,7 @@ public class MyProductModel{
 
     }
 
-    public class Model {
+    public class Model implements Serializable {
 
         @SerializedName("name")
         @Expose
@@ -748,7 +748,7 @@ public class MyProductModel{
 
     }
 
-    public class Price {
+    public class Price implements Serializable {
 
         @SerializedName("from")
         @Expose
@@ -797,7 +797,7 @@ public class MyProductModel{
 
     }
 
-    public class SubCategoryId {
+    public class SubCategoryId implements Serializable {
 
         @SerializedName("name")
         @Expose

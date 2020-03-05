@@ -86,6 +86,18 @@ public class CartChangeAdapter extends RecyclerView.Adapter<CartChangeAdapter.Ca
             getCartID.getId(cartId);
         });
 
+        List<CartNewModel.BrandDetail_> brandDetail = cartChildModels.get(position).getBrandDetails();
+        int qtySum = 0;
+        for(int i=0;i<brandDetail.size();i++){
+            List<CartNewModel.Modallist> modallist = brandDetail.get(i).getModallist();
+            for(int j=0;j<modallist.size();j++){
+                int qty = modallist.get(j).getQuantity();
+                qtySum = qtySum+qty;
+            }
+        }
+
+        holder.qty.setText("Qty: "+qtySum);
+
     }
 
     @Override
@@ -107,32 +119,11 @@ public class CartChangeAdapter extends RecyclerView.Adapter<CartChangeAdapter.Ca
             itmImg = itemView.findViewById(R.id.brand_img);
             fullView = itemView.findViewById(R.id.full_view);
             removeTxt = itemView.findViewById(R.id.remove_txt);
+            qty = itemView.findViewById(R.id.qty_txt);
         }
     }
 
     public interface GetCartID{
         void getId(String cartId);
-    }
-
-    private void deleteCart(String url){
-        CommonNetwork.deleteNetworkJsonObj(url, new JSONResult() {
-            @Override
-            public void notifySuccess(@NonNull JSONObject response) {
-                Log.e("res",""+response);
-                try {
-                    String confirmation = response.getString("confirmation");
-//                    if(confirmation.equals("success")){
-//
-//                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void notifyError(@NonNull ANError anError) {
-                Log.e("res",""+anError);
-            }
-        },context);
     }
 }

@@ -1,5 +1,6 @@
 package com.app.mobilityapp.app_utils;
 
+import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -19,7 +20,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         ActionBar actionbar = getSupportActionBar();
         actionbar.setBackgroundDrawable(getResources().getDrawable(R.drawable.custom_tool));
-        setContentView(getLayoutResourceId()); 
+        setContentView(getLayoutResourceId());
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     } 
     protected abstract int getLayoutResourceId();
 

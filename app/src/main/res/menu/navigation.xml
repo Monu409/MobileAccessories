@@ -3,7 +3,7 @@
 
     <item
         android:id="@+id/navigation_chat"
-        android:icon="@drawable/chat_unslct"
+        android:icon="@drawable/chat_unslct_1"
         android:title="Chat"
         android:iconTint="@color/textcolor"/>
 

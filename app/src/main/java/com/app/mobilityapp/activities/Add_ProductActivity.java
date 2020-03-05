@@ -11,6 +11,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -110,6 +111,12 @@ public class Add_ProductActivity extends BaseActivity {
                 editPrices(productChild.getPrice());
                 contentEdt.setText(productChild.getContent());
                 product_edt.setText(productChild.getName());
+                ArrayList<String> urls = new ArrayList<>();
+                for (MyProductModel.Image image : productChild.getImage()) {
+                    urls.add(image.getImageurl());
+                }
+                MyAdapter mAdapter = new MyAdapter(this, urls);
+                listView.setAdapter(mAdapter);
             }
             Log.e("edit price", " is now here");
         }
@@ -224,7 +231,7 @@ public class Add_ProductActivity extends BaseActivity {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-        color_spnr.setItems(Arrays.asList(getResources().getStringArray(R.array.color_array)), "Please Select");
+        color_spnr.setItems(Arrays.asList(getResources().getStringArray(R.array.color_array)));
         color_spnr.setItemSelectListener(new MultiSpinner.MultiSpinnerListener() {
             @Override
             public void onItemsSelected(Boolean[] selected) {
@@ -248,7 +255,7 @@ public class Add_ProductActivity extends BaseActivity {
         final MultiSpinner model_spnr = view1.findViewById(R.id.model_spinr);
 
         brand_spinr.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, all_brands));
-//        brand_spinr.setSelection(getIndex(all_brands, brands.getBrand_id()));
+        brand_spinr.setSelection(getIndex(all_brands, brands.getBrand_id()));
 
         view1.setTag(brand_root.getChildCount());
         if (brand_root.getChildCount() == 0) {
@@ -270,7 +277,7 @@ public class Add_ProductActivity extends BaseActivity {
                     ConsModel selected_brand = (ConsModel) parent.getSelectedItem();
                     if (!check_duplicate(post_brands, selected_brand)) {
                         brands.setBrand_id(selected_brand.getId());
-                        get_model("http://132.148.158.82:3004/custom/model", putJson(new JSONObject(), "brandId", selected_brand.getId()), model_spnr);
+                        get_model("http://132.148.158.82:3004/custom/model", putJson(new JSONObject(), "brandId", selected_brand.getId()), model_spnr, brands.getModel_ids());
                     } else {
                         Toast.makeText(Add_ProductActivity.this, "This Brand already selected please select different one", Toast.LENGTH_SHORT).show();
                         brand_spinr.setSelection(0);
@@ -294,7 +301,16 @@ public class Add_ProductActivity extends BaseActivity {
 
             }
         });
-        post_brands.add(brands);
+//        if (page_type == null || page_type.equals(""))
+//            post_brands.add(brands);
+//        else {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                post_brands.add(brands);
+            }
+        }, 1000);
+//        }
     }
 
     private boolean check_duplicate(List<AddedBrands> post_brands, ConsModel cat) {
@@ -421,7 +437,7 @@ public class Add_ProductActivity extends BaseActivity {
                                 sub_cat2List = new ArrayList<>(Arrays.asList(gson.fromJson(data, ConsModel[].class)));
                                 scat2_spnr.setAdapter(new ArrayAdapter<>(Add_ProductActivity.this, android.R.layout.simple_list_item_1, sub_cat2List));
                                 ((ViewGroup) scat2_spnr.getParent()).setVisibility(View.VISIBLE);
-                                if (page_type != null && !page_type.equals("")) {
+                                if (page_type != null && !page_type.equals("") && productChild.getSubcategory2() != null) {
                                     scat2_spnr.setSelection(getIndex(sub_catList, productChild.getSubcategory2().getName()));
                                 }
                                 break;
@@ -454,7 +470,7 @@ public class Add_ProductActivity extends BaseActivity {
         }, this);
     }
 
-    public void get_model(String url, JSONObject jsonObject, MultiSpinner model_spnr) {
+    public void get_model(String url, JSONObject jsonObject, MultiSpinner model_spnr, List<String> last_selected) {
         CommonNetwork.postNetworkJsonObj(url, jsonObject, new JSONResult() {
             @Override
             public void notifySuccess(@NonNull JSONObject response) {
@@ -465,7 +481,11 @@ public class Add_ProductActivity extends BaseActivity {
                             ((ViewGroup) model_spnr.getParent()).setVisibility(View.GONE);
                         else
                             ((ViewGroup) model_spnr.getParent()).setVisibility(View.VISIBLE);
-                        model_spnr.setItems(models, "Please select");
+                        if (last_selected != null) {
+                            model_spnr.setItems(models, last_selected);
+                        } else {
+                            model_spnr.setItems(models);
+                        }
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -690,12 +710,14 @@ public class Add_ProductActivity extends BaseActivity {
     private void editBrands() {
         List<MyProductModel.BrandDetail> brands = productChild.getBrandDetails();
         for (MyProductModel.BrandDetail brand : brands) {
-            AddedBrands addedBrands = new AddedBrands();
-            addedBrands.setBrand_id(brand.getBrand().getId());
-            for (MyProductModel.Model model : brand.getModel()) {
-                addedBrands.addModel_ids(model.getId());
+            if (brand.getBrand() != null) {
+                AddedBrands addedBrands = new AddedBrands();
+                addedBrands.setBrand_id(brand.getBrand().getId());
+                for (MyProductModel.Model model : brand.getModel()) {
+                    addedBrands.addModel_ids(model.getId());
+                }
+                add_new_brand(addedBrands);
             }
-            add_new_brand(addedBrands);
         }
     }
 

@@ -99,7 +99,13 @@ public class LoginActivity extends BaseActivity {
                     public void onError(ANError anError) {
                         ConstantMethods.dismissProgressBar();
                         Log.e("anError",anError.toString());
-                        Toast.makeText(LoginActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
+                        try {
+                            JSONObject jsonObject1 = new JSONObject(anError.getErrorBody());
+                            String error = jsonObject1.getString("message");
+                            Toast.makeText(LoginActivity.this, error, Toast.LENGTH_SHORT).show();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 });
     }

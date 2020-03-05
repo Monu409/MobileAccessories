@@ -56,6 +56,18 @@
                     android:layout_marginLeft="10dp"
                     />
 
+                <TextView
+                    android:id="@+id/price_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="10dp"
+                    android:textColor="@color/colorAccent"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:textSize="17sp"/>
+
                 <View
                     android:id="@+id/line_view"
                     android:layout_marginTop="5dp"
@@ -67,24 +79,12 @@
                     android:layout_marginRight="10dp"/>
 
                 <TextView
+                    android:id="@+id/qty_txt"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Price"
-                    android:textColor="@color/colorAccent"
-                    android:layout_below="@+id/line_view"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_toLeftOf="@+id/price_txt"/>
-
-                <TextView
-                    android:id="@+id/price_txt"
-                    android:layout_width="60dp"
                     android:layout_height="35dp"
                     android:text="12"
                     android:textColor="@color/colorAccent"
-                    android:textStyle="bold"
                     android:gravity="center"
-                    android:textSize="17sp"
                     android:layout_alignParentRight="true"
                     android:layout_below="@+id/line_view"
                     android:layout_centerVertical="true"
@@ -94,20 +94,20 @@
                 <TextView
                     android:id="@+id/remove_txt"
                     android:layout_width="wrap_content"
-                    android:layout_height="40dp"
+                    android:layout_height="35dp"
                     android:text=" Remove "
-                    android:layout_below="@+id/price_txt"
+                    android:layout_below="@+id/qty_txt"
                     android:background="@drawable/rectangle_shape"
-                    android:gravity="center"
-                    android:layout_marginBottom="5dp"
                     android:layout_marginLeft="10dp"
-                    android:padding="10dp"/>
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="7dp"/>
 
                 <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="40dp"
+                    android:layout_height="35dp"
                     android:text=" Review and Order "
-                    android:layout_below="@+id/price_txt"
+                    android:layout_below="@+id/qty_txt"
                     android:layout_alignParentRight="true"
                     android:layout_marginRight="10dp"
                     android:background="@drawable/blue_rect"

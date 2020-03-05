@@ -101,7 +101,7 @@ public class ProductBrandListAdapter extends RecyclerView.Adapter<ProductBrandLi
             for (int i = 0; i < quantityModels.size(); i++) {
                 String cartBrandId = quantityModels.get(i).getBrandid();
                 if (cartBrandId.equals(productBrandId)) {
-                    holder.qtyTxt.setText("Total Items: " + quantityModels.get(i).getTotalQty());
+                    holder.qtyTxt.setText(String.valueOf(quantityModels.get(i).getTotalQty()));
                     proBrndModal.setQuantity(String.valueOf(quantityModels.get(i).getTotalQty()));
                 }
             }

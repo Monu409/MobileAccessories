@@ -187,7 +187,7 @@ public class DashboardActivity extends BaseActivity implements JSONResult ,Navig
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("isDeleted","false");
+            jsonObject.put("status","true");
         } catch (JSONException e) {
             e.printStackTrace();
         }

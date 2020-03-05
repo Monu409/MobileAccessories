@@ -55,6 +55,11 @@ public class CartChangeActivity extends BaseActivity implements CartChangeAdapte
         checkoutTxt = findViewById(R.id.checkout_txt);
         emptyCartView = findViewById(R.id.empty_cart_view);
         fullCartView = findViewById(R.id.cart_full_view);
+        continueShopTxtBotm = findViewById(R.id.continue_shop_txt);
+
+        continueShopTxtBotm.setOnClickListener(v->{
+            startActivity(new Intent(this,DashboardActivity.class));
+        });
 
         cartList.setLayoutManager(new LinearLayoutManager(this));
         checkoutTxt.setOnClickListener(v -> {

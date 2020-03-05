@@ -47,6 +47,7 @@ public class CheckoutActivity extends BaseActivity {
     private LinearLayout noDataView;
     private String ADDRESS_MATCHER = "[!#$%&(){|}~:;<=>?@*+,./^_`\\'\\\" \\t\\r\\n\\f-]+";
     private JSONObject cartIdJSON = new JSONObject();
+    private RelativeLayout addressRel;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -62,12 +63,23 @@ public class CheckoutActivity extends BaseActivity {
         continueBtn = findViewById(R.id.placed_btn);
         dataAvailView = findViewById(R.id.data_avail_view);
         noDataView = findViewById(R.id.empty_cart_view);
+        addressRel = findViewById(R.id.address_rel);
         noDataView.setOnClickListener(v->{
             startActivity(new Intent(this,DashboardActivity.class));
         });
         checkoutList.setLayoutManager(new LinearLayoutManager(this));
         getAddressData();
         addressEdt.setEnabled(false);
+        addressRel.setOnClickListener(v->{
+            String btnTxt = editAdrsBtn.getText().toString();
+            if(btnTxt.equals("Edit")) {
+                addressEdt.setEnabled(true);
+                editAdrsBtn.setText("Save");
+            }
+            else if(btnTxt.equals("Save")){
+                saveAddress();
+            }
+        });
         editAdrsBtn.setOnClickListener(v->{
             String btnTxt = editAdrsBtn.getText().toString();
             if(btnTxt.equals("Edit")) {

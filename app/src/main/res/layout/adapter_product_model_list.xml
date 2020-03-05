@@ -60,6 +60,7 @@
                         android:src="@drawable/minus_clr"
                         android:padding="10dp"
                         android:layout_marginLeft="10dp"
+                        android:tint="@color/colorAccent1"
                         android:layout_centerVertical="true"/>
                     <View
                         android:layout_width="1dp"
@@ -96,6 +97,7 @@
                         android:padding="10dp"
                         android:layout_alignParentRight="true"
                         android:layout_marginRight="10dp"
+                        android:tint="@color/colorAccent1"
                         android:layout_centerVertical="true"/>
 
                 </RelativeLayout>

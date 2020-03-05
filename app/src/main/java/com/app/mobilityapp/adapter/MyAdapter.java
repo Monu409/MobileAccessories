@@ -24,12 +24,13 @@ import java.util.ArrayList;
 public class MyAdapter extends BaseAdapter {
 
     private Context context;
-    private ArrayList<Uri> arrayList;
+    private ArrayList arrayList;
 
-    public MyAdapter(Context context, ArrayList<Uri> arrayList) {
+    public MyAdapter(Context context, ArrayList arrayList) {
         this.context = context;
         this.arrayList = arrayList;
     }
+
 
     @Override
     public int getCount() {
@@ -54,11 +55,14 @@ public class MyAdapter extends BaseAdapter {
             convertView = mInflater.inflate(R.layout.list_items, null);
         }
 
-        ImageView imageView = (ImageView) convertView.findViewById(R.id.imageView);
-        TextView imagePath =(TextView) convertView.findViewById(R.id.imagePath);
+        ImageView imageView = convertView.findViewById(R.id.imageView);
+        TextView imagePath = convertView.findViewById(R.id.imagePath);
 
-        imagePath.setText(FileUtils.getPath(context, (arrayList.get(position))));
-//        Picasso.with(context).load(arrayList.get(position)).into(imageView);
+        if (arrayList.get(position) instanceof Uri)
+            imagePath.setText(FileUtils.getPath(context, (Uri) arrayList.get(position)));
+        else
+            imagePath.setText(""+arrayList.get(position));
+
         Glide.with(context)
                 .load(arrayList.get(position))
                 .into(imageView);

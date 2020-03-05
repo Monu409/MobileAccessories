@@ -47,6 +47,10 @@ public class GlassFragment extends Fragment {
         this.catId = catId;
     }
 
+    public GlassFragment(){
+
+    }
+
     private void getGlassData(){
 //        ConstantMethods.showProgressbar(getActivity());
         DashboardActivity dashboardActivity = (DashboardActivity)getActivity();
