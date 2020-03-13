@@ -1,13 +1,24 @@
 package com.app.mobilityapp.adapter;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
+
 import com.app.mobilityapp.R;
+import com.app.mobilityapp.activities.FullImageActivity;
 import com.bumptech.glide.Glide;
 import com.smarteist.autoimageslider.SliderViewAdapter;
 
@@ -34,11 +45,15 @@ public class SliderAdapterExample extends SliderViewAdapter<SliderAdapterExample
         Glide.with(viewHolder.itemView)
                 .load(imgUrls.get(position))
                 .into(viewHolder.imageViewBackground);
+        viewHolder.imageViewBackground.setOnClickListener(v->{
+            Intent intent = new Intent(context, FullImageActivity.class);
+            intent.putExtra("image_url",imgUrls.get(position));
+            context.startActivity(intent);
+        });
     }
 
     @Override
     public int getCount() {
-        //slider view count could be dynamic size
         return imgUrls.size();
     }
 
@@ -46,13 +61,12 @@ public class SliderAdapterExample extends SliderViewAdapter<SliderAdapterExample
 
         View itemView;
         ImageView imageViewBackground;
-//        TextView textViewDescription;
 
         public SliderAdapterVH(View itemView) {
             super(itemView);
             imageViewBackground = itemView.findViewById(R.id.iv_auto_image_slider);
-//            textViewDescription = itemView.findViewById(R.id.tv_auto_image_slider);
             this.itemView = itemView;
         }
     }
+
 }

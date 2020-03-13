@@ -21,6 +21,7 @@ import com.app.mobilityapp.app_utils.ConstantMethods;
 import com.app.mobilityapp.connection.CommonNetwork;
 import com.app.mobilityapp.connection.JSONResult;
 import com.app.mobilityapp.modals.CartNewModel;
+import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
@@ -48,6 +49,7 @@ public class CheckoutActivity extends BaseActivity {
     private String ADDRESS_MATCHER = "[!#$%&(){|}~:;<=>?@*+,./^_`\\'\\\" \\t\\r\\n\\f-]+";
     private JSONObject cartIdJSON = new JSONObject();
     private RelativeLayout addressRel;
+    private boolean blockStatus = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -69,6 +71,7 @@ public class CheckoutActivity extends BaseActivity {
         });
         checkoutList.setLayoutManager(new LinearLayoutManager(this));
         getAddressData();
+        getProfileData();
         addressEdt.setEnabled(false);
         addressRel.setOnClickListener(v->{
             String btnTxt = editAdrsBtn.getText().toString();
@@ -91,12 +94,17 @@ public class CheckoutActivity extends BaseActivity {
             }
         });
         continueBtn.setOnClickListener(v->{
-            String addressStr = addressEdt.getText().toString();
-            if(addressStr.equals("No address specified")||addressStr.equals("")||!ConstantMethods.checkAddress(addressStr)){
-                ConstantMethods.getAlertMessage(this,"Please enter valid shipping address");
+            if(blockStatus) {
+                String addressStr = addressEdt.getText().toString();
+                if(addressStr.equals("No address specified")||addressStr.equals("")||!ConstantMethods.checkAddress(addressStr)){
+                    ConstantMethods.getAlertMessage(this,"Please enter valid shipping address");
+                }
+                else {
+                    orderPlaced(jsonForOrder);
+                }
             }
             else {
-                orderPlaced(jsonForOrder);
+                ConstantMethods.messageDialog(this);
             }
         });
         getCartDetail();
@@ -149,7 +157,7 @@ public class CheckoutActivity extends BaseActivity {
                 String confirmation = cartNewModel.getConfirmation();
                 if(confirmation.equals("success")){
                     List<CartNewModel.CartChildModel> cartChildModels = cartNewModel.getData();
-                    CartChangeAdapter cartChangeAdapter = new CartChangeAdapter(cartChildModels, CheckoutActivity.this);
+                    CartChangeAdapter cartChangeAdapter = new CartChangeAdapter(cartChildModels, CheckoutActivity.this,false);
                     checkoutList.setAdapter(cartChangeAdapter);
                     if(cartChildModels.size()!=0){
                         dataAvailView.setVisibility(View.VISIBLE);
@@ -351,6 +359,33 @@ public class CheckoutActivity extends BaseActivity {
                 Log.e("res",""+anError);
             }
         },this);
+    }
+
+    private void getProfileData() {
+        String userId = ConstantMethods.getStringPreference("user_id", this);
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("_id", userId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        CommonNetwork.postNetworkJsonObj(GET_PROFILE, jsonObject, new JSONResult() {
+            @Override
+            public void notifySuccess(@NonNull JSONObject response) {
+                try {
+                    JSONArray jsonArray = response.getJSONArray("data");
+                    JSONObject userInfo = jsonArray.getJSONObject(0);
+                    blockStatus = userInfo.getBoolean("status");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void notifyError(@NonNull ANError anError) {
+//                ConstantMethods.dismissProgressBar();
+            }
+        }, this);
     }
 
 }

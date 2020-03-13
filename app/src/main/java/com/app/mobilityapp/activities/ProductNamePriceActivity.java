@@ -102,19 +102,6 @@ public class ProductNamePriceActivity extends BaseActivity {
 
 
         String lastView = getIntent().getStringExtra("last_view");
-
-//        JSONObject jsonObject = null;
-//        jsonObjectParent = new JSONObject();
-//        try {
-//            // Log.e("catId",cat_id);
-//            jsonObjectParent.put(jsonKey, cat_id);
-//            jsonObject.put("sort", sortVal);
-//            Log.e("request", jsonObject.toString());
-//
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-
         JSONObject jsonObject = getInitialJSONObject();
         try {
             jsonObject.put("sort", sortVal);
@@ -139,6 +126,7 @@ public class ProductNamePriceActivity extends BaseActivity {
                 jsonObject.put("name", keyWord);
                 jsonObject.put("sort", "1");
                 Log.e("request", jsonObject.toString());
+                getProductData(url,jsonObject);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

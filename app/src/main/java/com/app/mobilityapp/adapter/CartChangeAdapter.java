@@ -39,6 +39,7 @@ public class CartChangeAdapter extends RecyclerView.Adapter<CartChangeAdapter.Ca
     private Context context;
     private LayoutInflater layoutInflater;
     private GetCartID getCartID;
+    private boolean isClicked = true;
 
     public CartChangeAdapter(List<CartNewModel.CartChildModel> cartChildModels, Context context,GetCartID getCartID) {
         this.cartChildModels = cartChildModels;
@@ -46,9 +47,10 @@ public class CartChangeAdapter extends RecyclerView.Adapter<CartChangeAdapter.Ca
         this.getCartID = getCartID;
         layoutInflater = LayoutInflater.from(context);
     }
-    public CartChangeAdapter(List<CartNewModel.CartChildModel> cartChildModels, Context context) {
+    public CartChangeAdapter(List<CartNewModel.CartChildModel> cartChildModels, Context context,boolean isClicked) {
         this.cartChildModels = cartChildModels;
         this.context = context;
+        this.isClicked = isClicked;
         layoutInflater = LayoutInflater.from(context);
     }
 
@@ -77,11 +79,14 @@ public class CartChangeAdapter extends RecyclerView.Adapter<CartChangeAdapter.Ca
                 .centerCrop()
                 .into(holder.itmImg);
         String cartId = cartChildModels.get(position).getId();
-        holder.fullView.setOnClickListener(v->{
+        holder.fullView.setOnClickListener(v -> {
             Intent intent = new Intent(context, EditCartActivity.class);
-            intent.putExtra("cart_id",cartId);
+            intent.putExtra("cart_id", cartId);
             context.startActivity(intent);
         });
+        if(!isClicked) {
+            holder.reviewRemoveLay.setVisibility(View.GONE);
+        }
         holder.removeTxt.setOnClickListener(v->{
             getCartID.getId(cartId);
         });
@@ -109,7 +114,7 @@ public class CartChangeAdapter extends RecyclerView.Adapter<CartChangeAdapter.Ca
         public TextView name, qty, priceTxt, catName,removeTxt;
         public CircleImageView itmImg;
         public ImageView editImg;
-        RelativeLayout fullView;
+        RelativeLayout fullView,reviewRemoveLay;
 
         public CartCHolder(@NonNull View itemView) {
             super(itemView);
@@ -120,6 +125,7 @@ public class CartChangeAdapter extends RecyclerView.Adapter<CartChangeAdapter.Ca
             fullView = itemView.findViewById(R.id.full_view);
             removeTxt = itemView.findViewById(R.id.remove_txt);
             qty = itemView.findViewById(R.id.qty_txt);
+            reviewRemoveLay = itemView.findViewById(R.id.review_remove_lay);
         }
     }
 

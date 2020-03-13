@@ -52,7 +52,7 @@
                     android:layout_height="wrap_content"
                     android:text="Title"
                     android:layout_toRightOf="@+id/brand_img"
-                    android:layout_below="@+id/cat_name_txt"
+                    android:layout_above="@+id/line_view"
                     android:layout_marginLeft="10dp"
                     />
 
@@ -68,6 +68,19 @@
                     android:gravity="center"
                     android:textSize="17sp"/>
 
+                <TextView
+                    android:id="@+id/qty_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="12"
+                    android:textColor="@color/colorAccent"
+                    android:gravity="center"
+                    android:layout_alignParentRight="true"
+                    android:layout_above="@+id/line_view"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"
+                    />
+
                 <View
                     android:id="@+id/line_view"
                     android:layout_marginTop="5dp"
@@ -78,42 +91,38 @@
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"/>
 
-                <TextView
-                    android:id="@+id/qty_txt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="35dp"
-                    android:text="12"
-                    android:textColor="@color/colorAccent"
-                    android:gravity="center"
-                    android:layout_alignParentRight="true"
+                <RelativeLayout
+                    android:id="@+id/review_remove_lay"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_below="@+id/line_view"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="10dp"
-                    />
+                    android:layout_marginTop="10dp">
+                    <TextView
+                        android:id="@+id/remove_txt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="35dp"
+                        android:text=" Remove "
+                        android:background="@drawable/rectangle_shape"
+                        android:layout_marginLeft="10dp"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:paddingTop="7dp"/>
 
-                <TextView
-                    android:id="@+id/remove_txt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="35dp"
-                    android:text=" Remove "
-                    android:layout_below="@+id/qty_txt"
-                    android:background="@drawable/rectangle_shape"
-                    android:layout_marginLeft="10dp"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
-                    android:paddingTop="7dp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="35dp"
+                        android:text=" Review and Order "
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="10dp"
+                        android:background="@drawable/blue_rect"
+                        android:padding="5dp"
+                        android:textColor="@color/textcolornew"
+                        android:gravity="center"/>
+                </RelativeLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="35dp"
-                    android:text=" Review and Order "
-                    android:layout_below="@+id/qty_txt"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginRight="10dp"
-                    android:background="@drawable/blue_rect"
-                    android:padding="5dp"
-                    android:textColor="@color/textcolornew"
-                    android:gravity="center"/>
+
+
+
 
             </RelativeLayout>
         </androidx.cardview.widget.CardView>

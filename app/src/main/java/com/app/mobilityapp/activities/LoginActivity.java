@@ -1,14 +1,19 @@
 package com.app.mobilityapp.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.text.InputType;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
@@ -90,6 +95,10 @@ public class LoginActivity extends BaseActivity {
                                 String message = response.getString("message");
                                 Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
                             }
+                            else if(mResponse.equals("block")){
+                                String message = response.getString("message");
+                                messageDialog(message);
+                            }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -102,7 +111,9 @@ public class LoginActivity extends BaseActivity {
                         try {
                             JSONObject jsonObject1 = new JSONObject(anError.getErrorBody());
                             String error = jsonObject1.getString("message");
-                            Toast.makeText(LoginActivity.this, error, Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(LoginActivity.this, error, Toast.LENGTH_SHORT).show();
+                            String phoneNum = phoneEdt.getText().toString();
+                            notRegisterPopup(phoneNum);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -114,5 +125,31 @@ public class LoginActivity extends BaseActivity {
     public void onBackPressed() {
         super.onBackPressed();
         finishAffinity();
+    }
+
+    private void notRegisterPopup(String mobileNum){
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setTitle("Number not exist");
+        alert.setMessage("This mobile number is not register with us.\nDo you want to continue");
+        alert.setPositiveButton("Ok", (dialog, whichButton) -> {
+            Intent intent = new Intent(LoginActivity.this,SignUpActivity.class);
+            intent.putExtra("mobile_number",mobileNum);
+            startActivity(intent);
+        });
+
+        alert.setNegativeButton("Cancel", (dialog, whichButton) -> {
+            // what ever you want to do with No option.
+        });
+
+        alert.show();
+    }
+    private void messageDialog(String message){
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setTitle("Number Block");
+        alert.setMessage(message);
+        alert.setPositiveButton("Ok", (dialog, whichButton) -> {
+
+        });
+        alert.show();
     }
 }

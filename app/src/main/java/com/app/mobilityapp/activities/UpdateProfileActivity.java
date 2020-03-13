@@ -171,6 +171,7 @@ public class UpdateProfileActivity extends BaseActivity {
                     String name = userInfo.getString("displayName");
                     String email = userInfo.getString("email");
                     String phone = userInfo.getString("phone");
+
                     String userPicture = userInfo.getString("userPicture");
                     JSONObject addressObj = userInfo.getJSONObject("addressId");
                     String addressStr = addressObj.getString("address");

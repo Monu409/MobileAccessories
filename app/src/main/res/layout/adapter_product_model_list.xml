@@ -49,7 +49,7 @@
                     android:orientation="horizontal"
                     android:layout_centerVertical="true"
                     android:layout_alignParentRight="true"
-                    android:background="@drawable/rectangle_shape"
+
                     android:layout_marginRight="10dp"
                     >
                     <ImageView
@@ -60,33 +60,21 @@
                         android:src="@drawable/minus_clr"
                         android:padding="10dp"
                         android:layout_marginLeft="10dp"
-                        android:tint="@color/colorAccent1"
+                        android:background="@drawable/minus_bck"
                         android:layout_centerVertical="true"/>
-                    <View
-                        android:layout_width="1dp"
-                        android:layout_height="35dp"
-                        android:background="#000000"
-                        android:layout_toRightOf="@+id/btn_minus"
-                        android:layout_marginLeft="5dp"/>
 
                     <EditText
                         android:id="@+id/edt_qty"
                         android:layout_width="60dp"
                         android:layout_height="35dp"
                         android:layout_centerInParent="true"
-                        android:background="@null"
                         android:gravity="center"
                         android:hint="0"
                         android:maxLength="5"
                         android:inputType="numberSigned"
+                        android:background="@drawable/rectangle_shape"
                         android:padding="2dp"
                         android:maxLines="1"/>
-                    <View
-                        android:layout_width="1dp"
-                        android:layout_height="35dp"
-                        android:background="#000000"
-                        android:layout_toLeftOf="@+id/btn_plus"
-                        android:layout_marginRight="5dp"/>
 
                     <ImageView
                         android:id="@+id/btn_plus"
@@ -97,7 +85,7 @@
                         android:padding="10dp"
                         android:layout_alignParentRight="true"
                         android:layout_marginRight="10dp"
-                        android:tint="@color/colorAccent1"
+                        android:background="@drawable/plus_bck"
                         android:layout_centerVertical="true"/>
 
                 </RelativeLayout>

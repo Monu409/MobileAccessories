@@ -21,7 +21,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class EnterQuantityACopy extends BaseActivity {
     private RecyclerView qtyList;
@@ -96,7 +98,15 @@ public class EnterQuantityACopy extends BaseActivity {
                     jsonObject.put("modallist", jsonArray);
                     Gson gson = new Gson();
                     LocalQuantityModel conversationModel = gson.fromJson(String.valueOf(jsonObject),LocalQuantityModel.class);
-                    List<LocalQuantityModel> localQuantityModels1 = ConstantMethods.getQtyArrayListShared(this,"local_qty_models");
+                    List<LocalQuantityModel> localQuantityModels1 = new ArrayList<>();
+                    localQuantityModels1.add(conversationModel);
+//                    Map<String,List<LocalQuantityModel>> stringListMap = ConstantMethods.loadMap(this);
+//                    if(stringListMap==null){
+//                        stringListMap = new HashMap<>();
+//                    }
+//                    stringListMap.put("list"+position,localQuantityModels1);
+//                    ConstantMethods.saveMap(this,stringListMap);
+//                    List<LocalQuantityModel> localQuantityModels1 = ConstantMethods.getQtyArrayListShared(this,"local_qty_models");
                     if(localQuantityModels1==null){
                         localQuantityModels1 = new ArrayList<>();
                     }

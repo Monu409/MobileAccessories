@@ -103,6 +103,7 @@ public class DashboardActivity extends BaseActivity implements JSONResult ,Navig
     private DrawerLayout drawer;
     private ImageView profilePic;
     private TextView nameTxt,emailTxt,myProducts,orderRcvd;
+    private boolean blockStatus = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -156,7 +157,14 @@ public class DashboardActivity extends BaseActivity implements JSONResult ,Navig
         helpSprtTxt.setOnClickListener(v->startActivity(new Intent(this, HelpSupportActivity.class)));
         callImg.setOnClickListener(v->onCallBtnClick());
         logoutTxt.setOnClickListener(v->alertDialogForLogout());
-        myProducts.setOnClickListener(v->startActivity(new Intent(this, MyProductActivity.class)));
+        myProducts.setOnClickListener(v->{
+            if(blockStatus) {
+                startActivity(new Intent(this,MyProductActivity.class));
+            }
+            else {
+                ConstantMethods.messageDialog(this);
+            }
+        });
         orderRcvd.setOnClickListener(v->startActivity(new Intent(this, OrderReceivedActivity.class)));
 
         searchEdt.setOnEditorActionListener((v, actionId, event) -> {
@@ -250,7 +258,12 @@ public class DashboardActivity extends BaseActivity implements JSONResult ,Navig
         int id = item.getItemId();
         switch (id){
             case R.id.my_profile:
-                startActivity(new Intent(this, UpdateProfileActivity.class));
+                if(blockStatus) {
+                    startActivity(new Intent(this, UpdateProfileActivity.class));
+                }
+                else {
+                    ConstantMethods.messageDialog(this);
+                }
                 break;
             case R.id.my_ledger:
                 startActivity(new Intent(this, CreditSttmntActivity.class));
@@ -512,7 +525,12 @@ public class DashboardActivity extends BaseActivity implements JSONResult ,Navig
                 item.setIcon(R.drawable.orders_slctd);
                 return true;
             case navigation_add_product:
-                startActivity(new Intent(this,Add_ProductActivity.class));
+                if(blockStatus) {
+                    startActivity(new Intent(this,Add_ProductActivity.class));
+                }
+                else {
+                    ConstantMethods.messageDialog(this);
+                }
                 return true;
         }
         return false;
@@ -669,7 +687,6 @@ public class DashboardActivity extends BaseActivity implements JSONResult ,Navig
     }
 
     private void getProfileData() {
-//        ConstantMethods.showProgressbar(this);
         String userId = ConstantMethods.getStringPreference("user_id", this);
         JSONObject jsonObject = new JSONObject();
         try {
@@ -680,12 +697,12 @@ public class DashboardActivity extends BaseActivity implements JSONResult ,Navig
         CommonNetwork.postNetworkJsonObj(GET_PROFILE, jsonObject, new JSONResult() {
             @Override
             public void notifySuccess(@NonNull JSONObject response) {
-//                ConstantMethods.dismissProgressBar();
                 try {
                     JSONArray jsonArray = response.getJSONArray("data");
                     JSONObject userInfo = jsonArray.getJSONObject(0);
                     String name = userInfo.getString("displayName");
                     String email = userInfo.getString("email");
+                    blockStatus = userInfo.getBoolean("status");
                     String userPicture = userInfo.getString("userPicture");
                     nameTxt.setText(name);
                     emailTxt.setText(email);

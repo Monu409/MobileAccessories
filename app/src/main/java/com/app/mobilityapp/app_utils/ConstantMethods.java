@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -24,6 +25,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 
+import com.app.mobilityapp.activities.LoginActivity;
 import com.app.mobilityapp.modals.CartModel;
 import com.app.mobilityapp.modals.LocalQuantityModel;
 import com.google.gson.Gson;
@@ -237,7 +239,7 @@ public class ConstantMethods {
         Gson gson = new Gson();
         String json = gson.toJson(list);
         editor.putString(key, json);
-        editor.apply();     // This line is IMPORTANT !!!
+        editor.apply();
     }
 
     public static List<LocalQuantityModel> getQtyArrayListShared(Context context,String key){
@@ -248,22 +250,22 @@ public class ConstantMethods {
         return gson.fromJson(json, type);
     }
 
-//    private static void saveMap(Context context, Map<String,List<LocalQuantityModel>> inputMap){
-//        String jsonString = new Gson().toJson(jsonMap);
-//        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-//        SharedPreferences.Editor editor = sharedPreferences.edit();
-//        editor.putString("map", jsonString);
-//        editor.apply();
-//    }
-//
-//    private static Map<String,List<LocalQuantityModel>> loadMap(Context context){
-//        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-//        String defValue = new Gson().toJson(new HashMap<String, List<String>>());
-//        String json=sharedPreferences.getString("map",defValue);
-//        TypeToken<HashMap<String,List<String>>> token = new TypeToken<HashMap<String,List<String>>>() {};
-//        HashMap<String,List<LocalQuantityModel>> retrievedMap=new Gson().fromJson(json,token.getType());
-//        return retrievedMap;
-//    }
+    public static void saveMap(Context context, Map<String,List<LocalQuantityModel>> inputMap){
+        String jsonString = new Gson().toJson(inputMap);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("map", jsonString);
+        editor.apply();
+    }
+
+    public static Map<String,List<LocalQuantityModel>> loadMap(Context context){
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String defValue = new Gson().toJson(new HashMap<String, List<String>>());
+        String json=sharedPreferences.getString("map",defValue);
+        TypeToken<HashMap<String,List<String>>> token = new TypeToken<HashMap<String,List<String>>>() {};
+        HashMap<String,List<LocalQuantityModel>> retrievedMap=new Gson().fromJson(json,token.getType());
+        return retrievedMap;
+    }
 
     public static void getAlertMessage(Context context,String message){
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -319,5 +321,15 @@ public class ConstantMethods {
             valid = false;
         }
         return valid;
+    }
+
+    public static void messageDialog(Context context){
+        AlertDialog.Builder alert = new AlertDialog.Builder(context);
+        alert.setTitle("Blocked");
+        alert.setMessage("You have blocked\nPlease contact to admin");
+        alert.setPositiveButton("Ok", (dialog, whichButton) -> {
+            context.startActivity(new Intent(context, LoginActivity.class));
+        });
+        alert.show();
     }
 }

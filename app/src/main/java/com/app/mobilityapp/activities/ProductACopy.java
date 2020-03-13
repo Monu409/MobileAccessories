@@ -100,14 +100,11 @@ public class ProductACopy extends BaseActivity {
         addToCartBtn = findViewById(R.id.add_to_cart);
 
         prod_brand = findViewById(R.id.prod_brand);
-//        prod_model = findViewById(R.id.prod_model);
         rec_price = findViewById(R.id.rec_price);
         navigationView = findViewById(R.id.navigation);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ProductACopy.this);
         prod_brand.setLayoutManager(linearLayoutManager);
-//        GridLayoutManager glm1 = new GridLayoutManager(ProductACopy.this, 2);
-//        prod_model.setLayoutManager(glm1);
         rec_price.setLayoutManager(new GridLayoutManager(this,3));
         onclickInterface = abc -> Toast.makeText(ProductACopy.this, "Position is" + abc, Toast.LENGTH_LONG).show();
         productId = getIntent().getStringExtra("brand_id");
@@ -211,8 +208,9 @@ public class ProductACopy extends BaseActivity {
 
                             String name = jsonObject2.optString("name");
                             String brandId = jsonObject2.optString("_id");
-                            String imgurl = jsonObject2.optString("imgUrl");
-                            img1 = jsonObject2.optString("imgUrl");
+                            JSONObject imgObj = jsonObject2.getJSONObject("image");
+//                            String imgurl = jsonObject2.optString("imgUrl");
+                            img1 = imgObj.optString("imageurl");
                             int indexId = j;
 
                             for (int i = 0; i < jsonArray.length(); i++) {
@@ -236,7 +234,7 @@ public class ProductACopy extends BaseActivity {
                                 proBrndModal.setImgUrl(img1);
                                 proBrndModal.setId(brandId);
                                 proBrndModal.setIndexId(indexId);
-                                proBrndModal.setImgUrl(imgurl);
+//                                proBrndModal.setImgUrl(imgurl);
 //                                proBrndModal.setUniqueId(finalCatId);
                                 proBrndModals.add(proBrndModal);
                             }

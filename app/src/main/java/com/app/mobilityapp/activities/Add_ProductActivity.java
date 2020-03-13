@@ -789,7 +789,7 @@ public class Add_ProductActivity extends BaseActivity {
         TextView rightTxt = dialog.findViewById(R.id.txt_right);
         msgTxt.setText("Product Added successfully");
         leftTxt.setText("Go To My Product");
-        rightTxt.setText("Add Mode");
+        rightTxt.setText("Add More");
         rightTxt.setOnClickListener(v -> {
             startActivity(new Intent(Add_ProductActivity.this, Add_ProductActivity.class));
             dialog.dismiss();
