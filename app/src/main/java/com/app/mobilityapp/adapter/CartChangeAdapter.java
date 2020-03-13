@@ -79,7 +79,7 @@ public class CartChangeAdapter extends RecyclerView.Adapter<CartChangeAdapter.Ca
                 .centerCrop()
                 .into(holder.itmImg);
         String cartId = cartChildModels.get(position).getId();
-        holder.fullView.setOnClickListener(v -> {
+        holder.odrRvwTxt.setOnClickListener(v -> {
             Intent intent = new Intent(context, EditCartActivity.class);
             intent.putExtra("cart_id", cartId);
             context.startActivity(intent);
@@ -111,7 +111,7 @@ public class CartChangeAdapter extends RecyclerView.Adapter<CartChangeAdapter.Ca
     }
 
     public class CartCHolder extends RecyclerView.ViewHolder {
-        public TextView name, qty, priceTxt, catName,removeTxt;
+        public TextView name, qty, priceTxt, catName,removeTxt,odrRvwTxt;
         public CircleImageView itmImg;
         public ImageView editImg;
         RelativeLayout fullView,reviewRemoveLay;
@@ -125,6 +125,7 @@ public class CartChangeAdapter extends RecyclerView.Adapter<CartChangeAdapter.Ca
             fullView = itemView.findViewById(R.id.full_view);
             removeTxt = itemView.findViewById(R.id.remove_txt);
             qty = itemView.findViewById(R.id.qty_txt);
+            odrRvwTxt = itemView.findViewById(R.id.odr_rvw_txt);
             reviewRemoveLay = itemView.findViewById(R.id.review_remove_lay);
         }
     }

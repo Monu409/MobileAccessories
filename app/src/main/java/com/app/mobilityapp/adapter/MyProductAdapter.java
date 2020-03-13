@@ -38,6 +38,7 @@ public class MyProductAdapter extends RecyclerView.Adapter<MyProductAdapter.MPHo
     private List<MyProductModel.MyProductChild> myProductChildren;
     private Context context;
     private LayoutInflater layoutInflater;
+    public static final String PAYLOAD_NAME = "PAYLOAD_NAME";
 
     public MyProductAdapter(List<MyProductModel.MyProductChild> myProductChildren, Context context){
         this.myProductChildren = myProductChildren;
@@ -50,7 +51,7 @@ public class MyProductAdapter extends RecyclerView.Adapter<MyProductAdapter.MPHo
         View view = layoutInflater.inflate(R.layout.adapter_my_product,null);
         return new MPHolder(view);
     }
-
+private boolean status;
     @Override
     public void onBindViewHolder(@NonNull MPHolder holder, int position) {
         holder.prodName.setText(myProductChildren.get(position).getName());
@@ -73,7 +74,7 @@ public class MyProductAdapter extends RecyclerView.Adapter<MyProductAdapter.MPHo
         });
         String productId = myProductChildren.get(position).getId();
         String btnTxtStr = holder.actvTxt.getText().toString();
-        boolean status = myProductChildren.get(position).getStatus();
+        status = myProductChildren.get(position).getStatus();
         if(!status) {
             holder.actvTxt.setText("Inactive");
             holder.actvTxt.setBackgroundColor(context.getResources().getColor(R.color.colorAccent));
@@ -89,13 +90,16 @@ public class MyProductAdapter extends RecyclerView.Adapter<MyProductAdapter.MPHo
 //            statusBol = true;
 //        }
         holder.actvTxt.setOnClickListener(v->{
-            changeProductStatus(!status,productId,holder);
+            changeProductStatus(!status,productId,holder,position);
+            status = !status;
         });
 
         holder.editTxt.setOnClickListener(v -> {
+            String id = myProductChildren.get(position).getId();
             Intent intent =new Intent(context,Add_ProductActivity.class);
             intent.putExtra("page_type","edit");
             intent.putExtra("data",  new Gson().toJson(myProductChildren.get(position)));
+            intent.putExtra("product_id",id);
             context.startActivity(intent);
         });
     }
@@ -119,7 +123,7 @@ public class MyProductAdapter extends RecyclerView.Adapter<MyProductAdapter.MPHo
         }
     }
 
-    private void changeProductStatus(boolean status,String productId,MPHolder mpHolder){
+    private void changeProductStatus(boolean status,String productId,MPHolder mpHolder,int position){
         ConstantMethods.showProgressbar(context);
         JSONObject jsonObject = new JSONObject();
         try {

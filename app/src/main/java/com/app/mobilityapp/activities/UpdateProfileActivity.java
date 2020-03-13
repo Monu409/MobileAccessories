@@ -339,9 +339,21 @@ public class UpdateProfileActivity extends BaseActivity {
                 valid = true;
             }
         } else if (userType.equals("4")) {
-            if (nameStr.isEmpty() || gstNoStr.isEmpty() || phoneStr.isEmpty() || addressStr.isEmpty()) {
-                ConstantMethods.getAlertMessage(this, "Enter name,mobile,address and GST No.");
-            } else if (phoneStr.length() > 13 || phoneStr.length() < 10) {
+            if (nameStr.isEmpty()) {
+                Toast.makeText(this, "Enter your", Toast.LENGTH_SHORT).show();
+            }
+            else if(gstNoStr.isEmpty()){
+                Toast.makeText(this, "Enter gst number", Toast.LENGTH_SHORT).show();
+            }
+
+            else if(phoneStr.isEmpty()){
+                Toast.makeText(this, "Enter phone number", Toast.LENGTH_SHORT).show();
+            }
+
+            else if(addressStr.isEmpty()){
+                Toast.makeText(this, "Enter address", Toast.LENGTH_SHORT).show();
+            }
+            else if (phoneStr.length() > 13 || phoneStr.length() < 10) {
                 Toast.makeText(this, "Enter valid mobile", Toast.LENGTH_SHORT).show();
                 valid = false;
             } else if (!gstNoStr.matches(GSTINFORMAT_REGEX1)) {

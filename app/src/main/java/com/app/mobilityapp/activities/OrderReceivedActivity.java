@@ -48,6 +48,9 @@ public class OrderReceivedActivity extends BaseActivity {
                 String confirmation = orderRcvdModel.getConfirmation();
                 if(confirmation.equals("success")){
                     List<OrderRcvdModel.OrderRcvdModelChild> orderRcvdModelChild = orderRcvdModel.getData();
+                    if(orderRcvdModelChild.size()>=0){
+                        Toast.makeText(OrderReceivedActivity.this, "Still there is no order", Toast.LENGTH_SHORT).show();
+                    }
                     OrdrRcvdAdapter ordrRcvdAdapter = new OrdrRcvdAdapter(orderRcvdModelChild,OrderReceivedActivity.this);
                     ordrrcvdList.setAdapter(ordrRcvdAdapter);
                 }

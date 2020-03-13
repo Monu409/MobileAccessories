@@ -12,7 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.app.mobilityapp.R;
-import com.app.mobilityapp.activities.ProductActivity;
+//import com.app.mobilityapp.activities.ProductActivity;
 import com.app.mobilityapp.modals.ProModlModel;
 
 import java.util.List;

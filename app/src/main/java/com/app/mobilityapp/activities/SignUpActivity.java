@@ -131,7 +131,10 @@ public class SignUpActivity extends BaseActivity {
             String typeStrKey = (String)getKeyFromValue(userMap,typeStr);
             if(fieldsValidation()) {
                 if (typeStrKey.equals("4")) {
-                    if (!gstNoStr.matches(GSTINFORMAT_REGEX1)) {
+                    if(gstNoStr.trim().isEmpty()){
+                        ConstantMethods.getAlertMessage(this, "Enter GST No.");
+                    }
+                    else if (!gstNoStr.matches(GSTINFORMAT_REGEX1)) {
                         ConstantMethods.getAlertMessage(this, "Enter valid GST No.");
                     } else {
                         validSign(nameStr, emailStr, mobileStr, typeStrKey, gstNoStr);

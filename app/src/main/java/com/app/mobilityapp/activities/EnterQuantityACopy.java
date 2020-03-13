@@ -15,15 +15,15 @@ import com.app.mobilityapp.modals.LocalQuantityModel;
 import com.app.mobilityapp.modals.ProModlModel;
 import com.app.mobilityapp.modals.ProductPriceModel;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class EnterQuantityACopy extends BaseActivity {
     private RecyclerView qtyList;
@@ -35,6 +35,7 @@ public class EnterQuantityACopy extends BaseActivity {
     private List<ProductPriceModel> productPriceModels;
     int mQty = 0;
     int position;
+    private String brandDetailsarrStr;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,6 +51,8 @@ public class EnterQuantityACopy extends BaseActivity {
         List<LocalQuantityModel.Modallist>  modelList = null;
         List<LocalQuantityModel> localQuantityModels = ConstantMethods.getQtyArrayListShared(this,"local_qty_models");
 
+        brandDetailsarrStr = getIntent().getStringExtra("brandDetailsarr");
+
         try {
             modelList = localQuantityModels.get(position).getModallist();
             btnOrder.setText("Order Qty" + "  " + localQuantityModels.get(position).getTotalQty());
@@ -61,11 +64,11 @@ public class EnterQuantityACopy extends BaseActivity {
         if(localQuantityModels==null||modelList==null){
             localQuantityModels = new ArrayList<>();
         }
-        else {
-            for (int i = 0; i < proModlModels.size(); i++) {
-                proModlModels.get(i).setQty(modelList.get(i).getQuantity());
-            }
-        }
+//        else {
+//            for (int i = 0; i < proModlModels.size(); i++) {
+//                proModlModels.get(i).setQty(modelList.get(i).getQuantity());
+//            }
+//        }
         productModelAdapter = new ProductModelListAdapter1(this, proModlModels);
         qtyList.setAdapter(productModelAdapter);
         productIdforJson = getIntent().getStringExtra("brand_id");
@@ -98,19 +101,38 @@ public class EnterQuantityACopy extends BaseActivity {
                     jsonObject.put("modallist", jsonArray);
                     Gson gson = new Gson();
                     LocalQuantityModel conversationModel = gson.fromJson(String.valueOf(jsonObject),LocalQuantityModel.class);
-                    List<LocalQuantityModel> localQuantityModels1 = new ArrayList<>();
-                    localQuantityModels1.add(conversationModel);
-//                    Map<String,List<LocalQuantityModel>> stringListMap = ConstantMethods.loadMap(this);
-//                    if(stringListMap==null){
-//                        stringListMap = new HashMap<>();
-//                    }
-//                    stringListMap.put("list"+position,localQuantityModels1);
-//                    ConstantMethods.saveMap(this,stringListMap);
-//                    List<LocalQuantityModel> localQuantityModels1 = ConstantMethods.getQtyArrayListShared(this,"local_qty_models");
+                    List<LocalQuantityModel> localQuantityModels1 = ConstantMethods.getQtyArrayListShared(this,"local_qty_models");
                     if(localQuantityModels1==null){
                         localQuantityModels1 = new ArrayList<>();
                     }
+//                    localQuantityModels1.remove(position);
                     localQuantityModels1.add(position,conversationModel);
+                    ConstantMethods.saveQtyListShared(localQuantityModels1,this,"local_qty_models");
+//                    JSONArray jsonArray1 = new JSONArray(brandDetailsarrStr);
+//                    JSONArray modallist = new JSONArray();
+//
+//                    for(int i=0;i<localQuantityModels1.size();i++){
+//                        if(localQuantityModels1.get(i).getBrandid().equals("")){
+//                            localQuantityModels1.remove(i);
+//                            JSONObject jsonObject1 = jsonArray1.getJSONObject(i);
+//                            JSONObject brandObj = jsonObject1.getJSONObject("brand");
+//                            String brandId = brandObj.getString("_id");
+//                            JSONArray qtyArr = jsonObject1.getJSONArray("model");
+//                            for(int j=0;j<qtyArr.length();j++){
+//                                JSONObject idObj = qtyArr.getJSONObject(j);
+//                                JSONObject modlObj = new JSONObject();
+//                                String qtyId = idObj.getString("_id");
+//                                modlObj.put("modalid",qtyId);
+//                                modlObj.put("quantity","0");
+//                                modallist.put(j,modlObj);
+//                            }
+//                            Type type = new TypeToken<List<LocalQuantityModel.Modallist>>(){}.getType();
+//                            List<LocalQuantityModel.Modallist> modallist1 = gson.fromJson(String.valueOf(modallist), type);
+//                            conversationModel.setModallist(modallist1);
+//                            LocalQuantityModel localQuantityModel = nullModel(modallist1,brandId);
+//                            localQuantityModels1.add(i,localQuantityModel);
+//                        }
+//                    }
                     ConstantMethods.saveQtyListShared(localQuantityModels1,this,"local_qty_models");
                     onBackPressed();
                 } catch (JSONException e) {
@@ -118,6 +140,16 @@ public class EnterQuantityACopy extends BaseActivity {
                 }
             }
         });
+    }
+
+    private LocalQuantityModel nullModel(List<LocalQuantityModel.Modallist> modallists,String brandId){
+        LocalQuantityModel localQuantityModel = new LocalQuantityModel();
+        localQuantityModel.setBrandid(brandId);
+        localQuantityModel.setModallist(modallists);
+        localQuantityModel.setPrice("0");
+        localQuantityModel.setProductid("");
+        localQuantityModel.setTotalQty(0);
+        return localQuantityModel;
     }
 
     @Override

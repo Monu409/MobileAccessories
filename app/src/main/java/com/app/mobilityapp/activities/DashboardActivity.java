@@ -104,6 +104,7 @@ public class DashboardActivity extends BaseActivity implements JSONResult ,Navig
     private ImageView profilePic;
     private TextView nameTxt,emailTxt,myProducts,orderRcvd;
     private boolean blockStatus = true;
+    private NavigationView navigationViewSide;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -126,6 +127,7 @@ public class DashboardActivity extends BaseActivity implements JSONResult ,Navig
         helpSprtTxt = findViewById(R.id.help_sprt_txt);
         myProducts = findViewById(R.id.my_products);
         orderRcvd = findViewById(R.id.order_rcvd);
+        navigationViewSide = findViewById(R.id.nav_view);
 
         ImageView searchImg = findViewById(R.id.srch_img);
         searchEdt.addTextChangedListener(new TextWatcher() {
@@ -207,6 +209,8 @@ public class DashboardActivity extends BaseActivity implements JSONResult ,Navig
             menu.add(Menu.NONE, navigation_add_product, Menu.NONE, getString(R.string.add_product)).setIcon(R.drawable.addproduct);
             changeUserTxt.setVisibility(View.GONE);
             sellerView.setVisibility(View.VISIBLE);
+            Menu nav_Menu = navigationViewSide.getMenu();
+            nav_Menu.findItem(R.id.become_seller).setVisible(false);
         }
         else {
             changeUserTxt.setText("Becomes a Seller");
@@ -221,8 +225,8 @@ public class DashboardActivity extends BaseActivity implements JSONResult ,Navig
         setCartCount();
 
         drawer = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+
+        navigationViewSide.setNavigationItemSelectedListener(this);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
@@ -230,7 +234,7 @@ public class DashboardActivity extends BaseActivity implements JSONResult ,Navig
                 R.id.nav_tools, R.id.nav_share, R.id.nav_send)
                 .setDrawerLayout(drawer)
                 .build();
-        View hView =  navigationView.getHeaderView(0);
+        View hView =  navigationViewSide.getHeaderView(0);
         profilePic = hView.findViewById(R.id.profile_pic);
         nameTxt = hView.findViewById(R.id.user_name);
         emailTxt = hView.findViewById(R.id.user_email);
@@ -508,7 +512,7 @@ public class DashboardActivity extends BaseActivity implements JSONResult ,Navig
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
 
             = item -> {
-        navigationView.getMenu().getItem(0).setIcon(R.drawable.chat_unslct);
+        navigationView.getMenu().getItem(0).setIcon(R.drawable.chat_unslct_1);
         navigationView.getMenu().getItem(1).setIcon(R.drawable.cart_unslctd);
         navigationView.getMenu().getItem(2).setIcon(R.drawable.orders_unslctd);
         switch (item.getItemId()) {
@@ -609,12 +613,13 @@ public class DashboardActivity extends BaseActivity implements JSONResult ,Navig
                     JSONArray jsonArray = response.getJSONArray("data");
                     JSONObject userInfo = jsonArray.getJSONObject(0);
                     String gstno = userInfo.getString("gstno");
-                    if(gstno.isEmpty()){
+                    if(gstno.isEmpty()||gstno.equals("null")){
                         gstNoPopup();
                     }
                     else {
-                        Intent intent = new Intent(DashboardActivity.this,ThankuActivity.class);
-                        startActivity(intent);
+//                        Intent intent = new Intent(DashboardActivity.this,ThankuActivity.class);
+//                        startActivity(intent);
+                        changeUserType(gstno);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

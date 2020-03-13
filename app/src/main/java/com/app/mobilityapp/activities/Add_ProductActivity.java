@@ -77,6 +77,8 @@ public class Add_ProductActivity extends BaseActivity {
     private ArrayList<Uri> arrayList;
     private GridView listView;
     private JSONArray imageArr = new JSONArray();
+    private String productId="";
+    private String mCurrentPhotoPath = "";
 
     @Override
     protected int getLayoutResourceId() {
@@ -97,10 +99,17 @@ public class Add_ProductActivity extends BaseActivity {
         if (getIntent().getExtras() != null) {
             page_type = getIntent().getStringExtra("page_type");
             productChild = gson.fromJson(getIntent().getStringExtra("data"), MyProductModel.MyProductChild.class);
+            productId = getIntent().getStringExtra("product_id");
         }
 
         findViewId();
-        get_category("http://132.148.158.82:3004/custom/category", new JSONObject(), "category");
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("status",true);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        get_category("http://132.148.158.82:3004/custom/category", jsonObject, "category");
         get_category("http://132.148.158.82:3004/custom/brand", new JSONObject(), "brand");
         if (page_type == null || page_type.equals("")) {
             ConstantMethods.setTitleAndBack(this, "Add Product");
@@ -153,7 +162,13 @@ public class Add_ProductActivity extends BaseActivity {
                             e.printStackTrace();
                         }
                         Log.e("final json ", " to post " + post_json);
-                        uploadProduct(post_json);
+                        if(productId.equals("")){
+                            addProduct(post_json);
+                        }
+                        else {
+                            updateProduct(post_json,productId);
+                        }
+
                     }
                     break;
                 case R.id.add_image:
@@ -224,7 +239,7 @@ public class Add_ProductActivity extends BaseActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 ConsModel categoryModel = (ConsModel) parent.getSelectedItem();
                 putJson(post_json, "subcategory2", categoryModel.getId());
-                putJson(post_json, "subcategory3", "");
+                putJson(post_json, "subcategory3", null);
             }
 
             @Override
@@ -509,9 +524,34 @@ public class Add_ProductActivity extends BaseActivity {
         return jsonObject;
     }
 
-    private void uploadProduct(JSONObject jsonObject) {
+    private void addProduct(JSONObject jsonObject) {
         ConstantMethods.showProgressbar(this);
         CommonNetwork.postNetworkJsonObj(UPLOAD_PRODUCT, jsonObject, new JSONResult() {
+            @Override
+            public void notifySuccess(@NonNull JSONObject response) {
+                ConstantMethods.dismissProgressBar();
+                try {
+                    String confirmation = response.getString("confirmation");
+                    if (confirmation.equals("success")) {
+                        showDialog(Add_ProductActivity.this);
+                    } else {
+                        Toast.makeText(Add_ProductActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void notifyError(@NonNull ANError anError) {
+                Toast.makeText(Add_ProductActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
+            }
+        }, this);
+    }
+
+    private void updateProduct(JSONObject jsonObject,String productId) {
+        ConstantMethods.showProgressbar(this);
+        CommonNetwork.putNetworkJsonObj(UPLOAD_PRODUCT+"/"+productId, jsonObject, new JSONResult() {
             @Override
             public void notifySuccess(@NonNull JSONObject response) {
                 ConstantMethods.dismissProgressBar();
@@ -611,8 +651,8 @@ public class Add_ProductActivity extends BaseActivity {
                 Log.d("Single File Selected", path);
                 pathlist.add(path);
                 arrayList.add(selectedImage);
-                MyAdapter mAdapter = new MyAdapter(this, arrayList);
-                listView.setAdapter(mAdapter);
+//                MyAdapter mAdapter = new MyAdapter(this, arrayList);
+//                listView.setAdapter(mAdapter);
             } else {
                 Toast.makeText(this, "Error while capturing Image", Toast.LENGTH_LONG).show();
             }
@@ -635,7 +675,7 @@ public class Add_ProductActivity extends BaseActivity {
                                 String path = FileUtils.getPath(this, imageUri);
 
                                 Log.d("Multiple File Selected", path);
-                                pathlist.add(path);
+//                                pathlist.add(path);
                                 arrayList.add(imageUri);
                             } catch (Exception e) {
 
@@ -673,9 +713,9 @@ public class Add_ProductActivity extends BaseActivity {
                     try {
 //                        mImageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), Uri.parse(mCurrentPhotoPath));
 //                        mImageView.setImageBitmap(mImageBitmap);
-                        Uri uri = data.getData();
+                        Uri uri = Uri.parse(mCurrentPhotoPath);
                         final String path = FileUtils.getPath(this, uri);
-                        Log.d("Single File Selected", path);
+//                        Log.d("Single File Selected", path);
                         pathlist.add(path);
                         arrayList.add(uri);
                         MyAdapter mAdapter = new MyAdapter(this, arrayList);
@@ -791,12 +831,16 @@ public class Add_ProductActivity extends BaseActivity {
         leftTxt.setText("Go To My Product");
         rightTxt.setText("Add More");
         rightTxt.setOnClickListener(v -> {
-            startActivity(new Intent(Add_ProductActivity.this, Add_ProductActivity.class));
+            Intent intent = new Intent(Add_ProductActivity.this, Add_ProductActivity.class);
+            startActivity(intent);
+            finish();
             dialog.dismiss();
         });
 
         leftTxt.setOnClickListener(v -> {
-            startActivity(new Intent(Add_ProductActivity.this, MyProductActivity.class));
+            Intent intent = new Intent(Add_ProductActivity.this, MyProductActivity.class);
+            startActivity(intent);
+            finish();
             dialog.dismiss();
         });
 

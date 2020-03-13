@@ -53,9 +53,10 @@ public class EditEnterQuantityActivity extends BaseActivity {
 
         doneBtn.setOnClickListener(v->{
             ConstantMethods.showProgressbar(this);
-            int totalQty = getQty(modallists);
-            totalPrice = applyPrice(totalQty,priceList);
             List<ModelListModel> strings = editEntrQtyAdapter.retrieveData();
+            int totalQty = getQty(strings);
+            totalPrice = applyPrice(totalQty,priceList);
+
             JSONObject jsonObject = getEditJSon(modallists,strings);
 
             CommonNetwork.postNetworkJsonObj(EDIT_CART, jsonObject, new JSONResult() {
@@ -106,10 +107,10 @@ public class EditEnterQuantityActivity extends BaseActivity {
         return finalJson;
     }
 
-    private int getQty(List<EditCartModel.Modallist> modallists){
+    private int getQty(List<ModelListModel> modallists){
         int sumQty = 0;
         for(int i=0;i<modallists.size();i++){
-            int qty = modallists.get(i).getQuantity();
+            int qty = Integer.parseInt(modallists.get(i).getQuantity());
             sumQty = sumQty+qty;
         }
         return sumQty;
