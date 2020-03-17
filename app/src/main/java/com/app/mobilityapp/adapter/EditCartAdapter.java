@@ -47,7 +47,7 @@ public class EditCartAdapter extends RecyclerView.Adapter<EditCartAdapter.ECHold
     public void onBindViewHolder(@NonNull ECHolder holder, int position) {
         List<EditCartModel.BrandDetail> brandDetail = editCartModel.getData().getBrandDetails();
         String catName = brandDetail.get(position).getBrand().getName();
-        String imageUrl = brandDetail.get(position).getBrand().getImgUrl();
+        String imageUrl = brandDetail.get(position).getBrand().getImage().getImageurl();
         List<EditCartModel.Modallist> modallists = brandDetail.get(position).getModallist();
         int qtySum = 0;
         for(int i=0;i<modallists.size();i++){

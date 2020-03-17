@@ -187,12 +187,8 @@ public class SignUpActivity extends BaseActivity {
         String typeStrKey = (String)getKeyFromValue(userMap,typeStr);
         String cityStr = cityEdt.getText().toString();
 //        String mobileFirstPos = String.valueOf(mobileStr.charAt(0));
-        if(nameStr.isEmpty()||emailStr.isEmpty()||mobileStr.isEmpty()){
+        if(nameStr.isEmpty()||mobileStr.isEmpty()){
             Toast.makeText(this, "Enter all the fields", Toast.LENGTH_SHORT).show();
-            isValid = false;
-        }
-        else if(!ConstantMethods.isValidMail(emailStr)){
-            Toast.makeText(this, "Enter a valid email", Toast.LENGTH_SHORT).show();
             isValid = false;
         }
         else if(!ConstantMethods.isValidMobile(mobileStr) || !ConstantMethods.isFirstLetterMobileNum(mobileStr)|| mobileStr.length()>13||mobileStr.length()<9){
@@ -203,10 +199,6 @@ public class SignUpActivity extends BaseActivity {
 //            Toast.makeText(this, "Password does'nt match", Toast.LENGTH_SHORT).show();
 //            isValid = false;
 //        }
-        else if(typeStr.equals("Select user type")){
-            Toast.makeText(this, "Please select any user type", Toast.LENGTH_SHORT).show();
-            isValid = false;
-        }
         else if(typeStr.equals("Select user type")){
             Toast.makeText(this, "Please select any user type", Toast.LENGTH_SHORT).show();
             isValid = false;

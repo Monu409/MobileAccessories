@@ -60,7 +60,7 @@
 
                 <TextView
                     android:id="@+id/price_txt"
-                    android:layout_width="60dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="35dp"
                     android:text="12"
                     android:textColor="@color/colorAccent"

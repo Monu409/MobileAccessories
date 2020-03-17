@@ -86,7 +86,7 @@ public class ProductACopy extends BaseActivity {
     private String mProductID;
     ProductBrandListAdapter productBrandAdapter;
     List<ProductPriceModel> productPriceModels;
-    private BottomNavigationView navigationView;
+//    private BottomNavigationView navigationView;
     private SliderView sliderView;
     private Button addToCartBtn;
 
@@ -101,7 +101,7 @@ public class ProductACopy extends BaseActivity {
 
         prod_brand = findViewById(R.id.prod_brand);
         rec_price = findViewById(R.id.rec_price);
-        navigationView = findViewById(R.id.navigation);
+//        navigationView = findViewById(R.id.navigation);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ProductACopy.this);
         prod_brand.setLayoutManager(linearLayoutManager);
@@ -115,7 +115,7 @@ public class ProductACopy extends BaseActivity {
             addDataIntoCart(jsonObject,ADD_INTO_CART);
         });
         Log.e("prod_brand_id", productId);
-        setCartCount();
+//        setCartCount();
 //        setCartCount();
 
 
@@ -145,7 +145,7 @@ public class ProductACopy extends BaseActivity {
         prodPrice.setText(getResources().getString(R.string.rs) + "100");
 
         ConstantMethods.setTitleAndBack(this, modelName);
-        navigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+//        navigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
 
     @Override
@@ -270,22 +270,22 @@ public class ProductACopy extends BaseActivity {
             }
         },this);
     }
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = item -> {
-
-        switch (item.getItemId()) {
-            case R.id.navigation_chat:
-                startActivity(new Intent(this,ChatActivity.class));
-                return true;
-            case R.id.navigation_cart:
-                startActivity(new Intent(this,CartChangeActivity.class));
-                return true;
-            case R.id.navigation_home:
-                startActivity(new Intent(this,DashboardActivity.class));
-                return true;
-        }
-        return false;
-    };
+//    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+//            = item -> {
+//
+//        switch (item.getItemId()) {
+//            case R.id.navigation_chat:
+//                startActivity(new Intent(this,ChatActivity.class));
+//                return true;
+//            case R.id.navigation_cart:
+//                startActivity(new Intent(this,CartChangeActivity.class));
+//                return true;
+//            case R.id.navigation_home:
+//                startActivity(new Intent(this,DashboardActivity.class));
+//                return true;
+//        }
+//        return false;
+//    };
     String productIdforJson, brandId;
     private void getModel(int inx) {
         modeljsonArray = null;
@@ -393,41 +393,41 @@ public class ProductACopy extends BaseActivity {
         ConstantMethods.saveQtyListShared(quantityModels,this,"local_qty_models");
     }
 
-    private void setCartCount() {
-        CommonNetwork.getNetworkJsonObj(ADD_INTO_CART, new JSONResult() {
-            @Override
-            public void notifySuccess(@NonNull JSONObject response) {
-                try {
-                    JSONArray jsonArray = response.getJSONArray("data");
-                    int size = jsonArray.length();
-                    String cartSize = String.valueOf(size);
-                    if(cartSize.equals("")){
-                        cartSize = "0";
-                    }
-                    addBadgeView(cartSize);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
+//    private void setCartCount() {
+//        CommonNetwork.getNetworkJsonObj(ADD_INTO_CART, new JSONResult() {
+//            @Override
+//            public void notifySuccess(@NonNull JSONObject response) {
+//                try {
+//                    JSONArray jsonArray = response.getJSONArray("data");
+//                    int size = jsonArray.length();
+//                    String cartSize = String.valueOf(size);
+//                    if(cartSize.equals("")){
+//                        cartSize = "0";
+//                    }
+//                    addBadgeView(cartSize);
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//            @Override
+//            public void notifyError(@NonNull ANError anError) {
+//            }
+//        },this);
+//    }
 
-            @Override
-            public void notifyError(@NonNull ANError anError) {
-            }
-        },this);
-    }
-
-    private void addBadgeView(String count) {
-        try {
-            BottomNavigationMenuView menuView = (BottomNavigationMenuView) navigationView.getChildAt(0);
-            BottomNavigationItemView itemView = (BottomNavigationItemView) menuView.getChildAt(1);
-            View notificationBadge = LayoutInflater.from(this).inflate(R.layout.notification_badge, menuView, false);
-            TextView textView = notificationBadge.findViewById(R.id.count_txt);
-            textView.setText(count);
-            itemView.addView(notificationBadge);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    private void addBadgeView(String count) {
+//        try {
+//            BottomNavigationMenuView menuView = (BottomNavigationMenuView) navigationView.getChildAt(0);
+//            BottomNavigationItemView itemView = (BottomNavigationItemView) menuView.getChildAt(1);
+//            View notificationBadge = LayoutInflater.from(this).inflate(R.layout.notification_badge, menuView, false);
+//            TextView textView = notificationBadge.findViewById(R.id.count_txt);
+//            textView.setText(count);
+//            itemView.addView(notificationBadge);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     public void showDialog(Activity activity) {
         final Dialog dialog = new Dialog(activity);

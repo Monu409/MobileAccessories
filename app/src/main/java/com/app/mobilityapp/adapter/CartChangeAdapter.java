@@ -67,8 +67,9 @@ public class CartChangeAdapter extends RecyclerView.Adapter<CartChangeAdapter.Ca
         String proName = productid.getName();
         CartNewModel.CategoryId categoryId = cartChildModels.get(position).getCategoryId();
         String catName = categoryId.getName();
-        CartNewModel.Image_ image = cartChildModels.get(position).getCategoryId().getImage();
-        String imgUrl = image.getImageurl();
+//        CartNewModel.Image__ image1 = cartChildModels.get(position).getSubCategoryId().getImage();
+        String imgUrl = cartChildModels.get(position).getProductid().getImage().get(0).getImageurl();
+//        String imgUrl = image1.getImageurl();
         int price = cartChildModels.get(position).getPrice();
         holder.catName.setText(proName);
         holder.name.setText(catName);

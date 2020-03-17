@@ -73,16 +73,17 @@ public class CheckoutActivity extends BaseActivity {
         getAddressData();
         getProfileData();
         addressEdt.setEnabled(false);
-//        addressRel.setOnClickListener(v->{
-//            String btnTxt = editAdrsBtn.getText().toString();
-//            if(btnTxt.equals("Edit")) {
-//                addressEdt.setEnabled(true);
-//                editAdrsBtn.setText("Save");
-//            }
+        addressRel.setOnClickListener(v->{
+            String btnTxt = editAdrsBtn.getText().toString();
+            if(btnTxt.equals("Edit")) {
+                addressEdt.setEnabled(true);
+                addressEdt.requestFocus();
+                editAdrsBtn.setText("Save");
+            }
 //            else if(btnTxt.equals("Save")){
 //                saveAddress();
 //            }
-//        });
+        });
         editAdrsBtn.setOnClickListener(v->{
             String btnTxt = editAdrsBtn.getText().toString();
             if(btnTxt.equals("Edit")) {
