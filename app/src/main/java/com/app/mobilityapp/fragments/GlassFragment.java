@@ -1,6 +1,5 @@
 package com.app.mobilityapp.fragments;
 
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,11 +10,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.androidnetworking.error.ANError;
 import com.app.mobilityapp.activities.DashboardActivity;
-import com.app.mobilityapp.app_utils.ConstantMethods;
 import com.app.mobilityapp.R;
 import com.app.mobilityapp.adapter.ProductAdapter;
 import com.app.mobilityapp.connection.CommonNetwork;
@@ -32,14 +30,20 @@ import static com.app.mobilityapp.app_utils.AppApis.GET_GLASS_DATA;
 public class GlassFragment extends Fragment {
     private RecyclerView productRcylr;
     String catId;
+    private SwipeRefreshLayout swipeRefreshLayout;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_glass,container,false);
         productRcylr = view.findViewById(R.id.product_rcylr);
+        swipeRefreshLayout = view.findViewById(R.id.pull_to_refresh);
         productRcylr.setLayoutManager(new GridLayoutManager(getActivity(),2));
         productRcylr.setBackgroundColor(Color.parseColor("#FFFFFF"));
         getGlassData();
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            getGlassData();
+            swipeRefreshLayout.setRefreshing(false);
+        });
         return view;
     }
 

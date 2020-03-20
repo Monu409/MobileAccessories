@@ -1,20 +1,24 @@
 package com.app.mobilityapp.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.app.mobilityapp.R;
+import com.app.mobilityapp.activities.OrderDetailModelActivity;
 import com.app.mobilityapp.app_utils.CircleImageView;
 import com.app.mobilityapp.modals.OrderDetailModel;
 import com.app.mobilityapp.modals.OrderRcvdModel;
 import com.bumptech.glide.Glide;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SubOrderDetailAdapter extends RecyclerView.Adapter<SubOrderDetailAdapter.SODHolder> {
@@ -67,12 +71,21 @@ public class SubOrderDetailAdapter extends RecyclerView.Adapter<SubOrderDetailAd
                     .placeholder(R.drawable.test)
                     .centerCrop()
                     .into(holder.img);
+            holder.fullView.setOnClickListener(v->{
+                Intent intent = new Intent(context, OrderDetailModelActivity.class);
+                intent.putExtra("model_list",(ArrayList)modallist);
+                intent.putExtra("pr_ac","buyer");
+                context.startActivity(intent);
+            });
         }
         else{
             OrderRcvdModel.ProductId productId = orderRcvdModelChildren.get(position).getProductId();
             String name = productId.getName();
+            String imgUrl = "";
             List<OrderRcvdModel.Image> image = orderRcvdModelChildren.get(position).getProductId().getImage();
-            String imgUrl = image.get(0).getImageurl();
+            if(image.size()!=0){
+                imgUrl = image.get(0).getImageurl();
+            }
             List<OrderRcvdModel.Modallist> modallist = orderRcvdModelChildren.get(position).getBrandDetails().get(0).getModallist();
             int sumQty = 0;
             for(int i=0;i<modallist.size();i++){
@@ -85,8 +98,15 @@ public class SubOrderDetailAdapter extends RecyclerView.Adapter<SubOrderDetailAd
                     .with(context)
                     .load(imgUrl)
                     .placeholder(R.drawable.test)
+                    .error(R.drawable.test)
                     .centerCrop()
                     .into(holder.img);
+            holder.fullView.setOnClickListener(v->{
+                Intent intent = new Intent(context, OrderDetailModelActivity.class);
+                intent.putExtra("model_list",(ArrayList)modallist);
+                intent.putExtra("pr_ac","seller");
+                context.startActivity(intent);
+            });
         }
     }
 
@@ -103,11 +123,13 @@ public class SubOrderDetailAdapter extends RecyclerView.Adapter<SubOrderDetailAd
     public class SODHolder extends RecyclerView.ViewHolder {
         TextView name,qty;
         CircleImageView img;
+        RelativeLayout fullView;
         public SODHolder(@NonNull View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.cat_name_txt);
             qty = itemView.findViewById(R.id.qty_txt);
             img = itemView.findViewById(R.id.brand_img);
+            fullView = itemView.findViewById(R.id.full_view);
         }
     }
 }

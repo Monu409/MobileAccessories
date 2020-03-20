@@ -172,8 +172,8 @@ public class CheckoutActivity extends BaseActivity {
                         priceSum = priceSum+price;
                     }
                     totalTxt.setText("₹ "+priceSum);
-                    getCreditLimit(priceSum/*,cartChangeModels*/);
-                    jsonForOrder = getOrderJson(cartChildModels,priceSum);
+                    getCreditLimit(priceSum,cartChildModels,priceSum);
+                    String netAmountStr = netAmountTxt.getText().toString();
                 }
             }
             @Override
@@ -184,7 +184,7 @@ public class CheckoutActivity extends BaseActivity {
         },this);
     }
     double totalDiscount;
-    private void getCreditLimit(int totalAmount/*,List<CartChangeModel> cartChangeModels*/){
+    private void getCreditLimit(int totalAmount,List<CartNewModel.CartChildModel> cartChildModels,int priceSum){
 
         CommonNetwork.getNetworkJsonObj(CREDIT_LIMIT, new JSONResult() {
             @Override
@@ -197,7 +197,7 @@ public class CheckoutActivity extends BaseActivity {
                     totalDiscount = (totalAmount*percentIntDiscount)/100;
                     netAmountTxt.setText(String.valueOf(totalAmount-totalDiscount));
                     discounntTxt.setText(String.valueOf(totalDiscount));
-                    totalBotmTxt.setText("₹ "+(totalAmount-totalDiscount));
+                    jsonForOrder = getOrderJson(cartChildModels,priceSum,netAmountTxt.getText().toString());
 //                    jsonForOrder = getOrderJson(cartChangeModels);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -252,7 +252,7 @@ public class CheckoutActivity extends BaseActivity {
         }
     }
 
-    private JSONObject getOrderJson(List<CartNewModel.CartChildModel> cartChildModels,int priceSum) {
+    private JSONObject getOrderJson(List<CartNewModel.CartChildModel> cartChildModels,int priceSum,String netAmount) {
         JSONObject parentObject = new JSONObject();
         Gson gson = new Gson();
         try {
@@ -292,7 +292,7 @@ public class CheckoutActivity extends BaseActivity {
                 prodctDtlArr.put(i,jsonObject);
             }
             parentObject.put("amount",priceSum);
-            parentObject.put("netamount",priceSum);
+            parentObject.put("netamount",netAmount);
             parentObject.put("discount",0);
             parentObject.put("productdetails",prodctDtlArr);
 

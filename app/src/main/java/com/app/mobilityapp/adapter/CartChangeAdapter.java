@@ -68,7 +68,14 @@ public class CartChangeAdapter extends RecyclerView.Adapter<CartChangeAdapter.Ca
         CartNewModel.CategoryId categoryId = cartChildModels.get(position).getCategoryId();
         String catName = categoryId.getName();
 //        CartNewModel.Image__ image1 = cartChildModels.get(position).getSubCategoryId().getImage();
-        String imgUrl = cartChildModels.get(position).getProductid().getImage().get(0).getImageurl();
+        String imgUrl = "";
+        List<CartNewModel.Image> images = cartChildModels.get(position).getProductid().getImage();
+        if(images.size()!=0){
+            imgUrl = cartChildModels.get(position).getProductid().getImage().get(0).getImageurl();
+        }
+        else {
+
+        }
 //        String imgUrl = image1.getImageurl();
         int price = cartChildModels.get(position).getPrice();
         holder.catName.setText(proName);
@@ -78,6 +85,7 @@ public class CartChangeAdapter extends RecyclerView.Adapter<CartChangeAdapter.Ca
                 .with(context)
                 .load(imgUrl)
                 .centerCrop()
+                .error(R.drawable.test)
                 .into(holder.itmImg);
         String cartId = cartChildModels.get(position).getId();
         holder.odrRvwTxt.setOnClickListener(v -> {
