@@ -716,8 +716,8 @@ public class Add_ProductActivity extends BaseActivity {
                         Uri uri = Uri.parse(mCurrentPhotoPath);
                         final String path = FileUtils.getPath(this, uri);
 //                        Log.d("Single File Selected", path);
-                        pathlist.add(path);
-                        arrayList.add(uri);
+//                        pathlist.add(path);
+//                        arrayList.add(uri);
                         MyAdapter mAdapter = new MyAdapter(this, arrayList);
                         listView.setAdapter(mAdapter);
                         getAllImagePaths();
@@ -779,13 +779,12 @@ public class Add_ProductActivity extends BaseActivity {
 //        return -1;
 //    }
 
-    int mInt = 0;
+    private int mInt = 0;
 
     private void uploadMedia(File file) {
         AndroidNetworking
                 .upload(SEND_MEDIA_TO_PRODUCT)
                 .addMultipartFile("image", file)
-                //.addMultipartFile("baseurl", BASE_URL)
                 .addMultipartParameter("baseurl", BASE_URL)
                 .addMultipartParameter("fileSize", String.valueOf(file.getTotalSpace()))
                 .setTag("uploadTest")
