@@ -43,19 +43,27 @@ public class EditCartAdapter extends RecyclerView.Adapter<EditCartAdapter.ECHold
         return new ECHolder(view);
     }
 
+    int qtySum1 = 0;
     @Override
     public void onBindViewHolder(@NonNull ECHolder holder, int position) {
+        int qtySum = 0;
         List<EditCartModel.BrandDetail> brandDetail = editCartModel.getData().getBrandDetails();
         String catName = brandDetail.get(position).getBrand().getName();
         String imageUrl = brandDetail.get(position).getBrand().getImage().getImageurl();
         List<EditCartModel.Modallist> modallists = brandDetail.get(position).getModallist();
-        int qtySum = 0;
+
         for(int i=0;i<modallists.size();i++){
             int qty = modallists.get(i).getQuantity();
             qtySum = qtySum+qty;
         }
+//        qtySum1 = qtySum;
+
         holder.catName.setText(catName);
         holder.quantity.setText("Qty: "+qtySum);
+        String qtyTxt = holder.quantity.getText().toString();
+        String[] parts = qtyTxt.split(" ");
+        String qtyStr = parts[1];
+        int qtyInt = Integer.parseInt(qtyStr);
         Glide
                 .with(context)
                 .load(imageUrl)
@@ -68,6 +76,8 @@ public class EditCartAdapter extends RecyclerView.Adapter<EditCartAdapter.ECHold
         holder.deleteImg.setOnClickListener(v->getSubCartCatId.getSubCartId(subCartId,cartId));
 
         holder.editCart.setOnClickListener(v->{
+            int fullQty = getFullQty();
+            int otherQty = fullQty-qtyInt;
             EditCartModel.Brand brand = brandDetail.get(position).getBrand();
             List<EditCartModel.Price> prices = editCartModel.getData().getProductid().getPrice();
             Intent intent = new Intent(context, EditEnterQuantityActivity.class);
@@ -76,6 +86,7 @@ public class EditCartAdapter extends RecyclerView.Adapter<EditCartAdapter.ECHold
             intent.putExtra("brand_id",brand.getId());
             intent.putExtra("price_list",(ArrayList)prices);
             intent.putExtra("cart_id",cartId);
+            intent.putExtra("other_qty",otherQty);
             context.startActivity(intent);
         });
     }
@@ -105,5 +116,20 @@ public class EditCartAdapter extends RecyclerView.Adapter<EditCartAdapter.ECHold
 
     public interface GetSubCartCatId{
         void getSubCartId(String subCartId,String cartId);
+    }
+
+    private int getFullQty(){
+        List<EditCartModel.BrandDetail> brandDetail = editCartModel.getData().getBrandDetails();
+        int fullQty = 0;
+        for(int i=0;i<brandDetail.size();i++) {
+            List<EditCartModel.Modallist> modallists = brandDetail.get(i).getModallist();
+            int qtySum = 0;
+            for (int j = 0; j < modallists.size(); j++) {
+                int qty = modallists.get(j).getQuantity();
+                qtySum = qtySum + qty;
+            }
+            fullQty = fullQty+qtySum;
+        }
+        return fullQty;
     }
 }

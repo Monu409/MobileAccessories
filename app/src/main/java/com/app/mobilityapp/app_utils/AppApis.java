@@ -45,4 +45,5 @@ public interface AppApis {
     String SELLER_ORDER_RECEIVED = BASE_URL+"token/myorder/sellerorder";
     String DELETE_BRANDS = BASE_URL+"token/deletebrand/cart";
     String MY_PRODUCT_STATUS = BASE_URL+"custom/product/";
+    String GLOBEL_NOTIFICATION = BASE_URL+"token/userget/notification";
 }

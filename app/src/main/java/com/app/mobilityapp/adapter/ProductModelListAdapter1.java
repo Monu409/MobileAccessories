@@ -44,7 +44,11 @@ public class ProductModelListAdapter1 extends RecyclerView.Adapter<ProductModelL
         holder.setIsRecyclable(false);
         ProModlModel proModlModel = proModlModels.get(position);
         holder.nameTxt.setText(proModlModel.getName());
-        holder.edt_qty.setText("");
+        String qtyStr = proModlModels.get(position).getQty();
+        if(qtyStr.equals("0")){
+            qtyStr = "";
+        }
+        holder.edt_qty.setText(qtyStr);
 
         holder.edt_qty.addTextChangedListener(new TextWatcher() {
             @Override
@@ -127,19 +131,5 @@ public class ProductModelListAdapter1 extends RecyclerView.Adapter<ProductModelL
             setIsRecyclable(false);
         }
     }
-
-    private int quantities[];
-//    public int[] getQuantities() {
-//        return this.quantities;
-//    }
-//
-//    public String[] getModelName() {
-//        return this.name;
-//    }
-//
-//    public String[] getBrandIds() {
-//        return this.brandIds;
-//    }
-
 }
 

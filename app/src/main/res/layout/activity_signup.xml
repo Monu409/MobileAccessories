@@ -57,7 +57,7 @@
                             android:layout_height="wrap_content"
                             android:digits="abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                             android:hint="First Name *"
-                            android:inputType="text"
+                            android:inputType="textCapWords"
                             android:maxLines="1"
                             android:maxLength="20"/>
                     </com.google.android.material.textfield.TextInputLayout>
@@ -117,13 +117,23 @@
                     </com.google.android.material.textfield.TextInputLayout>
 
 
-                    <AutoCompleteTextView
-                        android:id="@+id/city_edt"
+<!--                    <AutoCompleteTextView-->
+<!--                        android:id="@+id/city_edt"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:ems="10"-->
+<!--                        android:imeOptions="actionSearch"-->
+<!--                        android:hint="City *" />-->
+
+                    <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:ems="10"
-                        android:imeOptions="actionSearch"
-                        android:hint="City *" />
+                        android:layout_height="wrap_content">
+                        <EditText android:id="@+id/city_edt"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textCapWords"
+                            android:hint="City *" />
+                    </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
@@ -132,7 +142,6 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="textCapCharacters"
-                            android:hint="GST No."
                             android:maxLength="15"/>
                     </com.google.android.material.textfield.TextInputLayout>
 

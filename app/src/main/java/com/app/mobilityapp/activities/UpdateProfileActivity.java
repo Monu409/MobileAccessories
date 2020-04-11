@@ -1,6 +1,7 @@
 package com.app.mobilityapp.activities;
 
 import android.Manifest;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -31,6 +32,8 @@ import com.androidnetworking.interfaces.UploadProgressListener;
 import com.app.mobilityapp.app_utils.BaseActivity;
 import com.app.mobilityapp.app_utils.CircleImageView;
 import com.app.mobilityapp.app_utils.ConstantMethods;
+import com.app.mobilityapp.app_utils.FileUtils;
+import com.app.mobilityapp.camera.CameraActivity;
 import com.app.mobilityapp.connection.CommonNetwork;
 import com.app.mobilityapp.connection.JSONResult;
 import com.app.mobilityapp.R;
@@ -66,8 +69,8 @@ public class UpdateProfileActivity extends BaseActivity {
     public static final int PICK_IMAGE_GALLERY = 200;
     private CircleImageView profileImg;
     private ImageView camImg;
-    private String imgPath;
-    private EditText nameEdt, emailEdt, passwordEdt, dobEdt, phoneEdt, addressEdt, gstEdt;
+    private String imgPath="";
+    private EditText nameEdt, emailEdt, passwordEdt, dobEdt, phoneEdt, addressEdt, gstEdt,cityEdt;
     private Button updateBtn;
     private File destinationFile;
     private String ADDRESS_MATCHER = "[!#$%&(){|}~:;<=>?@*+,./^_`\\'\\\" \\t\\r\\n\\f-]+";
@@ -89,6 +92,7 @@ public class UpdateProfileActivity extends BaseActivity {
             updateBtn = findViewById(R.id.update_btn);
             addressEdt = findViewById(R.id.input_address);
             gstEdt = findViewById(R.id.input_gstno);
+            cityEdt = findViewById(R.id.input_city);
             userType = ConstantMethods.getStringPreference("user_type", this);
             blackColorEditTexts();
             updateBtn.setOnClickListener(v -> {
@@ -124,6 +128,9 @@ public class UpdateProfileActivity extends BaseActivity {
                 jsonObject.put("displayName", nameStr);
                 jsonObject.put("email", emailStr);
                 jsonObject.put("phone", phoneStr);
+                jsonObject.put("address", addressStr);
+                jsonObject.put("cityName", cityEdt.getText().toString());
+                jsonObject.put("gstno", gstEdt.getText().toString());
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -175,19 +182,23 @@ public class UpdateProfileActivity extends BaseActivity {
                     String userPicture = userInfo.getString("userPicture");
                     JSONObject addressObj = userInfo.getJSONObject("addressId");
                     String addressStr = addressObj.getString("address");
+                    String cityStr = userInfo.getString("cityName");
                     if (addressStr.equals("null")) {
                         addressStr = "No address specified";
                     }
+
                     String gstNo = userInfo.getString("gstno");
                     nameEdt.setText(name);
                     emailEdt.setText(email);
                     phoneEdt.setText(phone);
                     addressEdt.setText(addressStr);
                     gstEdt.setText(gstNo);
+                    cityEdt.setText(cityStr);
                     Glide
                             .with(UpdateProfileActivity.this)
                             .load(userPicture)
-                            .centerCrop()
+//                            .error(R.drawable.profile_icon)
+//                            .centerCrop()
                             .into(profileImg);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -214,12 +225,11 @@ public class UpdateProfileActivity extends BaseActivity {
                     public void onClick(DialogInterface dialog, int item) {
                         if (options[item].equals("Take Photo")) {
                             dialog.dismiss();
-                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            startActivityForResult(intent, PICK_IMAGE_CAMERA);
+                            cameraImage();
+
                         } else if (options[item].equals("Choose From Gallery")) {
                             dialog.dismiss();
-                            Intent pickPhoto = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                            startActivityForResult(pickPhoto, PICK_IMAGE_GALLERY);
+                            showChooser();
                         } else if (options[item].equals("Cancel")) {
                             dialog.dismiss();
                         }
@@ -234,71 +244,113 @@ public class UpdateProfileActivity extends BaseActivity {
         }
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_IMAGE_CAMERA) {
-            try {
-                Bitmap bitmap = (Bitmap) data.getExtras().get("data");
-                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 50, bytes);
+//    private Uri imageToUploadUri;
 
-                Log.e("Activity", "Pick from Camera::>>> ");
+    String imagePath = "";
+    String directory;
 
-                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
-                String filePath = Environment.getExternalStorageDirectory() + "/" +
-                        getString(R.string.app_name);
-                File destination = new File(filePath, "IMG_" + timeStamp + ".jpg");
-                File dir = new File(filePath);
-                if (!dir.exists()) {
-                    dir.mkdirs();
-                }
-                FileOutputStream fo;
-                try {
-                    destination.createNewFile();
-                    fo = new FileOutputStream(destination);
-                    fo.write(bytes.toByteArray());
-                    fo.close();
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+    private void cameraImage() {
+        directory = Environment.getExternalStorageDirectory().getAbsolutePath() + "/";
+        String imgcurTime = "" + System.currentTimeMillis();
+        File imageDirectory = new File(directory);
+        imageDirectory.mkdirs();
+        imagePath = directory + imgcurTime + ".jpg";
+        startCamera(PICK_IMAGE_CAMERA, imgcurTime + ".jpg", true, false);
+    }
 
-                String imgPath = destination.getAbsolutePath();
+    public void startCamera(int request_code, String name, boolean isTime, boolean isScan) {
+        Intent camera = new Intent(this, CameraActivity.class);
+        camera.putExtra("name", name);
+        camera.putExtra("path", directory);
+        camera.putExtra("istime", isTime);
+        camera.putExtra("isScan", isScan);
+        startActivityForResult(camera, request_code);
+    }
 
-                profileImg.setImageBitmap(bitmap);
-                File file = new File(imgPath);
-                uploadMedia(file);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else if (requestCode == PICK_IMAGE_GALLERY) {
-            Uri selectedImage = data.getData();
-            try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
-                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 50, bytes);
-                Log.e("Activity", "Pick from Gallery::>>> ");
 
-                imgPath = getRealPathFromURI(selectedImage);
-                destinationFile = new File(imgPath);
-                profileImg.setImageBitmap(bitmap);
-                File file = new File(imgPath);
-                uploadMedia(file);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+    private void showChooser() {
+        // Use the GET_CONTENT intent from the utility class
+        Intent target = createGetContentIntent();
+        // Create the chooser Intent
+        Intent intent = Intent.createChooser(target, getString(R.string.app_name));
+        try {
+            startActivityForResult(intent, PICK_IMAGE_GALLERY);
+        } catch (ActivityNotFoundException e) {
+            // The reason for the existence of aFileChooser
         }
     }
 
-    public String getRealPathFromURI(Uri contentUri) {
-        String[] proj = {MediaStore.Audio.Media.DATA};
-        Cursor cursor = managedQuery(contentUri, proj, null, null, null);
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA);
-        cursor.moveToFirst();
-        return cursor.getString(column_index);
+    public static Intent createGetContentIntent() {
+        // Implicitly allow the user to select a particular kind of data
+        final Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        // The MIME data page_type filter
+        intent.setType("*/*");
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        // Only return URIs that can be opened with ContentResolver
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        return intent;
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case PICK_IMAGE_GALLERY:
+                // If the file selection was successful
+                if (resultCode == RESULT_OK) {
+                    if (data.getClipData() != null) {
+                        int count = data.getClipData().getItemCount();
+                        int currentItem = 0;
+                        while (currentItem < count) {
+                            Uri imageUri = data.getClipData().getItemAt(currentItem).getUri();
+                            //do something with the image (save it to some directory or whatever you need to do with it here)
+                            currentItem = currentItem + 1;
+                            Log.d("Uri Selected", imageUri.toString());
+                            try {
+                                // Get the file path from the URI
+                                String path = FileUtils.getPath(this, imageUri);
+                                Log.d("Multiple File Selected", path);
+                            } catch (Exception e) {
+
+                            }
+                        }
+                    } else if (data.getData() != null) {
+                        //do something with the image (save it to some directory or whatever you need to do with it here)
+                        final Uri uri = data.getData();
+                        try {
+                            // Get the file path from the URI
+                            final String path = FileUtils.getPath(this, uri);
+                            Log.d("Single File Selected", path);
+                            Bitmap bitmap = BitmapFactory.decodeFile(path);
+//                            Bitmap bmp = BitmapFactory.decodeFile(filePath);
+                            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 70, bos);
+                            profileImg.setImageBitmap(bitmap);
+                            File file = new File(path);
+                            uploadMedia(file);
+                        } catch (Exception e) {
+                            Log.e("", "File select error", e);
+                        }
+                    }
+//                    getAllImagePaths("gallery");
+
+                }
+                break;
+
+            case PICK_IMAGE_CAMERA:
+                if (resultCode == RESULT_OK) {
+                    Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+////                            Bitmap bmp = BitmapFactory.decodeFile(filePath);
+//                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+//                    bitmap.compress(Bitmap.CompressFormat.JPEG, 70, bos);
+                    profileImg.setImageBitmap(bitmap);
+                    File file = new File(imagePath);
+                    uploadMedia(file);
+                }
+        }
+
+    }
+
 
     private void grayColorEditTexts() {
         nameEdt.setTextColor(getResources().getColor(R.color.textcolor));
@@ -306,11 +358,13 @@ public class UpdateProfileActivity extends BaseActivity {
         emailEdt.setTextColor(getResources().getColor(R.color.textcolor));
         addressEdt.setTextColor(getResources().getColor(R.color.textcolor));
         gstEdt.setTextColor(getResources().getColor(R.color.textcolor));
+        cityEdt.setTextColor(getResources().getColor(R.color.textcolor));
         nameEdt.setEnabled(true);
         phoneEdt.setEnabled(true);
         emailEdt.setEnabled(true);
         addressEdt.setEnabled(true);
         gstEdt.setEnabled(true);
+        cityEdt.setEnabled(true);
     }
 
     private void blackColorEditTexts() {
@@ -319,11 +373,13 @@ public class UpdateProfileActivity extends BaseActivity {
         emailEdt.setTextColor(getResources().getColor(R.color.gray_color));
         addressEdt.setTextColor(getResources().getColor(R.color.gray_color));
         gstEdt.setTextColor(getResources().getColor(R.color.gray_color));
+        cityEdt.setTextColor(getResources().getColor(R.color.gray_color));
         nameEdt.setEnabled(false);
         phoneEdt.setEnabled(false);
         emailEdt.setEnabled(false);
         addressEdt.setEnabled(false);
         gstEdt.setEnabled(false);
+        cityEdt.setEnabled(false);
     }
 
     private boolean formValidation(String nameStr, String phoneStr, String addressStr, String gstNoStr) {
@@ -367,6 +423,7 @@ public class UpdateProfileActivity extends BaseActivity {
     }
 
     private void uploadMedia(File file) {
+        ConstantMethods.showProgressbar(this);
         AndroidNetworking
                 .upload(UPLOAD_PROFILE_PICTURE)
                 .addMultipartFile("image", file)
@@ -384,10 +441,17 @@ public class UpdateProfileActivity extends BaseActivity {
                 .getAsJSONObject(new JSONObjectRequestListener() {
                     @Override
                     public void onResponse(JSONObject response) {
+                        ConstantMethods.dismissProgressBar();
                         Log.e("progress", "" + response);
                         Toast.makeText(UpdateProfileActivity.this, "Profile image uploaded", Toast.LENGTH_SHORT).show();
                         try {
                             String imageUrl = response.getString("imageurl");
+//                            Glide
+//                                    .with(UpdateProfileActivity.this)
+//                                    .load(imageUrl)
+//                                    .error(R.drawable.profile_icon)
+//                                    .centerCrop()
+//                                    .into(profileImg);
                             postProfilePicture(imageUrl);
                         } catch (JSONException e) {
                             e.printStackTrace();

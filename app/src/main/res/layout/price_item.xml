@@ -61,6 +61,7 @@
         android:background="@drawable/rounded_corner"
         android:gravity="start"
         android:inputType="number"
+        android:digits="0123456789."
         android:minHeight="35dp"
         android:padding="10dp"
         android:paddingLeft="8dp"

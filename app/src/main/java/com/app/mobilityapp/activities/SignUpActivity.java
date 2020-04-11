@@ -17,6 +17,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.error.ANError;
@@ -40,8 +41,7 @@ import static com.app.mobilityapp.app_utils.AppApis.USER_SIGNUP;
 
 
 public class SignUpActivity extends BaseActivity {
-    private EditText nameEdt,emailEdt,phoneEdt,passEdt,rePassEdt,gstNo,addresssEdt;
-    private AutoCompleteTextView cityEdt;
+    private EditText nameEdt,emailEdt,phoneEdt,passEdt,rePassEdt,gstNo,addresssEdt,cityEdt;
     private Spinner userTypeSpnr;
     private Button signupBtn;
     private Map<String, String> userMap;
@@ -71,28 +71,28 @@ public class SignUpActivity extends BaseActivity {
         phoneEdt.setText(mobileNo);
 
 
-        cityEdt.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                JSONObject jsonObject = new JSONObject();
-                try {
-                    jsonObject.put("searchkey",s.toString());
-                    getAddressData(jsonObject);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+//        cityEdt.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//                JSONObject jsonObject = new JSONObject();
+//                try {
+//                    jsonObject.put("searchkey",s.toString());
+//                    getAddressData(jsonObject);
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
 
         List<String> typeList = new ArrayList<>();
         userMap = ConstantMethods.getUserType();
@@ -160,12 +160,12 @@ public class SignUpActivity extends BaseActivity {
             jsonObject.put("password","");
             jsonObject.put("userType",typeStrKey);
             jsonObject.put("userRollId","5d7dffecb909fc0dec41f14e");
-            jsonObject.put("address", cityStr);
-            jsonObject.put("stateId",stateId);
-            jsonObject.put("countryId",countryId);
-            jsonObject.put("cityId",cityId);
+            jsonObject.put("address", addresssEdt.getText().toString());
+//            jsonObject.put("state_id",stateId);
+//            jsonObject.put("country_id",countryId);
+            jsonObject.put("city_name",cityEdt.getText().toString());
+//            jsonObject.put("cityId",cityId);
             jsonObject.put("gstno",gstNoStr);
-
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -179,14 +179,11 @@ public class SignUpActivity extends BaseActivity {
         String nameStr = nameEdt.getText().toString();
         String emailStr = emailEdt.getText().toString();
         String mobileStr = phoneEdt.getText().toString();
-//        String passStr = passEdt.getText().toString();
-//        String rePassStr = rePassEdt.getText().toString();
         String gstNoStr = gstNo.getText().toString();
         String addressStr = addresssEdt.getText().toString();
         String typeStr = userTypeSpnr.getSelectedItem().toString();
         String typeStrKey = (String)getKeyFromValue(userMap,typeStr);
         String cityStr = cityEdt.getText().toString();
-//        String mobileFirstPos = String.valueOf(mobileStr.charAt(0));
         if(nameStr.isEmpty()||mobileStr.isEmpty()){
             Toast.makeText(this, "Enter all the fields", Toast.LENGTH_SHORT).show();
             isValid = false;
@@ -195,10 +192,6 @@ public class SignUpActivity extends BaseActivity {
             Toast.makeText(this, "Enter a valid mobile", Toast.LENGTH_SHORT).show();
             isValid = false;
         }
-//        else if(!passStr.equals(rePassStr)){
-//            Toast.makeText(this, "Password does'nt match", Toast.LENGTH_SHORT).show();
-//            isValid = false;
-//        }
         else if(typeStr.equals("Select user type")){
             Toast.makeText(this, "Please select any user type", Toast.LENGTH_SHORT).show();
             isValid = false;
@@ -240,11 +233,20 @@ public class SignUpActivity extends BaseActivity {
                             ConstantMethods.dismissProgressBar();
                             String mResponse = response.getString("confirmation");
                             if(mResponse.equals("success")){
-                                Toast.makeText(SignUpActivity.this, "Account create successfully", Toast.LENGTH_SHORT).show();
                                 JSONObject dataObj = response.getJSONObject("data");
-                                Intent intent = new Intent(SignUpActivity.this,LoginActivity.class);
-                                startActivity(intent);
-                                finish();
+                                String phoneStr = dataObj.getString("phone");
+                                String userType = dataObj.getString("userType");
+                                if(userType.equals("3")){
+                                    Toast.makeText(SignUpActivity.this, "Account create successfully", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(SignUpActivity.this,LoginActivity.class);
+                                    intent.putExtra("phone",phoneStr);
+                                    startActivity(intent);
+                                    finish();
+                                }
+                                else{
+                                    messageDialog("Your account has been created successfully\nSoon you will be contacted from our side.");
+                                }
+
                             }else if(mResponse.equals("error")){
                                 String message = response.getString("message");
                                 Toast.makeText(SignUpActivity.this, message, Toast.LENGTH_SHORT).show();
@@ -270,58 +272,6 @@ public class SignUpActivity extends BaseActivity {
             }
         }
         return null;
-    }
-
-    private void getAddressData(JSONObject jsonObject){
-        CommonNetwork.postNetworkJsonObj(ADDRESS_DATA, jsonObject, new JSONResult() {
-            List<CityModel> cityData = new ArrayList<>();
-            List<String> cityDataShown = new ArrayList<>();
-            @Override
-            public void notifySuccess(@NonNull JSONObject response) {
-                Log.e("res",""+response);
-                try {
-                    String confirmation = response.getString("confirmation");
-                    if(confirmation.equals("success")){
-                        JSONArray jsonArray = response.getJSONArray("data");
-                        for(int i=0;i<jsonArray.length();i++){
-                            CityModel cityModel = new CityModel();
-                            JSONObject childObj = jsonArray.getJSONObject(i);
-                            String cityStr = childObj.getString("cityName");
-                            JSONObject contryJSON = childObj.getJSONObject("countryId");
-                            String countryId = contryJSON.getString("_id");
-                            JSONObject stateJSON = childObj.getJSONObject("stateId");
-                            String stateId = stateJSON.getString("_id");
-                            String cityId = childObj.getString("_id");
-                            cityModel.setCityName(cityStr);
-                            cityModel.setCityId(cityId);
-                            cityModel.setStateId(stateId);
-                            cityModel.setCountryId(countryId);
-                            cityData.add(cityModel);
-                            cityDataShown.add(cityStr);
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(SignUpActivity.this, android.R.layout.simple_dropdown_item_1line, cityDataShown);
-                cityEdt.setAdapter(adapter);
-                cityEdt.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        CityModel cityModel = cityData.get(position);
-                        cityId = cityModel.getCityId();
-                        countryId = cityModel.getCountryId();
-                        stateId = cityModel.getStateId();
-                        cityStr = cityModel.getCityName();
-                    }
-                });
-            }
-
-            @Override
-            public void notifyError(@NonNull ANError anError) {
-                Log.e("res",""+anError);
-            }
-        },this);
     }
 
     private static boolean validGSTIN(String gstin) throws Exception {
@@ -386,4 +336,18 @@ public class SignUpActivity extends BaseActivity {
             cpChars = null;
         }
     }
+
+    private void messageDialog(String message){
+        AlertDialog.Builder alert = new AlertDialog.Builder(this,R.style.AlertDialogCustom);
+        alert.setTitle("Congratulation");
+        alert.setMessage(message);
+        alert.setPositiveButton("Ok", (dialog, whichButton) -> {
+            Intent intent = new Intent(SignUpActivity.this,LoginActivity.class);
+//            intent.putExtra("phone",phoneStr);
+            startActivity(intent);
+            finish();
+        });
+        alert.show();
+    }
 }
+

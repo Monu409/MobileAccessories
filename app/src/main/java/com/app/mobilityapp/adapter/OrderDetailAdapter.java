@@ -37,7 +37,7 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
     @Override
     public void onBindViewHolder(@NonNull ODHolder holder, int position) {
         OrderDetailModel.ProductId productId = productdetails.get(position).getProductId();
-        int price = productdetails.get(position).getPrice();
+        double price = productdetails.get(position).getPrice();
         OrderDetailModel.CategoryId categoryId = productdetails.get(position).getCategoryId();
         List<OrderDetailModel.BrandDetail_> brandDetail1 = productdetails.get(position).getBrandDetails();
         String name = productId.getName();

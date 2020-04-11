@@ -67,6 +67,12 @@ public class ConstantMethods {
         progressDialog.setCancelable(true);
         progressDialog.show();
     }
+    public static void showProgressbar1(Context context,String s){
+        progressDialog = new ProgressDialog(context);
+        progressDialog.setMessage("Please wait... "+s);
+        progressDialog.setCancelable(true);
+        progressDialog.show();
+    }
     public static void dismissProgressBar(){
         progressDialog.dismiss();
     }
@@ -325,8 +331,8 @@ public class ConstantMethods {
 
     public static void messageDialog(Context context){
         AlertDialog.Builder alert = new AlertDialog.Builder(context);
-        alert.setTitle("Blocked");
-        alert.setMessage("You have blocked\nPlease contact to admin");
+        alert.setTitle("Profile Alert");
+        alert.setMessage("Your profile has been inactive\nPlease contact your system admin");
         alert.setPositiveButton("Ok", (dialog, whichButton) -> {
             context.startActivity(new Intent(context, LoginActivity.class));
         });

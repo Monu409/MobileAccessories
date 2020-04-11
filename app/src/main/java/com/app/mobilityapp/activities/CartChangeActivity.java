@@ -99,9 +99,9 @@ public class CartChangeActivity extends BaseActivity implements CartChangeAdapte
                         fullCartView.setVisibility(View.GONE);
                         emptyCartView.setVisibility(View.VISIBLE);
                     }
-                    int priceSum = 0;
+                    double priceSum = 0;
                     for (int i = 0; i < cartChildModels.size(); i++) {
-                        int price = cartChildModels.get(i).getPrice();
+                        double price = cartChildModels.get(i).getPrice();
                         priceSum = priceSum + price;
                     }
 //                    priceTxt.setText("₹ "+priceSum);
@@ -120,8 +120,6 @@ public class CartChangeActivity extends BaseActivity implements CartChangeAdapte
     public void getId(String cartId) {
         alertDialogForLogout(cartId);
     }
-
-    //{"_id":["5e5c92d96f6a170ed18e7411"]}
     private void deleteCart(String catdId) {
         JSONObject cartIdObj = new JSONObject();
         JSONArray jsonArray = new JSONArray();

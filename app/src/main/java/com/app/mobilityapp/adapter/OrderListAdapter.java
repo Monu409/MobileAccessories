@@ -40,7 +40,7 @@ public class OrderListAdapter extends RecyclerView.Adapter<OrderListAdapter.Orde
     @Override
     public void onBindViewHolder(@NonNull OrderHolder holder, int position) {
         String orderId = myOrderChildModels.get(position).getOrderId();
-        int amount = myOrderChildModels.get(position).getAmount();
+        double amount = myOrderChildModels.get(position).getAmount();
         String dateTime = myOrderChildModels.get(position).getCreatedAt();
         String showDate = ConstantMethods.changeDateFormate(dateTime);
         List<MyOrderModel.Productdetail> productdetail = myOrderChildModels.get(position).getProductdetails();

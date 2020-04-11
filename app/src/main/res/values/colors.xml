@@ -14,7 +14,8 @@
 <!--    <color name="colorPrimary">#28363F</color>-->
 <!--    <color name="textcolor">#ffffff</color>-->
 
-    <color name="colorPrimary">#F2E735</color>
+    <color name="colorPrimary">#DA1616</color>
+    <color name="colorPrimary11">#F2E735</color>
     <color name="test_color">#F3EE90</color>
     <color name="textcolor">#000000</color>
     <color name="textcolorlight">#3B3A3C</color>

@@ -30,8 +30,8 @@ import static com.app.mobilityapp.app_utils.AppApis.CREDIT_TRANSACTION;
 
 public class CreditSttmntActivity extends BaseActivity {
     private RecyclerView statementList;
-    int debitSum = 0;
-    int creditSum = 0;
+    double debitSum = 0;
+    double creditSum = 0;
     private TextView creditSumTxt,balanceTxt,debitTxt,noDataTxt;
 
     @Override
@@ -74,7 +74,7 @@ public class CreditSttmntActivity extends BaseActivity {
                                 String dabitBlnc = childObj.getString("usedBalence");
                                 String creditlimit = childObj.getString("creditlimit");
                                 String creditBlnc = childObj.getString("creditBalence");
-                                String createdAt = childObj.getString("createdAt");
+                                String createdAt = childObj.getString("ledgerdate");
                                 String[] parts = createdAt.split("T");
                                 String date = parts[0];
                                 String showDate = ConstantMethods.changeDateFormate(date);
@@ -88,23 +88,28 @@ public class CreditSttmntActivity extends BaseActivity {
                                     creditBlnc = "0";
                                     creditBlncShow = "--";
                                 }
-                                int debitInt = Integer.parseInt(dabitBlnc);
-                                int creditInt = Integer.parseInt(creditBlnc);
+                                double debitInt = Double.parseDouble(dabitBlnc);
+                                double creditInt = Double.parseDouble(creditBlnc);
                                 debitSum = debitSum + debitInt;
                                 creditSum = creditSum + creditInt;
                                 CreditStmntModel creditStmntModel = new CreditStmntModel();
-                                creditStmntModel.setTotallimit(Integer.parseInt(totallimit));
-                                creditStmntModel.setUsedBalence(dabitBlncShow);
-                                creditStmntModel.setCreditBalence(creditBlncShow);
-                                creditStmntModel.setCreditlimit(creditlimit);
-                                creditStmntModel.setCreatedAt(showDate);
-                                creditStmntModels.add(creditStmntModel);
+                                if(totallimit==null||totallimit.equals("null")){
+//                                    Toast.makeText(CreditSttmntActivity.this, "You have total limit 0", Toast.LENGTH_SHORT).show();
+                                }
+                                else {
+                                    creditStmntModel.setTotallimit(Double.parseDouble(totallimit));
+                                    creditStmntModel.setUsedBalence(dabitBlncShow);
+                                    creditStmntModel.setCreditBalence(creditBlncShow);
+                                    creditStmntModel.setCreditlimit(creditlimit);
+                                    creditStmntModel.setCreatedAt(showDate);
+                                    creditStmntModels.add(creditStmntModel);
+                                }
                             }
                             CreditStatementAdapter creditStatementAdapter = new CreditStatementAdapter(creditStmntModels, CreditSttmntActivity.this);
                             statementList.setAdapter(creditStatementAdapter);
                             debitTxt.setText(String.valueOf(debitSum));
                             creditSumTxt.setText(String.valueOf(creditSum));
-                            balanceTxt.setText(String.valueOf(creditStmntModels.get(creditStmntModels.size() - 1).getCreditlimit()));
+                            balanceTxt.setText(String.valueOf(creditStmntModels.get(0).getCreditlimit()));
                         }
                     }
                 } catch (JSONException e) {

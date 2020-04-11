@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Astrad</string>
+    <string name="app_name">Korobag</string>
     <string name="rs">"\u20B9"</string>
     <string name="add_product">"Add"</string>
     <string name="title_activity_main2">Main2Activity</string>

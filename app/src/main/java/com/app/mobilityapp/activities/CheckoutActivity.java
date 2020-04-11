@@ -1,9 +1,11 @@
 package com.app.mobilityapp.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -79,6 +81,9 @@ public class CheckoutActivity extends BaseActivity {
                 addressEdt.setEnabled(true);
                 addressEdt.requestFocus();
                 editAdrsBtn.setText("Save");
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+                addressEdt.setSelection(addressEdt.getText().length());
             }
 //            else if(btnTxt.equals("Save")){
 //                saveAddress();
@@ -164,9 +169,9 @@ public class CheckoutActivity extends BaseActivity {
                         dataAvailView.setVisibility(View.VISIBLE);
                         noDataView.setVisibility(View.GONE);
                     }
-                    int priceSum = 0;
+                    double priceSum = 0;
                     for(int i=0;i<cartChildModels.size();i++){
-                        int price = cartChildModels.get(i).getPrice();
+                        double price = cartChildModels.get(i).getPrice();
                         String cartId = cartChildModels.get(i).getId();
                         cartIdArray.put(cartId);
                         priceSum = priceSum+price;
@@ -184,7 +189,7 @@ public class CheckoutActivity extends BaseActivity {
         },this);
     }
     double totalDiscount;
-    private void getCreditLimit(int totalAmount,List<CartNewModel.CartChildModel> cartChildModels,int priceSum){
+    private void getCreditLimit(double totalAmount,List<CartNewModel.CartChildModel> cartChildModels,double priceSum){
 
         CommonNetwork.getNetworkJsonObj(CREDIT_LIMIT, new JSONResult() {
             @Override
@@ -193,11 +198,15 @@ public class CheckoutActivity extends BaseActivity {
                     ConstantMethods.dismissProgressBar();
                     JSONObject creditObj = response.getJSONObject("data");
                     String discountPercent = creditObj.getString("discount");
+                    if(discountPercent.equals("null")||discountPercent==null){
+                        discountPercent = "0";
+                    }
                     int percentIntDiscount = Integer.parseInt(discountPercent);
                     totalDiscount = (totalAmount*percentIntDiscount)/100;
-                    netAmountTxt.setText(String.valueOf(totalAmount-totalDiscount));
-                    discounntTxt.setText(String.valueOf(totalDiscount));
-                    jsonForOrder = getOrderJson(cartChildModels,priceSum,netAmountTxt.getText().toString());
+                    double netAmountInt = totalAmount-totalDiscount;
+                    netAmountTxt.setText("₹ "+netAmountInt);
+                    discounntTxt.setText("₹ "+totalDiscount);
+                    jsonForOrder = getOrderJson(cartChildModels,priceSum,String.valueOf(netAmountInt),String.valueOf(totalDiscount));
 //                    jsonForOrder = getOrderJson(cartChangeModels);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -252,7 +261,7 @@ public class CheckoutActivity extends BaseActivity {
         }
     }
 
-    private JSONObject getOrderJson(List<CartNewModel.CartChildModel> cartChildModels,int priceSum,String netAmount) {
+    private JSONObject getOrderJson(List<CartNewModel.CartChildModel> cartChildModels,double priceSum,String netAmount,String discount) {
         JSONObject parentObject = new JSONObject();
         Gson gson = new Gson();
         try {
@@ -263,7 +272,7 @@ public class CheckoutActivity extends BaseActivity {
                 CartNewModel.SubCategoryId subCategoryId = cartChildModels.get(i).getSubCategoryId();
                 CartNewModel.Subcategory2 subcategory2 = cartChildModels.get(i).getSubcategory2();
                 Object o = cartChildModels.get(i).getSubcategory3();
-                int price = cartChildModels.get(i).getPrice();
+                double price = cartChildModels.get(i).getPrice();
                 List<CartNewModel.BrandDetail_> brandDetail = cartChildModels.get(i).getBrandDetails();
                 String productIdStr = productid.getId();
                 String catidStr = categoryId.getId();
@@ -293,7 +302,7 @@ public class CheckoutActivity extends BaseActivity {
             }
             parentObject.put("amount",priceSum);
             parentObject.put("netamount",netAmount);
-            parentObject.put("discount",0);
+            parentObject.put("discount",discount);
             parentObject.put("productdetails",prodctDtlArr);
 
         } catch (JSONException e) {

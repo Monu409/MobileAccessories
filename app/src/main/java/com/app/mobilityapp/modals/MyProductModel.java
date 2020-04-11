@@ -225,7 +225,7 @@ public class MyProductModel implements Serializable {
         private Boolean sellerType;
         @SerializedName("creditLimit")
         @Expose
-        private Integer creditLimit;
+        private double creditLimit;
         @SerializedName("discount")
         @Expose
         private Integer discount;
@@ -395,11 +395,11 @@ public class MyProductModel implements Serializable {
             this.sellerType = sellerType;
         }
 
-        public Integer getCreditLimit() {
+        public double getCreditLimit() {
             return creditLimit;
         }
 
-        public void setCreditLimit(Integer creditLimit) {
+        public void setCreditLimit(double creditLimit) {
             this.creditLimit = creditLimit;
         }
 
@@ -474,6 +474,9 @@ public class MyProductModel implements Serializable {
         @SerializedName("name")
         @Expose
         private String name;
+        @SerializedName("moq")
+        @Expose
+        private String moq;
         @SerializedName("content")
         @Expose
         private String content;
@@ -529,6 +532,14 @@ public class MyProductModel implements Serializable {
 
         public void setName(String name) {
             this.name = name;
+        }
+
+        public String getMoq() {
+            return moq;
+        }
+
+        public void setMoq(String moq) {
+            this.moq = moq;
         }
 
         public String getContent() {

@@ -28,6 +28,7 @@ import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.app.mobilityapp.R;
 import com.app.mobilityapp.modals.ConsModel;
@@ -144,46 +145,52 @@ public class MultiSpinner extends Spinner implements DialogInterface.OnMultiChoi
 
         final ListAdapter ad = new ListAdapter(getContext(), items, selected);
         ListView listView = dialog.findViewById(R.id.item_list);
-        listView.setAdapter(ad);
-        listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-        slect_btn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked)
-                    Arrays.fill(selected, true);
-                else
-                    Arrays.fill(selected, false);
-                ad.notifyDataSetChanged();
-            }
-        });
-        listView.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (is_SingleSelect) {
-                    Arrays.fill(selected, false);
-                    selected[position] = true;
+        if(items == null){
+            Toast.makeText(getContext(), "Select brand first", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            listView.setAdapter(ad);
+            listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+            slect_btn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (isChecked)
+                        Arrays.fill(selected, true);
+                    else
+                        Arrays.fill(selected, false);
                     ad.notifyDataSetChanged();
-                } else {
-                    if (selected[position]) {
-                        selected[position] = false;
-                    } else {
-                        selected[position] = true;
-                    }
                 }
-                ((CheckBox) view.findViewById(R.id.check_btn)).setChecked(selected[position]);
-            }
-        });
-        btn_ok.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.cancel();
-            }
-        });
-        dialog.setOnCancelListener(this);
-        dialog.show();
-        Window window = dialog.getWindow();
-        window.setLayout(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+            });
 
+            listView.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    if (is_SingleSelect) {
+                        Arrays.fill(selected, false);
+                        selected[position] = true;
+                        ad.notifyDataSetChanged();
+                    } else {
+                        if (selected[position]) {
+                            selected[position] = false;
+                        } else {
+                            selected[position] = true;
+                        }
+                    }
+                    ((CheckBox) view.findViewById(R.id.check_btn)).setChecked(selected[position]);
+                }
+            });
+
+            btn_ok.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.cancel();
+                }
+            });
+            dialog.setOnCancelListener(this);
+            dialog.show();
+            Window window = dialog.getWindow();
+            window.setLayout(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+        }
         return true;
     }
 

@@ -59,10 +59,6 @@ public class ProductNamePriceActivity extends BaseActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         brandList = findViewById(R.id.brand_list);
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        // Sets the Toolbar to act as the ActionBar for this Activity window.
-        // Make sure the toolbar exists in the activity and is not null
-//        setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             ConstantMethods.setTitleAndBack(this, getIntent().getStringExtra("cat_name"));
         }
@@ -225,11 +221,11 @@ public class ProductNamePriceActivity extends BaseActivity {
                                 String maxPrice = priceObjFirst.getString("amount");
                                 String minPrice = priceObjLast.getString("amount");
                                 String fPrice = minPrice + "-" + maxPrice;
-                                String moqStr = "";
+                                String moqStr = jsonObject.getString("moq");
                                 JSONObject subcategory3 = null;
                                 try {
                                     subcategory3 = jsonObject.getJSONObject("subcategory3");
-                                    moqStr = subcategory3.getString("moq");
+//                                    moqStr = subcategory3.getString("moq");
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -237,7 +233,7 @@ public class ProductNamePriceActivity extends BaseActivity {
                                 JSONObject subcategory2 = null;
                                 try {
                                     subcategory2 = jsonObject.getJSONObject("subcategory2");
-                                    moqStr = subcategory2.getString("moq");
+//                                    moqStr = subcategory2.getString("moq");
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -245,7 +241,7 @@ public class ProductNamePriceActivity extends BaseActivity {
                                 JSONObject subCategoryId = null;
                                 try {
                                     subCategoryId = jsonObject.getJSONObject("subCategoryId");
-                                    moqStr = subCategoryId.getString("moq");
+//                                    moqStr = subCategoryId.getString("moq");
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -261,7 +257,7 @@ public class ProductNamePriceActivity extends BaseActivity {
                                 proBrndModal.setName(name);
                                 proBrndModal.setContent(String.valueOf(Html.fromHtml(content)));
                                 proBrndModal.setId(brandId);
-                                proBrndModal.setPriceRange("₹ " + fPrice);
+                                proBrndModal.setPriceRange(fPrice);
                                 proBrndModal.setMoqStr(moqStr);
                                 proBrndModal.setImgArr(imgArr);
                                 proBrndModals.add(proBrndModal);
@@ -270,8 +266,8 @@ public class ProductNamePriceActivity extends BaseActivity {
                             brandList.setAdapter(productBrandAdapter);
                             productBrandAdapter.onListClick(proBrndModal -> {
                                 Log.e("position", "" + proBrndModal);
-                                Intent intent = new Intent(ProductNamePriceActivity.this, ProductACopy.class);
-//                            Intent intent = new Intent(ProductNamePriceActivity.this, ProductActivity.class);
+//                                Intent intent = new Intent(ProductNamePriceActivity.this, ProductACopyCopy.class);
+                            Intent intent = new Intent(ProductNamePriceActivity.this, ProductACopy.class);
                                 Log.e("brand_name", proBrndModal.getName());
                                 Log.e("brand_des", proBrndModal.getContent());
 

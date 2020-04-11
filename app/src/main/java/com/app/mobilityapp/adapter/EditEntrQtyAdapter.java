@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.app.mobilityapp.R;
+import com.app.mobilityapp.activities.EditEnterQuantityActivity;
 import com.app.mobilityapp.activities.EnterQuantityACopy;
 import com.app.mobilityapp.app_utils.OnItemClick;
 import com.app.mobilityapp.modals.EditCartModel;
@@ -28,7 +29,7 @@ import java.util.List;
 public class EditEntrQtyAdapter extends RecyclerView.Adapter<EditEntrQtyAdapter.ProModlHolder> implements OnItemClick {
     private Activity context;
     private List<EditCartModel.Modallist> modallists;
-    private int qty = 0;
+    private int qty;
     private List<ModelListModel> _retData;
 
     public EditEntrQtyAdapter(Activity context, List<EditCartModel.Modallist> modallists) {
@@ -55,6 +56,9 @@ public class EditEntrQtyAdapter extends RecyclerView.Adapter<EditEntrQtyAdapter.
         modelListModel.setModalid(modalid.getId());
         modelListModel.setQuantity(String.valueOf(modallist.getQuantity()));
         _retData.add(modelListModel);
+        if(modallist.getQuantity()==0) {
+            holder.edt_qty.setText("");
+        }
         holder.edt_qty.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -68,13 +72,24 @@ public class EditEntrQtyAdapter extends RecyclerView.Adapter<EditEntrQtyAdapter.
             public void afterTextChanged(Editable s) {
                 if (!holder.edt_qty.getText().toString().equalsIgnoreCase("")) {
                     qty = Integer.parseInt(holder.edt_qty.getText().toString());
-                    ModelListModel modelListModel = new ModelListModel();
-                    modelListModel.setModalid(modalid.getId());
-                    modelListModel.setQuantity(s.toString());
-                    _retData.remove(position);
-                    _retData.add(position,modelListModel);
+//                    ModelListModel modelListModel = new ModelListModel();
+//                    modelListModel.setModalid(modalid.getId());
+//                    modelListModel.setQuantity(s.toString());
+//                    _retData.remove(position);
+//                    _retData.add(position,modelListModel);
                 } else {
                     qty = 0;
+//                    ModelListModel modelListModel = new ModelListModel();
+//                    modelListModel.setModalid(modalid.getId());
+//                    modelListModel.setQuantity(String.valueOf(0));
+//                    _retData.remove(position);
+//                    _retData.add(position,modelListModel);
+                }
+                if (!modallist.getQuantity().equals("" + qty)) {
+                    modallist.setQuantity(qty);
+                    if (context instanceof EditEnterQuantityActivity) {
+                        ((EditEnterQuantityActivity) context).update_quantity();
+                    }
                 }
             }
         });
@@ -124,13 +139,18 @@ public class EditEntrQtyAdapter extends RecyclerView.Adapter<EditEntrQtyAdapter.
             edt_qty = itemView.findViewById(R.id.edt_qty);
             btn_plus = itemView.findViewById(R.id.btn_plus);
             btn_minus = itemView.findViewById(R.id.btn_minus);
-            setIsRecyclable(false);
         }
     }
 
-    public List<ModelListModel> retrieveData()
-    {
-        return _retData;
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
     }
 
 }

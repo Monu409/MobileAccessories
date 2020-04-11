@@ -111,14 +111,14 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
-            android:text="Mobility"
+            android:text="KOROBAG"
             android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
         <RelativeLayout
             android:id="@+id/search_lay"
-            android:layout_width="185dp"
+            android:layout_width="160dp"
             android:layout_height="35dp"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"

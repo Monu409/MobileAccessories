@@ -83,12 +83,6 @@ private boolean status;
             holder.actvTxt.setText("Active");
             holder.actvTxt.setBackgroundColor(context.getResources().getColor(R.color.green));
         }
-//        if(btnTxtStr.equals("Active")){
-//            statusBol = false;
-//        }
-//        else if(btnTxtStr.equals("Inactive")){
-//            statusBol = true;
-//        }
         holder.actvTxt.setOnClickListener(v->{
             changeProductStatus(!status,productId,holder,position);
             status = !status;

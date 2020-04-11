@@ -41,7 +41,8 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_centerInParent="true"
-        android:id="@+id/empty_cart_view">
+        android:id="@+id/empty_cart_view"
+        android:visibility="gone">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

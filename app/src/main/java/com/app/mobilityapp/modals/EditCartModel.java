@@ -1388,7 +1388,7 @@ import java.util.List;
             private Productid productid;
             @SerializedName("price")
             @Expose
-            private Integer price;
+            private double price;
             @SerializedName("categoryId")
             @Expose
             private CategoryId categoryId;
@@ -1431,11 +1431,11 @@ import java.util.List;
                 this.productid = productid;
             }
 
-            public Integer getPrice() {
+            public double getPrice() {
                 return price;
             }
 
-            public void setPrice(Integer price) {
+            public void setPrice(double price) {
                 this.price = price;
             }
 

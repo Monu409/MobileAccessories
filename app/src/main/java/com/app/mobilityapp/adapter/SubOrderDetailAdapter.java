@@ -25,7 +25,7 @@ public class SubOrderDetailAdapter extends RecyclerView.Adapter<SubOrderDetailAd
     private List<OrderDetailModel.BrandDetail_> modallistList;
     private Context context;
     private LayoutInflater layoutInflater;
-    private List<OrderRcvdModel.OrderRcvdModelChild> orderRcvdModelChildren;
+    private List<OrderRcvdModel.BrandDetail> brandDetails;
     private String seller;
     private String seller1;
 
@@ -37,8 +37,8 @@ public class SubOrderDetailAdapter extends RecyclerView.Adapter<SubOrderDetailAd
         layoutInflater = LayoutInflater.from(context);
     }
 
-    public SubOrderDetailAdapter(List<OrderRcvdModel.OrderRcvdModelChild> orderRcvdModelChildren, Context context,String seller){
-        this.orderRcvdModelChildren = orderRcvdModelChildren;
+    public SubOrderDetailAdapter(List<OrderRcvdModel.BrandDetail> brandDetails, Context context,String seller){
+        this.brandDetails = brandDetails;
         this.context = context;
         this.seller = seller;
         layoutInflater = LayoutInflater.from(context);
@@ -79,14 +79,16 @@ public class SubOrderDetailAdapter extends RecyclerView.Adapter<SubOrderDetailAd
             });
         }
         else{
-            OrderRcvdModel.ProductId productId = orderRcvdModelChildren.get(position).getProductId();
-            String name = productId.getName();
-            String imgUrl = "";
-            List<OrderRcvdModel.Image> image = orderRcvdModelChildren.get(position).getProductId().getImage();
-            if(image.size()!=0){
-                imgUrl = image.get(0).getImageurl();
-            }
-            List<OrderRcvdModel.Modallist> modallist = orderRcvdModelChildren.get(position).getBrandDetails().get(0).getModallist();
+            OrderRcvdModel.Brand brand = brandDetails.get(position).getBrand();
+            String name = brand.getName();
+            OrderRcvdModel.Image_ brandImage = brand.getImage();
+            String imgUrl = brandImage.getImageurl();
+//            List<OrderRcvdModel.Image> image = orderRcvdModelChildren.get(position).getProductId().getImage();
+//            if(image.size()!=0){
+//                imgUrl = image.get(0).getImageurl();
+//            }
+//            List<OrderRcvdModel.Modallist> modallist = orderRcvdModelChildren.get(position).getBrandDetails().get(0).getModallist();
+            List<OrderRcvdModel.Modallist> modallist = brandDetails.get(position).getModallist();
             int sumQty = 0;
             for(int i=0;i<modallist.size();i++){
                 int qty = modallist.get(i).getQuantity();
@@ -116,7 +118,7 @@ public class SubOrderDetailAdapter extends RecyclerView.Adapter<SubOrderDetailAd
             return modallistList.size();
         }
         else {
-            return orderRcvdModelChildren.size();
+            return brandDetails.size();
         }
     }
 

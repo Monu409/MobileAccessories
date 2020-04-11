@@ -31,11 +31,12 @@ import static com.app.mobilityapp.app_utils.AppApis.EDIT_CART;
 
 public class EditEnterQuantityActivity extends BaseActivity {
     private RecyclerView qtyList;
-    private Button doneBtn;
+    private Button doneBtn,btnOrder;
     String brandDetailId,brandId,cartId;
-    private int totalPrice;
+    private double totalPrice;
     private List<EditCartModel.Modallist> modallists;
     private List<EditCartModel.Price> priceList;
+    int otherQty;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,14 +51,16 @@ public class EditEnterQuantityActivity extends BaseActivity {
         EditEntrQtyAdapter editEntrQtyAdapter = new EditEntrQtyAdapter(this,modallists);
         qtyList.setAdapter(editEntrQtyAdapter);
         doneBtn = findViewById(R.id.done_btn);
-
+        btnOrder = findViewById(R.id.btn_order);
+        otherQty = getIntent().getIntExtra("other_qty",0);
+        int totalQty1 = getQty(modallists);
+        btnOrder.setText("Order Qty" + "  " + totalQty1);
         doneBtn.setOnClickListener(v->{
             ConstantMethods.showProgressbar(this);
-            List<ModelListModel> strings = editEntrQtyAdapter.retrieveData();
-            int totalQty = getQty(strings);
-            totalPrice = applyPrice(totalQty,priceList);
+            int totalQty = getQty(modallists);
+            totalPrice = applyPrice((totalQty+otherQty),priceList);
 
-            JSONObject jsonObject = getEditJSon(modallists,strings);
+            JSONObject jsonObject = getEditJSon(modallists,modallists);
 
             CommonNetwork.postNetworkJsonObj(EDIT_CART, jsonObject, new JSONResult() {
                 @Override
@@ -90,7 +93,7 @@ public class EditEnterQuantityActivity extends BaseActivity {
         return R.layout.activity_edit_enter_qty;
     }
 
-    private JSONObject getEditJSon(List<EditCartModel.Modallist> modallists,List<ModelListModel> modelListModels){
+    private JSONObject getEditJSon(List<EditCartModel.Modallist> modallists,List<EditCartModel.Modallist> modelListModels){
         JSONObject finalJson = new JSONObject();
         Gson gson = new Gson();
         String modelListData = gson.toJson(modelListModels);
@@ -107,19 +110,19 @@ public class EditEnterQuantityActivity extends BaseActivity {
         return finalJson;
     }
 
-    private int getQty(List<ModelListModel> modallists){
+    private int getQty(List<EditCartModel.Modallist> modallists){
         int sumQty = 0;
         for(int i=0;i<modallists.size();i++){
-            int qty = Integer.parseInt(modallists.get(i).getQuantity());
+            int qty = modallists.get(i).getQuantity();
             sumQty = sumQty+qty;
         }
         return sumQty;
     }
 
-    private int applyPrice(int quantity,List<EditCartModel.Price> priceList){
-        int price = 0;
+    private double applyPrice(int quantity,List<EditCartModel.Price> priceList){
+        double price = 0;
         for(int i=0;i<priceList.size();i++){
-            int amount = Integer.parseInt(priceList.get(i).getAmount());
+            double amount = Double.parseDouble(priceList.get(i).getAmount());
             int fromVal = Integer.parseInt(priceList.get(i).getFrom());
             int toVal = Integer.parseInt(priceList.get(i).getTo());
             if(quantity>=fromVal && quantity<=toVal){
@@ -133,4 +136,14 @@ public class EditEnterQuantityActivity extends BaseActivity {
         return price;
     }
 
+    public void update_quantity() {
+        int total_qty = 0;
+        for (EditCartModel.Modallist proModlModel : modallists) {
+            int qtyInt = proModlModel.getQuantity();
+            total_qty = total_qty + qtyInt;
+        }
+        btnOrder.setText("Order Qty" + "  " + total_qty);
+        if (slctd_brand != null)
+            slctd_brand.setQuantity("" + total_qty);
+    }
 }

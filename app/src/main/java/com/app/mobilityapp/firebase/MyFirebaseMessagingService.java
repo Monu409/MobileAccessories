@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Build;
+import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
@@ -13,12 +14,20 @@ import com.app.mobilityapp.activities.DashboardActivity;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import me.leolin.shortcutbadger.ShortcutBadger;
+
 /**
  * Created by Belal on 12/8/2017.
  */
 
 //class extending FirebaseMessagingService
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
+
+    @Override
+    public void onNewToken(String s) {
+        super.onNewToken(s);
+        Log.d("NEW_TOKEN",s);
+    }
  
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
@@ -49,5 +58,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             manager.createNotificationChannel(channel);
         }
         manager.notify(0, builder.build());
+//        ShortcutBadger.wi(getApplicationContext()).count(1);
+        ShortcutBadger.applyCount(this,1);
     }
 }

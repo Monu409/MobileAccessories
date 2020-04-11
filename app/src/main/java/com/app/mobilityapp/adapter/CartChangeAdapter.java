@@ -67,7 +67,6 @@ public class CartChangeAdapter extends RecyclerView.Adapter<CartChangeAdapter.Ca
         String proName = productid.getName();
         CartNewModel.CategoryId categoryId = cartChildModels.get(position).getCategoryId();
         String catName = categoryId.getName();
-//        CartNewModel.Image__ image1 = cartChildModels.get(position).getSubCategoryId().getImage();
         String imgUrl = "";
         List<CartNewModel.Image> images = cartChildModels.get(position).getProductid().getImage();
         if(images.size()!=0){
@@ -76,8 +75,7 @@ public class CartChangeAdapter extends RecyclerView.Adapter<CartChangeAdapter.Ca
         else {
 
         }
-//        String imgUrl = image1.getImageurl();
-        int price = cartChildModels.get(position).getPrice();
+        double price = cartChildModels.get(position).getPrice();
         holder.catName.setText(proName);
         holder.name.setText(catName);
         holder.priceTxt.setText("₹ "+price);

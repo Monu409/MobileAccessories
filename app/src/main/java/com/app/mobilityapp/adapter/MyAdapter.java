@@ -1,5 +1,6 @@
 package com.app.mobilityapp.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.view.LayoutInflater;
@@ -12,6 +13,8 @@ import android.widget.TextView;
 import com.app.mobilityapp.R;
 import com.app.mobilityapp.app_utils.FileUtils;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.util.ArrayList;
 
@@ -23,12 +26,17 @@ import java.util.ArrayList;
 
 public class MyAdapter extends BaseAdapter {
 
-    private Context context;
+    private Activity context;
     private ArrayList arrayList;
 
-    public MyAdapter(Context context, ArrayList arrayList) {
+    public MyAdapter(Activity context, ArrayList arrayList) {
         this.context = context;
         this.arrayList = arrayList;
+    }
+
+    public void Update(ArrayList arrayList) {
+        this.arrayList = arrayList;
+        this.notifyDataSetChanged();
     }
 
 
@@ -57,14 +65,21 @@ public class MyAdapter extends BaseAdapter {
 
         ImageView imageView = convertView.findViewById(R.id.imageView);
         TextView imagePath = convertView.findViewById(R.id.imagePath);
+        ImageView crossView = convertView.findViewById(R.id.cross_img);
+        crossView.setOnClickListener(v -> {
+            arrayList.remove(position);
+            notifyDataSetChanged();
+        });
 
         if (arrayList.get(position) instanceof Uri)
             imagePath.setText(FileUtils.getPath(context, (Uri) arrayList.get(position)));
         else
-            imagePath.setText(""+arrayList.get(position));
+            imagePath.setText("" + arrayList.get(position));
 
         Glide.with(context)
+                .asBitmap()
                 .load(arrayList.get(position))
+                .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).skipMemoryCache(true))
                 .into(imageView);
 
         return convertView;

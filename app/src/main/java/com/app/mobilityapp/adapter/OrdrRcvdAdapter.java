@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.app.mobilityapp.R;
+import com.app.mobilityapp.activities.RcvdOrdrDetailActivity;
 import com.app.mobilityapp.activities.SubOrderActivity;
 import com.app.mobilityapp.app_utils.ConstantMethods;
 import com.app.mobilityapp.modals.MyOrderModel;
@@ -41,15 +42,21 @@ public class OrdrRcvdAdapter extends RecyclerView.Adapter<OrdrRcvdAdapter.ORHold
     public void onBindViewHolder(@NonNull ORHolder holder, int position) {
         OrderRcvdModel.OrderId orderIdObj = orderRcvdModelChildren.get(position).getOrderId();
         String orderIdStr = orderIdObj.getOrderId();
-        int amount = orderRcvdModelChildren.get(position).getAmount();
+        List<OrderRcvdModel.Productdetail> productdetail = orderRcvdModelChildren.get(position).getProductdetails();
+        int amountSum = 0;
+        for(int i=0;i<productdetail.size();i++){
+            int amount = productdetail.get(i).getAmount();
+            amountSum = amountSum+amount;
+        }
+
         String date = orderRcvdModelChildren.get(position).getCreatedAt();
         String showDate = ConstantMethods.changeDateFormate(date);
         holder.orderIdTxt.setText(orderIdStr);
-        holder.priceTxt.setText("₹ "+amount);
+        holder.priceTxt.setText("₹ "+amountSum);
         holder.dateTxt.setText(showDate);
         holder.fullView.setOnClickListener(v->{
-            Intent intent = new Intent(context, SubOrderActivity.class);
-            intent.putExtra("child_model",(ArrayList)orderRcvdModelChildren);
+            Intent intent = new Intent(context, RcvdOrdrDetailActivity.class);
+            intent.putExtra("product_details",(ArrayList)productdetail);
             intent.putExtra("preview","seller_view");
             context.startActivity(intent);
         });

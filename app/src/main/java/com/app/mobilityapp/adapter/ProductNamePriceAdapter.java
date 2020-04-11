@@ -64,7 +64,7 @@ public class ProductNamePriceAdapter extends RecyclerView.Adapter<ProductNamePri
         String brandName = proBrndModals.get(position).getName();
         holder.brandTxt.setText(brandName);
         holder.pricaeRangeTxt.setText(proBrndModals.get(position).getPriceRange());
-        holder.moqTxt.setText("MOQ: "+proBrndModals.get(position).getMoqStr());
+        holder.moqTxt.setText(proBrndModals.get(position).getMoqStr());
 //        holder.brandDes.setText(proBrndModals.get(position).getContent());
         String brandId = proBrndModals.get(position).getId();
 //        for(int i=0;i<proBrndModals.size();i++)

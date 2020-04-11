@@ -13,7 +13,7 @@ public class CreditStmntModel {
     private String creditBalence;
     @SerializedName("totallimit")
     @Expose
-    private Integer totallimit;
+    private double totallimit;
     @SerializedName("usedBalence")
     @Expose
     private String usedBalence;
@@ -44,11 +44,11 @@ public class CreditStmntModel {
         this.orderId = orderId;
     }
 
-    public Integer getTotallimit() {
+    public double getTotallimit() {
         return totallimit;
     }
 
-    public void setTotallimit(Integer totallimit) {
+    public void setTotallimit(double totallimit) {
         this.totallimit = totallimit;
     }
 

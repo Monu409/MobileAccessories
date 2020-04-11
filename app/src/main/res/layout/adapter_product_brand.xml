@@ -15,7 +15,7 @@
         android:layout_height="wrap_content">
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="180dp"
+            android:layout_height="200dp"
             android:divider="@android:color/transparent"
             android:dividerHeight="0.0px"
             android:clipToPadding="false"
@@ -57,7 +57,7 @@
                 <LinearLayout
                     android:id="@+id/rate_view"
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
+                    android:layout_height="50dp"
                     android:orientation="horizontal"
                     android:layout_alignParentBottom="true"
                     android:gravity="center"
@@ -67,33 +67,64 @@
                     android:layout_marginRight="2dp"
                     android:layout_marginBottom="2dp">
 
-                    <TextView
-                        android:id="@+id/price_range_txt"
+                    <LinearLayout
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:text="₹ 100"
-                        android:maxLines="1"
-                        android:layout_marginRight="2dp"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/colorAccent1"
-                        android:gravity="center"/>
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="₹"
+                            android:textColor="@color/colorAccent1"
+                            android:textSize="12sp"
+                            android:layout_gravity="center_horizontal"
+                            />
+                        <TextView
+                            android:id="@+id/price_range_txt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="18.5-15.5"
+                            android:maxLines="1"
+                            android:layout_marginRight="2dp"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/colorAccent1"
+                            android:layout_gravity="center"/>
+                    </LinearLayout>
+
+
                     <View
                         android:layout_width="0.5dp"
                         android:layout_height="match_parent"
                         android:background="#585858"/>
 
-                    <TextView
-                        android:id="@+id/moq_txt"
+                    <LinearLayout
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:text="MOQ:  100"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/colorAccent1"
-                        android:gravity="center"/>
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="MOQ"
+                            android:textColor="@color/colorAccent1"
+                            android:textSize="12sp"
+                            android:layout_gravity="center_horizontal"
+                            />
+                        <TextView
+                            android:id="@+id/moq_txt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="100"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/colorAccent1"
+                            android:layout_gravity="center"/>
+                    </LinearLayout>
+
+
 
                 </LinearLayout>
             </RelativeLayout>

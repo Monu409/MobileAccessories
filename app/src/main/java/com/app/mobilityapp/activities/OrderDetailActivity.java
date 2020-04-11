@@ -59,8 +59,8 @@ public class OrderDetailActivity extends BaseActivity {
                 if(confirmation.equals("success")){
                     OrderDetailModel.Data data = orderDetailModel.getData();
                     String orderIdSeen = data.getOrderId();
-                    int totalAmount = data.getAmount();
-                    int discount = data.getDiscount();
+                    double totalAmount = data.getAmount();
+                    double discount = data.getDiscount();
                     String date = data.getCreatedAt();
                     String showDate = ConstantMethods.changeDateFormate(date);
                     orderIdTxt.setText("OredrID: "+orderIdSeen);

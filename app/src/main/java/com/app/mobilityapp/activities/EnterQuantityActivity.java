@@ -74,7 +74,7 @@ public class EnterQuantityActivity extends BaseActivity {
                     }
                 }
                 btnOrder.setText("Order Qty" + "  " + mQty);
-                productModelAdapter = new ProductModelListAdapter1(this, proModlModels);
+//                productModelAdapter = new ProductModelListAdapter1(this, proModlModels);
                 qtyList.setAdapter(productModelAdapter);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -82,7 +82,7 @@ public class EnterQuantityActivity extends BaseActivity {
         } else if (previousViewName.equals("product")) {
             ConstantMethods.setTitleAndBack(this, "Enter Quantity");
             proModlModels = (ArrayList<ProModlModel>) getIntent().getSerializableExtra("qty_list");
-            productModelAdapter = new ProductModelListAdapter1(this, proModlModels);
+//            productModelAdapter = new ProductModelListAdapter1(this, proModlModels);
             qtyList.setAdapter(productModelAdapter);
             productIdforJson = getIntent().getStringExtra("brand_id");
             brandId = getIntent().getStringExtra("brandId");

@@ -73,13 +73,18 @@
         <activity android:name=".activities.OrderReceivedActivity" />
         <activity android:name=".activities.ShowMyProductActivity" />
         <activity android:name=".activities.OrderDetailModelActivity" />
+        <activity android:name=".activities.ProductACopyCopy" />
+        <activity android:name=".activities.NotificationActivity" />
+        <activity android:name=".activities.RcvdOrdrDetailActivity" />
+        <activity android:name=".camera.CameraActivity" />
 
-        <service android:name=".firebase.MyFirebaseInstanceIdService">
-            <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
-            </intent-filter>
-        </service>
-        <service android:name=".firebase.MyFirebaseMessagingService">
+<!--        <service android:name=".firebase.MyFirebaseInstanceIdService">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />-->
+<!--            </intent-filter>-->
+<!--        </service>-->
+        <service android:name=".firebase.MyFirebaseMessagingService"
+            android:stopWithTask="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>

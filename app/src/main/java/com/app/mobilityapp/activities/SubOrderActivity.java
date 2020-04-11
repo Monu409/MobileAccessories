@@ -27,7 +27,7 @@ public class SubOrderActivity extends BaseActivity {
         subOrdrList.setLayoutManager(new LinearLayoutManager(this));
         String preView = getIntent().getStringExtra("preview");
         if(preView.equals("seller_view")){
-            List<OrderRcvdModel.OrderRcvdModelChild> orderRcvdModelChildren = (List<OrderRcvdModel.OrderRcvdModelChild>)getIntent().getSerializableExtra("child_model");
+            List<OrderRcvdModel.BrandDetail> orderRcvdModelChildren = (List<OrderRcvdModel.BrandDetail>)getIntent().getSerializableExtra("child_model");
             SubOrderDetailAdapter subOrderDetailAdapter = new SubOrderDetailAdapter(orderRcvdModelChildren,this,"seller");
             subOrdrList.setAdapter(subOrderDetailAdapter);
         }

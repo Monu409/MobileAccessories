@@ -38,13 +38,13 @@ public class MyOrderModel implements Serializable {
         private String orderId;
         @SerializedName("amount")
         @Expose
-        private Integer amount;
+        private double amount;
         @SerializedName("netamount")
         @Expose
-        private Integer netamount;
+        private double netamount;
         @SerializedName("discount")
         @Expose
-        private Integer discount;
+        private double discount;
         @SerializedName("shippingFees")
         @Expose
         private Object shippingFees;
@@ -87,27 +87,27 @@ public class MyOrderModel implements Serializable {
             this.orderId = orderId;
         }
 
-        public Integer getAmount() {
+        public double getAmount() {
             return amount;
         }
 
-        public void setAmount(Integer amount) {
+        public void setAmount(double amount) {
             this.amount = amount;
         }
 
-        public Integer getNetamount() {
+        public double getNetamount() {
             return netamount;
         }
 
-        public void setNetamount(Integer netamount) {
+        public void setNetamount(double netamount) {
             this.netamount = netamount;
         }
 
-        public Integer getDiscount() {
+        public double getDiscount() {
             return discount;
         }
 
-        public void setDiscount(Integer discount) {
+        public void setDiscount(double discount) {
             this.discount = discount;
         }
 
@@ -488,7 +488,7 @@ public class MyOrderModel implements Serializable {
         private Boolean sellerType;
         @SerializedName("creditLimit")
         @Expose
-        private Integer creditLimit;
+        private long creditLimit;
         @SerializedName("discount")
         @Expose
         private Integer discount;
@@ -658,11 +658,11 @@ public class MyOrderModel implements Serializable {
             this.sellerType = sellerType;
         }
 
-        public Integer getCreditLimit() {
+        public long getCreditLimit() {
             return creditLimit;
         }
 
-        public void setCreditLimit(Integer creditLimit) {
+        public void setCreditLimit(long creditLimit) {
             this.creditLimit = creditLimit;
         }
 
@@ -1249,7 +1249,7 @@ public class MyOrderModel implements Serializable {
         private ProductId productId;
         @SerializedName("price")
         @Expose
-        private Integer price;
+        private double price;
         @SerializedName("sellerSeenStatus")
         @Expose
         private Integer sellerSeenStatus;
@@ -1280,11 +1280,11 @@ public class MyOrderModel implements Serializable {
             this.productId = productId;
         }
 
-        public Integer getPrice() {
+        public double getPrice() {
             return price;
         }
 
-        public void setPrice(Integer price) {
+        public void setPrice(double price) {
             this.price = price;
         }
 

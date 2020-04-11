@@ -1,0 +1,56 @@
+{
+  "project_info": {
+    "project_number": "334247023170",
+    "firebase_url": "https://testingtask-1055.firebaseio.com",
+    "project_id": "testingtask-1055",
+    "storage_bucket": "testingtask-1055.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:334247023170:android:4ae04ca73527a4fa3e93db",
+        "android_client_info": {
+          "package_name": "com.app.mobilityapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "334247023170-75ifpk64veqf05s4380c3gbjue05kgd6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.mobilityapp",
+            "certificate_hash": "ac58a67d4ce07f68e13c1e6ac502c56be8699544"
+          }
+        },
+        {
+          "client_id": "334247023170-gorko3c7t81igt55m480ssvcgjsvfoal.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.mobilityapp",
+            "certificate_hash": "92a2fe3a82d7d14f70567cc093f9e0da6b8bfc0c"
+          }
+        },
+        {
+          "client_id": "334247023170-v20quuhbrdcr54eh5lv47h14fpoams33.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCAz83MF2oqjyIUQsyfJLa_G7gEuYGK8aw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "334247023170-v20quuhbrdcr54eh5lv47h14fpoams33.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

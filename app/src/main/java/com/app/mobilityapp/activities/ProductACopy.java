@@ -132,10 +132,15 @@ public class ProductACopy extends BaseActivity {
                 String imgUrl = jsonObject.getString("imageurl");
                 imgList.add(imgUrl);
             }
-            sliderView.setSliderAdapter(new SliderAdapterExample(this,imgList));
-            sliderView.startAutoCycle();
-            sliderView.setIndicatorAnimation(IndicatorAnimations.WORM);
-            sliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);
+            if(imgList.size()==0){
+                sliderView.setVisibility(View.GONE);
+            }
+            else {
+                sliderView.setSliderAdapter(new SliderAdapterExample(this, imgList));
+                sliderView.startAutoCycle();
+                sliderView.setIndicatorAnimation(IndicatorAnimations.WORM);
+                sliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -327,13 +332,30 @@ public class ProductACopy extends BaseActivity {
         }
     }
 
+    private double applyPrice(int quantity){
+        double price = 0.0;
+        for(int i=0;i<productPriceModels.size();i++){
+            double amount = Double.parseDouble(productPriceModels.get(i).getAmount());
+            int fromVal = Integer.parseInt(productPriceModels.get(i).getFrom());
+            int toVal = Integer.parseInt(productPriceModels.get(i).getTo());
+            if(quantity>=fromVal && quantity<=toVal){
+                price = amount*quantity;
+                break;
+            }
+            else {
+                price = amount*quantity;
+            }
+        }
+        return price;
+    }
+
     private JSONObject getBrandDetailArr(List<LocalQuantityModel> quantityModels){
-        int priceSum = 0;
         JSONArray jsonArray = new JSONArray();
         JSONObject cartJson = new JSONObject();
         Gson gson = new Gson();
         String strJson = gson.toJson(quantityModels);
         Log.e("json",strJson);
+        int totalQty = 0;
         try {
             JSONArray getJsonArr = new JSONArray(strJson);
             for(int i=0;i<getJsonArr.length();i++){
@@ -341,17 +363,20 @@ public class ProductACopy extends BaseActivity {
                 JSONObject childObj = getJsonArr.getJSONObject(i);
                 JSONArray modallist = childObj.getJSONArray("modallist");
                 String brandid = childObj.getString("brandid");
-                String price = childObj.getString("price");
-                int priceInt = Integer.parseInt(price);
-                priceSum = priceSum+priceInt;
+                int qtyByRow = childObj.getInt("total_qty");
+                totalQty = totalQty+qtyByRow;
+//                String price = childObj.getString("price");
+//                int priceInt = Integer.parseInt(price);
+//                priceSum = priceSum+priceInt;
                 brandDetails.put("brand",brandid);
                 brandDetails.put("modallist",modallist);
                 jsonArray.put(i,brandDetails);
             }
+            double priceInt = applyPrice(totalQty);
             String productId = getJsonArr.getJSONObject(0).getString("productid");
             cartJson.put("productid",productId);
             cartJson.put("brandDetails",jsonArray);
-            cartJson.put("price",priceSum);
+            cartJson.put("price",priceInt);
         } catch (JSONException e) {
             e.printStackTrace();
         }

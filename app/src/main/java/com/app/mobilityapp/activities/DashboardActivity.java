@@ -83,6 +83,7 @@ import static com.app.mobilityapp.app_utils.AppApis.ADD_INTO_CART;
 import static com.app.mobilityapp.app_utils.AppApis.GET_BANNER;
 import static com.app.mobilityapp.app_utils.AppApis.GET_CATEGORY;
 import static com.app.mobilityapp.app_utils.AppApis.GET_PROFILE;
+import static com.app.mobilityapp.app_utils.AppApis.GLOBEL_NOTIFICATION;
 import static com.app.mobilityapp.app_utils.AppApis.PROFILE_UPDATE;
 
 public class DashboardActivity extends BaseActivity implements JSONResult ,NavigationView.OnNavigationItemSelectedListener{
@@ -254,6 +255,7 @@ public class DashboardActivity extends BaseActivity implements JSONResult ,Navig
 
 
         getBannerData();
+        getGlobelNotification();
 
     }
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -283,6 +285,9 @@ public class DashboardActivity extends BaseActivity implements JSONResult ,Navig
                 break;
             case R.id.hlp_suport:
                 startActivity(new Intent(this, HelpSupportActivity.class));
+                break;
+            case R.id.notification:
+                startActivity(new Intent(this, NotificationActivity.class));
                 break;
             case R.id.logout:
                 alertDialogForLogout();
@@ -706,14 +711,16 @@ public class DashboardActivity extends BaseActivity implements JSONResult ,Navig
                     JSONArray jsonArray = response.getJSONArray("data");
                     JSONObject userInfo = jsonArray.getJSONObject(0);
                     String name = userInfo.getString("displayName");
-                    String email = userInfo.getString("email");
+//                    String email = userInfo.getString("email");
+                    String phone = userInfo.getString("phone");
                     blockStatus = userInfo.getBoolean("status");
                     String userPicture = userInfo.getString("userPicture");
                     nameTxt.setText(name);
-                    emailTxt.setText(email);
+                    emailTxt.setText("\n"+phone);
                     Glide
                             .with(DashboardActivity.this)
                             .load(userPicture)
+                            .error(R.drawable.profile_icon)
                             .centerCrop()
                             .into(profilePic);
                 } catch (JSONException e) {
@@ -760,5 +767,19 @@ public class DashboardActivity extends BaseActivity implements JSONResult ,Navig
 
                     }
                 });
+    }
+
+    private void getGlobelNotification(){
+        CommonNetwork.getNetworkJsonObj(GLOBEL_NOTIFICATION, new JSONResult() {
+            @Override
+            public void notifySuccess(@NonNull JSONObject response) {
+                Log.e("response",""+response);
+            }
+
+            @Override
+            public void notifyError(@NonNull ANError anError) {
+                Log.e("error",""+anError);
+            }
+        },this);
     }
 }

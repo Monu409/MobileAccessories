@@ -7,12 +7,13 @@ import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -44,6 +45,7 @@ import com.app.mobilityapp.app_utils.BaseActivity;
 import com.app.mobilityapp.app_utils.ConstantMethods;
 import com.app.mobilityapp.app_utils.FileUtils;
 import com.app.mobilityapp.app_utils.MultiSpinner;
+import com.app.mobilityapp.camera.CameraActivity;
 import com.app.mobilityapp.connection.CommonNetwork;
 import com.app.mobilityapp.connection.JSONResult;
 import com.app.mobilityapp.modals.AddedBrands;
@@ -57,15 +59,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import static com.app.mobilityapp.app_utils.AppApis.BASE_URL;
 import static com.app.mobilityapp.app_utils.AppApis.SEND_MEDIA_TO_PRODUCT;
 import static com.app.mobilityapp.app_utils.AppApis.UPLOAD_PRODUCT;
+import com.app.mobilityapp.app_utils.ExpandableHeightGridView;
 
 public class Add_ProductActivity extends BaseActivity {
     LinearLayout brand_root, price_root;
@@ -74,11 +76,10 @@ public class Add_ProductActivity extends BaseActivity {
     final int PICK_IMAGE_CAMERA = 1;
     final int PICK_IMAGE_GALLERY = 2;
     private ArrayList<String> pathlist;
-    private ArrayList<Uri> arrayList;
-    private GridView listView;
-    private JSONArray imageArr = new JSONArray();
-    private String productId="";
-    private String mCurrentPhotoPath = "";
+    //    private ArrayList<Uri> arrayList;
+    private ExpandableHeightGridView listView;
+    public JSONArray imageArr = new JSONArray();
+    private String productId = "";
 
     @Override
     protected int getLayoutResourceId() {
@@ -87,6 +88,7 @@ public class Add_ProductActivity extends BaseActivity {
 
     String page_type = "";
     MyProductModel.MyProductChild productChild;
+    MyAdapter mAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -95,7 +97,7 @@ public class Add_ProductActivity extends BaseActivity {
         post_brands = new ArrayList();
         post_prices = new ArrayList();
         pathlist = new ArrayList<>();
-        arrayList = new ArrayList<>();
+//        arrayList = new ArrayList<>();
         if (getIntent().getExtras() != null) {
             page_type = getIntent().getStringExtra("page_type");
             productChild = gson.fromJson(getIntent().getStringExtra("data"), MyProductModel.MyProductChild.class);
@@ -103,9 +105,10 @@ public class Add_ProductActivity extends BaseActivity {
         }
 
         findViewId();
+
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("status",true);
+            jsonObject.put("status", true);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -120,12 +123,14 @@ public class Add_ProductActivity extends BaseActivity {
                 editPrices(productChild.getPrice());
                 contentEdt.setText(productChild.getContent());
                 product_edt.setText(productChild.getName());
-                ArrayList<String> urls = new ArrayList<>();
+                moqEdt.setText(productChild.getMoq());
                 for (MyProductModel.Image image : productChild.getImage()) {
-                    urls.add(image.getImageurl());
+                    pathlist.add(image.getImageurl());
                 }
-                MyAdapter mAdapter = new MyAdapter(this, urls);
-                listView.setAdapter(mAdapter);
+
+                if (mAdapter != null) {
+                    mAdapter.Update(pathlist);
+                }
             }
             Log.e("edit price", " is now here");
         }
@@ -147,29 +152,7 @@ public class Add_ProductActivity extends BaseActivity {
                     }
                     break;
                 case R.id.continue_btn:
-                    String productName = product_edt.getText().toString();
-                    if (productName.isEmpty()) {
-                        Toast.makeText(Add_ProductActivity.this, "Enter product name", Toast.LENGTH_SHORT).show();
-                    } else {
-                        try {
-                            putJson(post_json, "brandDetails", new JSONArray(gson.toJson(post_brands)));
-                            putJson(post_json, "price", new JSONArray(gson.toJson(post_prices)));
-                            putJson(post_json, "name", product_edt.getText().toString());
-                            putJson(post_json, "content", contentEdt.getText().toString().trim());
-                            putJson(post_json, "image", imageArr);
-                            putJson(post_json, "colour", new JSONArray());
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        Log.e("final json ", " to post " + post_json);
-                        if(productId.equals("")){
-                            addProduct(post_json);
-                        }
-                        else {
-                            updateProduct(post_json,productId);
-                        }
-
-                    }
+                    getAllImagePaths();
                     break;
                 case R.id.add_image:
                     selectImage();
@@ -178,10 +161,44 @@ public class Add_ProductActivity extends BaseActivity {
         }
     };
 
+    public void upload_product() {
+        String productName = product_edt.getText().toString();
+        String moqStr = moqEdt.getText().toString();
+        int moqInt = Integer.parseInt(moqStr);
+        if (productName.isEmpty()) {
+            Toast.makeText(Add_ProductActivity.this, "Enter product name", Toast.LENGTH_SHORT).show();
+        }
+        else if(moqStr.isEmpty()){
+            Toast.makeText(Add_ProductActivity.this, "Enter MOQ", Toast.LENGTH_SHORT).show();
+        }else if(moqInt<=0){
+            Toast.makeText(Add_ProductActivity.this, "Enter valid MOQ", Toast.LENGTH_SHORT).show();
+        } else{
+            try {
+                putJson(post_json, "brandDetails", new JSONArray(gson.toJson(post_brands)));
+                putJson(post_json, "price", new JSONArray(gson.toJson(post_prices)));
+                putJson(post_json, "name", product_edt.getText().toString());
+                putJson(post_json, "content", contentEdt.getText().toString().trim());
+                putJson(post_json, "moq", moqInt);
+                putJson(post_json, "image", imageArr);
+                putJson(post_json, "colour", new JSONArray());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            Log.e("final json ", " to post " + post_json);
+            if (productId.equals("")) {
+                addProduct(post_json);
+            } else {
+                updateProduct(post_json, productId);
+            }
+
+        }
+    }
+
+
     Spinner cat_spnr, scat_spnr, scat2_spnr;
     private TextView addview_btn, addprice_btn, continue_btn, addImage;
     MultiSpinner color_spnr;
-    EditText product_edt, contentEdt;
+    EditText product_edt, contentEdt,moqEdt;
 
     private void findViewId() {
         product_edt = findViewById(R.id.product_edt);
@@ -197,7 +214,11 @@ public class Add_ProductActivity extends BaseActivity {
         contentEdt = findViewById(R.id.content_edt);
         addImage = findViewById(R.id.add_image);
         listView = findViewById(R.id.gv);
+        moqEdt = findViewById(R.id.moq_edt);
         set_listeners();
+        mAdapter = new MyAdapter(this, pathlist);
+        listView.setAdapter(mAdapter);
+        listView.setExpanded(true);
     }
 
     public void set_listeners() {
@@ -316,7 +337,7 @@ public class Add_ProductActivity extends BaseActivity {
 
             }
         });
-//        if (page_type == null || page_type.equals(""))
+//        if (page_type == null || page_type.equals("ledgerdate"))
 //            post_brands.add(brands);
 //        else {
         new Handler().postDelayed(new Runnable() {
@@ -429,6 +450,7 @@ public class Add_ProductActivity extends BaseActivity {
         CommonNetwork.postNetworkJsonObj(url, jsonObject, new JSONResult() {
             @Override
             public void notifySuccess(@NonNull JSONObject response) {
+                ConstantMethods.dismissProgressBar();
                 try {
                     if (response.getString("confirmation").equalsIgnoreCase("success")) {
                         String data = response.getString("data");
@@ -475,7 +497,6 @@ public class Add_ProductActivity extends BaseActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
             }
 
             @Override
@@ -486,9 +507,11 @@ public class Add_ProductActivity extends BaseActivity {
     }
 
     public void get_model(String url, JSONObject jsonObject, MultiSpinner model_spnr, List<String> last_selected) {
+//        ConstantMethods.showProgressbar1(this,"get_model");
         CommonNetwork.postNetworkJsonObj(url, jsonObject, new JSONResult() {
             @Override
             public void notifySuccess(@NonNull JSONObject response) {
+                ConstantMethods.dismissProgressBar();
                 try {
                     if (response.getString("confirmation").equalsIgnoreCase("success")) {
                         List<ConsModel> models = new ArrayList<>(Arrays.asList(gson.fromJson(response.getString("data"), ConsModel[].class)));
@@ -510,7 +533,8 @@ public class Add_ProductActivity extends BaseActivity {
 
             @Override
             public void notifyError(@NonNull ANError anError) {
-
+                ConstantMethods.dismissProgressBar();
+                Toast.makeText(Add_ProductActivity.this, anError.getErrorBody(), Toast.LENGTH_SHORT).show();
             }
         }, this);
     }
@@ -544,14 +568,15 @@ public class Add_ProductActivity extends BaseActivity {
 
             @Override
             public void notifyError(@NonNull ANError anError) {
+                ConstantMethods.dismissProgressBar();
                 Toast.makeText(Add_ProductActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
             }
         }, this);
     }
 
-    private void updateProduct(JSONObject jsonObject,String productId) {
+    private void updateProduct(JSONObject jsonObject, String productId) {
         ConstantMethods.showProgressbar(this);
-        CommonNetwork.putNetworkJsonObj(UPLOAD_PRODUCT+"/"+productId, jsonObject, new JSONResult() {
+        CommonNetwork.putNetworkJsonObj(UPLOAD_PRODUCT + "/" + productId, jsonObject, new JSONResult() {
             @Override
             public void notifySuccess(@NonNull JSONObject response) {
                 ConstantMethods.dismissProgressBar();
@@ -589,6 +614,7 @@ public class Add_ProductActivity extends BaseActivity {
                         if (options[item].equals("Take Photo")) {
                             dialog.dismiss();
                             cameraImage();
+
                         } else if (options[item].equals("Choose From Gallery")) {
                             dialog.dismiss();
                             showChooser();
@@ -606,17 +632,29 @@ public class Add_ProductActivity extends BaseActivity {
         }
     }
 
-    private Uri imageToUploadUri;
+//    private Uri imageToUploadUri;
+
+    String imagePath = "";
+    String directory;
 
     private void cameraImage() {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy-hh-mm-ss");
-        String format = simpleDateFormat.format(new Date());
-        Intent chooserIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        File f = new File(Environment.getExternalStorageDirectory(), format + "_IMAGE.jpg");
-        chooserIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
-        imageToUploadUri = Uri.fromFile(f);
-        startActivityForResult(chooserIntent, PICK_IMAGE_CAMERA);
+        directory = Environment.getExternalStorageDirectory().getAbsolutePath() + "/";
+        String imgcurTime = "" + System.currentTimeMillis();
+        File imageDirectory = new File(directory);
+        imageDirectory.mkdirs();
+        imagePath = directory + imgcurTime + ".jpg";
+        startCamera(PICK_IMAGE_CAMERA, imgcurTime + ".jpg", true, false);
     }
+
+    public void startCamera(int request_code, String name, boolean isTime, boolean isScan) {
+        Intent camera = new Intent(this, CameraActivity.class);
+        camera.putExtra("name", name);
+        camera.putExtra("path", directory);
+        camera.putExtra("istime", isTime);
+        camera.putExtra("isScan", isScan);
+        startActivityForResult(camera, request_code);
+    }
+
 
     private void showChooser() {
         // Use the GET_CONTENT intent from the utility class
@@ -644,20 +682,6 @@ public class Add_ProductActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_IMAGE_CAMERA && resultCode == Activity.RESULT_OK) {
-            if (imageToUploadUri != null) {
-                Uri selectedImage = imageToUploadUri;
-                final String path = FileUtils.getPath(this, selectedImage);
-                Log.d("Single File Selected", path);
-                pathlist.add(path);
-                arrayList.add(selectedImage);
-//                MyAdapter mAdapter = new MyAdapter(this, arrayList);
-//                listView.setAdapter(mAdapter);
-            } else {
-                Toast.makeText(this, "Error while capturing Image", Toast.LENGTH_LONG).show();
-            }
-        }
-
         switch (requestCode) {
             case PICK_IMAGE_GALLERY:
                 // If the file selection was successful
@@ -673,20 +697,20 @@ public class Add_ProductActivity extends BaseActivity {
                             try {
                                 // Get the file path from the URI
                                 String path = FileUtils.getPath(this, imageUri);
-
                                 Log.d("Multiple File Selected", path);
-//                                pathlist.add(path);
-                                arrayList.add(imageUri);
+                                pathlist.add(path);
+//                                arrayList.add(imageUri);
                             } catch (Exception e) {
 
                             }
                         }
-                        if (arrayList.size() > 10) {
+                        if (pathlist.size() > 10) {
                             Toast.makeText(this, "Can't select more then 10 images", Toast.LENGTH_SHORT).show();
-                            arrayList.clear();
+                            pathlist.clear();
                         } else {
-                            MyAdapter mAdapter = new MyAdapter(this, arrayList);
-                            listView.setAdapter(mAdapter);
+                            if (mAdapter != null) {
+                                mAdapter.Update(pathlist);
+                            }
                         }
                     } else if (data.getData() != null) {
                         //do something with the image (save it to some directory or whatever you need to do with it here)
@@ -696,33 +720,23 @@ public class Add_ProductActivity extends BaseActivity {
                             final String path = FileUtils.getPath(this, uri);
                             Log.d("Single File Selected", path);
                             pathlist.add(path);
-                            arrayList.add(uri);
-                            MyAdapter mAdapter = new MyAdapter(this, arrayList);
-                            listView.setAdapter(mAdapter);
-
+//                            arrayList.add(uri);
+                            if (mAdapter != null) {
+                                mAdapter.Update(pathlist);
+                            }
                         } catch (Exception e) {
                             Log.e("", "File select error", e);
                         }
                     }
-                    getAllImagePaths();
+//                    getAllImagePaths("gallery");
                 }
                 break;
 
             case PICK_IMAGE_CAMERA:
                 if (resultCode == RESULT_OK) {
-                    try {
-//                        mImageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), Uri.parse(mCurrentPhotoPath));
-//                        mImageView.setImageBitmap(mImageBitmap);
-                        Uri uri = Uri.parse(mCurrentPhotoPath);
-                        final String path = FileUtils.getPath(this, uri);
-//                        Log.d("Single File Selected", path);
-//                        pathlist.add(path);
-//                        arrayList.add(uri);
-                        MyAdapter mAdapter = new MyAdapter(this, arrayList);
-                        listView.setAdapter(mAdapter);
-                        getAllImagePaths();
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    pathlist.add(imagePath);
+                    if (mAdapter != null) {
+                        mAdapter.Update(pathlist);
                     }
                 }
         }
@@ -732,9 +746,33 @@ public class Add_ProductActivity extends BaseActivity {
     private void getAllImagePaths() {
         for (int i = 0; i < pathlist.size(); i++) {
             File file = new File(pathlist.get(i));
-            uploadMedia(file);
+            if (file.exists()) {
+                try {
+                    Bitmap bitmap = BitmapFactory.decodeFile(file.getPath());
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 10, new FileOutputStream(file));
+                } catch (Throwable t) {
+                    Log.e("ERROR", "Error compressing file." + t.toString());
+                    t.printStackTrace();
+                }
+                uploadMedia(file);
+            } else {
+                try {
+                    JSONObject jsonObject = new JSONObject();
+                    String path = pathlist.get(i);
+                    jsonObject.put("imagename", path.substring(path.lastIndexOf("/") + 1));
+                    jsonObject.put("imageurl", path);
+                    imageArr.put(mInt, jsonObject);
+                    if (mInt == pathlist.size() - 1) {
+                        upload_product();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                mInt = mInt + 1;
+            }
         }
     }
+
 
     /***** Edit Code here
      * @param prices*****/
@@ -770,18 +808,11 @@ public class Add_ProductActivity extends BaseActivity {
         }
         return -1;
     }
-//    private int getBIndex(List list, String s) {
-//        for (int i = 0; i < list.size(); i++) {
-//            if (list.get(i).toString().equals(s)) {
-//                return i;
-//            }
-//        }
-//        return -1;
-//    }
 
     private int mInt = 0;
 
     private void uploadMedia(File file) {
+        ConstantMethods.showProgressbar(this);
         AndroidNetworking
                 .upload(SEND_MEDIA_TO_PRODUCT)
                 .addMultipartFile("image", file)
@@ -800,8 +831,12 @@ public class Add_ProductActivity extends BaseActivity {
                     @Override
                     public void onResponse(JSONObject response) {
                         Log.e("progress", "" + response);
+                        ConstantMethods.dismissProgressBar();
                         try {
                             imageArr.put(mInt, response);
+                            if (mInt == pathlist.size() - 1) {
+                                upload_product();
+                            }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -811,6 +846,7 @@ public class Add_ProductActivity extends BaseActivity {
                     @Override
                     public void onError(ANError error) {
                         Log.e("progress", "" + error);
+                        ConstantMethods.dismissProgressBar();
                     }
                 });
     }
@@ -845,5 +881,6 @@ public class Add_ProductActivity extends BaseActivity {
 
         dialog.show();
     }
+
 
 }

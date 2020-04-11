@@ -29,6 +29,10 @@
             android:icon="@drawable/support"
             android:title="Help &amp; Support" />
         <item
+            android:id="@+id/notification"
+            android:icon="@drawable/info"
+            android:title="Notification" />
+        <item
             android:id="@+id/logout"
             android:icon="@drawable/logout"
             android:title="Logout" />

@@ -45,30 +45,28 @@ public class EnterQuantityACopy extends BaseActivity {
         submit = findViewById(R.id.btn_submit);
         qtyList.setLayoutManager(new LinearLayoutManager(this));
         productPriceModels = (ArrayList<ProductPriceModel>) getIntent().getSerializableExtra("price_list");
-        position = getIntent().getIntExtra("position",0);
+        position = getIntent().getIntExtra("position", 0);
         ConstantMethods.setTitleAndBack(this, "Enter Quantity");
         proModlModels = (ArrayList<ProModlModel>) getIntent().getSerializableExtra("qty_list");
-        List<LocalQuantityModel.Modallist>  modelList = null;
-        List<LocalQuantityModel> localQuantityModels = ConstantMethods.getQtyArrayListShared(this,"local_qty_models");
+        List<LocalQuantityModel.Modallist> modelList = null;
+        List<LocalQuantityModel> localQuantityModels = ConstantMethods.getQtyArrayListShared(this, "local_qty_models");
 
         brandDetailsarrStr = getIntent().getStringExtra("brandDetailsarr");
 
         try {
             modelList = localQuantityModels.get(position).getModallist();
             btnOrder.setText("Order Qty" + "  " + localQuantityModels.get(position).getTotalQty());
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             btnOrder.setText("Order Qty" + "  " + mQty);
         }
-        if(localQuantityModels==null||modelList==null){
+        if (localQuantityModels == null || modelList == null) {
             localQuantityModels = new ArrayList<>();
+        } else {
+            for (int i = 0; i < proModlModels.size(); i++) {
+                proModlModels.get(i).setQty(modelList.get(i).getQuantity());
+            }
         }
-//        else {
-//            for (int i = 0; i < proModlModels.size(); i++) {
-//                proModlModels.get(i).setQty(modelList.get(i).getQuantity());
-//            }
-//        }
         productModelAdapter = new ProductModelListAdapter1(this, proModlModels);
         qtyList.setAdapter(productModelAdapter);
         productIdforJson = getIntent().getStringExtra("brand_id");
@@ -76,10 +74,9 @@ public class EnterQuantityACopy extends BaseActivity {
 
 
         submit.setOnClickListener(v -> {
-            if(btnOrder.getText().toString().trim().equals("Order Qty  0")){
+            if (btnOrder.getText().toString().trim().equals("Order Qty  0")) {
                 Toast.makeText(this, "Select minimum 1 quantity", Toast.LENGTH_SHORT).show();
-            }
-            else {
+            } else {
                 int totalQty = 0;
                 JSONObject jsonObject = new JSONObject();
                 JSONArray jsonArray = new JSONArray();
@@ -95,45 +92,23 @@ public class EnterQuantityACopy extends BaseActivity {
 
                     jsonObject.put("productid", productIdforJson);
                     jsonObject.put("brandid", brandId);
-                    int applyPrice = applyPrice(totalQty);
+                    double applyPrice = applyPrice(totalQty);
                     jsonObject.put("price", String.valueOf(applyPrice));
                     jsonObject.put("total_qty", totalQty);
                     jsonObject.put("modallist", jsonArray);
                     Gson gson = new Gson();
-                    LocalQuantityModel conversationModel = gson.fromJson(String.valueOf(jsonObject),LocalQuantityModel.class);
-                    List<LocalQuantityModel> localQuantityModels1 = ConstantMethods.getQtyArrayListShared(this,"local_qty_models");
-                    if(localQuantityModels1==null){
+                    LocalQuantityModel conversationModel = gson.fromJson(String.valueOf(jsonObject), LocalQuantityModel.class);
+                    List<LocalQuantityModel> localQuantityModels1 = ConstantMethods.getQtyArrayListShared(this, "local_qty_models");
+                    if (localQuantityModels1 == null) {
                         localQuantityModels1 = new ArrayList<>();
+                    } else {
+                        if (localQuantityModels1.size() > position) {
+                            localQuantityModels1.remove(position);
+                        }
+                        localQuantityModels1.add(position, conversationModel);
+                        ConstantMethods.saveQtyListShared(localQuantityModels1, this, "local_qty_models");
                     }
-//                    localQuantityModels1.remove(position);
-                    localQuantityModels1.add(position,conversationModel);
-                    ConstantMethods.saveQtyListShared(localQuantityModels1,this,"local_qty_models");
-//                    JSONArray jsonArray1 = new JSONArray(brandDetailsarrStr);
-//                    JSONArray modallist = new JSONArray();
-//
-//                    for(int i=0;i<localQuantityModels1.size();i++){
-//                        if(localQuantityModels1.get(i).getBrandid().equals("")){
-//                            localQuantityModels1.remove(i);
-//                            JSONObject jsonObject1 = jsonArray1.getJSONObject(i);
-//                            JSONObject brandObj = jsonObject1.getJSONObject("brand");
-//                            String brandId = brandObj.getString("_id");
-//                            JSONArray qtyArr = jsonObject1.getJSONArray("model");
-//                            for(int j=0;j<qtyArr.length();j++){
-//                                JSONObject idObj = qtyArr.getJSONObject(j);
-//                                JSONObject modlObj = new JSONObject();
-//                                String qtyId = idObj.getString("_id");
-//                                modlObj.put("modalid",qtyId);
-//                                modlObj.put("quantity","0");
-//                                modallist.put(j,modlObj);
-//                            }
-//                            Type type = new TypeToken<List<LocalQuantityModel.Modallist>>(){}.getType();
-//                            List<LocalQuantityModel.Modallist> modallist1 = gson.fromJson(String.valueOf(modallist), type);
-//                            conversationModel.setModallist(modallist1);
-//                            LocalQuantityModel localQuantityModel = nullModel(modallist1,brandId);
-//                            localQuantityModels1.add(i,localQuantityModel);
-//                        }
-//                    }
-                    ConstantMethods.saveQtyListShared(localQuantityModels1,this,"local_qty_models");
+                    ConstantMethods.saveQtyListShared(localQuantityModels1, this, "local_qty_models");
                     onBackPressed();
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -142,7 +117,7 @@ public class EnterQuantityACopy extends BaseActivity {
         });
     }
 
-    private LocalQuantityModel nullModel(List<LocalQuantityModel.Modallist> modallists,String brandId){
+    private LocalQuantityModel nullModel(List<LocalQuantityModel.Modallist> modallists, String brandId) {
         LocalQuantityModel localQuantityModel = new LocalQuantityModel();
         localQuantityModel.setBrandid(brandId);
         localQuantityModel.setModallist(modallists);
@@ -157,23 +132,40 @@ public class EnterQuantityACopy extends BaseActivity {
         return R.layout.activity_enter_quantity;
     }
 
-    private int applyPrice(int quantity){
-        int price = 0;
-        for(int i=0;i<productPriceModels.size();i++){
-            int amount = Integer.parseInt(productPriceModels.get(i).getAmount());
+    //    private int applyPrice(int quantity){
+//        int price = 0;
+//        for(int i=0;i<productPriceModels.size();i++){
+//            int amount = Integer.parseInt(productPriceModels.get(i).getAmount());
+//            int fromVal = Integer.parseInt(productPriceModels.get(i).getFrom());
+//            int toVal = Integer.parseInt(productPriceModels.get(i).getTo());
+//            if(quantity>=fromVal && quantity<=toVal){
+//                price = amount*quantity;
+//                break;
+//            }
+//            else {
+//                price = amount*quantity;
+//            }
+//        }
+//        return price;
+//    }
+    private double applyPrice(int quantity) {
+        double price = 0.0;
+        for (int i = 0; i < productPriceModels.size(); i++) {
+            double amount = Double.parseDouble(productPriceModels.get(i).getAmount());
             int fromVal = Integer.parseInt(productPriceModels.get(i).getFrom());
             int toVal = Integer.parseInt(productPriceModels.get(i).getTo());
-            if(quantity>=fromVal && quantity<=toVal){
-                price = amount*quantity;
+            if (quantity >= fromVal && quantity <= toVal) {
+                price = amount * quantity;
                 break;
-            }
-            else {
-                price = amount*quantity;
+            } else {
+                price = amount * quantity;
             }
         }
         return price;
     }
+
     int total_qty;
+
     public void update_quantity() {
         total_qty = 0;
         for (ProModlModel proModlModel : proModlModels) {
@@ -181,7 +173,7 @@ public class EnterQuantityACopy extends BaseActivity {
             total_qty = total_qty + qtyInt;
         }
         btnOrder.setText("Order Qty" + "  " + total_qty);
-        if(slctd_brand!=null)
+        if (slctd_brand != null)
             slctd_brand.setQuantity("" + total_qty);
     }
 }
